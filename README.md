@@ -22,7 +22,7 @@
 
 ---
 
-![Header](https://avatars.githubusercontent.com/u/149291157?s=400&u=fa385dad7eabe8a3da9af29623a2ccb93070dc8f&v=4)
+![Header](https://img.freepik.com/free-vector/coding-concept-illustration_114360-1155.jpg?t=st=1742160760~exp=1742164360~hmac=4e50e4ad8642a9cd39e62032d08cd49f372f0b8eba5ed26471d764a57d661c0d&w=740)
 
 ## 🚀 About Me  
 - 🎓 **Developer & Student** with a strong foundation in problem-solving.  
