@@ -5,6 +5,11 @@
   <br> Passionate about coding and solving challenges on platforms like Codeforces, CodeChef, and HackerRank. 
 </p>
 
+## 👀 Profile Views  
+<p align="center">
+  <img src="https://komarev.com/ghpvc/?username=shamiulriyad&label=Profile%20Views&color=blue&style=for-the-badge" alt="Profile Views Counter">
+</p>
+
 ---
 
 ![Header](https://github.com/shamiulriyad/shamiulriyad/blob/main/banner.jpg)
