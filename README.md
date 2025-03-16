@@ -12,7 +12,7 @@
 
 ---
 
-![Header](https://github.com/shamiulriyad/shamiulriyad/blob/main/banner.jpg)
+![Header](https://avatars.githubusercontent.com/u/149291157?s=400&u=fa385dad7eabe8a3da9af29623a2ccb93070dc8f&v=4)
 
 ## 🚀 About Me
 - 🎓 **Developer & Student** with a strong foundation in problem-solving.
