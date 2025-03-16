@@ -1,9 +1,18 @@
-# Hi, I'm Md Shamiul Islam Riyad! 👋
+<table>
+  <tr>
+    <td>
+      <h1>Hi, I'm Md Shamiul Islam Riyad! 👋</h1>
+      <p>
+        <b>Developer | Student | Competitive Programmer</b>  
+        <br> Passionate about coding and solving challenges on platforms like Codeforces, CodeChef, and HackerRank. 
+      </p>
+    </td>
+    <td>
+      <img src="https://github.com/shamiulriyad.png" width="150" style="border-radius: 50%;">
+    </td>
+  </tr>
+</table>
 
-<p align="center">
-  <b>Developer | Student | Competitive Programmer</b>  
-  <br> Passionate about coding and solving challenges on platforms like Codeforces, CodeChef, and HackerRank. 
-</p>
 
 ## 👀 Profile Views  
 <p align="center">
