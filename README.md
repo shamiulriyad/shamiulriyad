@@ -29,9 +29,14 @@
 </p>
 
 <p align="center">
+  <img src="https://github-readme-activity-graph.vercel.app/graph?username=shamiulriyad&theme=react" alt="GitHub Contribution Graph">
+</p>
+
+<p align="center">
   <img src="https://github-profile-summary-cards.vercel.app/api/cards/stats?username=shamiulriyad&theme=tokyonight" alt="GitHub Stats">
   <img src="https://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username=shamiulriyad&theme=tokyonight" alt="Most Used Languages">
 </p>
+
 
 ---
 
