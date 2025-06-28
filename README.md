@@ -3,8 +3,8 @@
     <td>
       <h1>Hi, I'm Md Shamiul Islam Riyad! 👋</h1>
       <p>
-        <b>Developer | Student | Competitive Programmer</b>  
-        <br> Passionate about coding and solving challenges on platforms like Codeforces, CodeChef, and HackerRank.
+        <b>Developer | Student | Competitive Programmer</b><br>
+        Passionate about coding and solving challenges on platforms like Codeforces, CodeChef, and HackerRank.
       </p>
     </td>
     <td>
@@ -15,43 +15,46 @@
 
 ---
 
-## 👀 Profile Views  
+## 👀 Profile Views
+
 <p align="center">
   <img src="https://komarev.com/ghpvc/?username=shamiulriyad&label=Profile%20Views&color=blue&style=for-the-badge" alt="Profile Views Counter">
 </p>
 
 ---
 
-![Header](https://img.freepik.com/free-vector/coding-concept-illustration_114360-1155.jpg?t=st=1742160760~exp=1742164360~hmac=4e50e4ad8642a9cd39e62032d08cd49f372f0b8eba5ed26471d764a57d661c0d&w=740)
+![Header](https://img.freepik.com/free-vector/coding-concept-illustration_114360-1155.jpg?w=740)
 
-## 🚀 About Me  
+## 🚀 About Me
+
 - 🎓 **Developer & Student** with a strong foundation in problem-solving.  
 - 💡 Passionate about **software development, AI, and competitive programming**.  
 - 🏆 Active participant in competitive programming contests.  
 - 🌱 Currently **learning JavaScript & QT Development** to enhance my skills.  
-- 💻 Skilled in **C, C++, Java, JavaScript, QT Dev**.  
+- 💻 Skilled in **C, C++, Java, JavaScript, QT Dev**.
 
 ---
 
-## 📊 GitHub Stats  
+## 📊 GitHub Stats
 
 <p align="center">
-  <img src="https://github-readme-stats.vercel.app/api?username=shamiulriyad&show_icons=true&theme=tokyonight" alt="GitHub Stats" width="48%">
-  <img src="https://github-readme-streak-stats.herokuapp.com/?user=shamiulriyad&theme=tokyonight" alt="GitHub Streak" width="48%">
+  <img src="https://github-readme-stats.vercel.app/api?username=shamiulriyad&show_icons=true&theme=tokyonight&count_private=true&v=1" alt="GitHub Stats" width="48%">
+  <img src="https://github-readme-streak-stats.herokuapp.com/?user=shamiulriyad&theme=tokyonight&v=1" alt="GitHub Streak" width="48%">
 </p>
 
 <p align="center">
-  <img src="https://github-profile-summary-cards.vercel.app/api/cards/stats?username=shamiulriyad&theme=tokyonight" alt="GitHub Stats" width="48%">
-  <img src="https://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username=shamiulriyad&theme=tokyonight" alt="Most Used Languages" width="48%">
+  <img src="https://github-profile-summary-cards.vercel.app/api/cards/stats?username=shamiulriyad&theme=tokyonight&v=1" alt="Summary Stats" width="48%">
+  <img src="https://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username=shamiulriyad&theme=tokyonight&v=1" alt="Most Used Languages" width="48%">
 </p>
 
 <p align="center">
-  <img src="https://github-readme-activity-graph.vercel.app/graph?username=shamiulriyad&theme=react" alt="GitHub Contribution Graph">
+  <img src="https://github-readme-activity-graph.vercel.app/graph?username=shamiulriyad&theme=react&v=1" alt="Contribution Graph">
 </p>
 
 ---
 
-## 📫 Connect With Me  
+## 📫 Connect With Me
+
 <p align="center">
   <a href="https://www.linkedin.com/in/md-shamiul-islam-riyad-31b8352b4/" target="_blank">
     <img src="https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white">
@@ -69,33 +72,38 @@
 
 ---
 
-## 🌍 Coding Profiles  
+## 🌍 Coding Profiles
+
 - **Codeforces:** [Riyad_shamiul](https://codeforces.com/profile/Riyad_shamiul)  
 - **CodeChef:** [riyad_1418](https://www.codechef.com/users/riyad_1418)  
 - **HackerRank:** [shamiulriyad96](https://www.hackerrank.com/profile/shamiulriyad96)  
 - **LeetCode:** [shamiulislamriyad](https://leetcode.com/u/shamiulislamriyad/)  
-- **GeeksforGeeks:** [shamiulrvb71](https://www.geeksforgeeks.org/user/shamiulrvb71/)  
+- **GeeksforGeeks:** [shamiulrvb71](https://www.geeksforgeeks.org/user/shamiulrvb71/)
 
 ---
 
-## ⚡ Tech Stack  
+## ⚡ Tech Stack
+
 **Languages & Tools:**  
-![C](https://img.shields.io/badge/C-00599C?style=flat&logo=c&logoColor=white)  
-![C++](https://img.shields.io/badge/C%2B%2B-00599C?style=flat&logo=c%2B%2B)  
-![Java](https://img.shields.io/badge/Java-ED8B00?style=flat&logo=java)  
-![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat&logo=javascript&logoColor=black)  
-![QT](https://img.shields.io/badge/QT-41CD52?style=flat&logo=qt&logoColor=white)  
+![C](https://img.shields.io/badge/C-00599C?style=flat&logo=c&logoColor=white)
+![C++](https://img.shields.io/badge/C++-00599C?style=flat&logo=c%2B%2B)
+![Java](https://img.shields.io/badge/Java-ED8B00?style=flat&logo=java)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat&logo=javascript&logoColor=black)
+![QT](https://img.shields.io/badge/QT-41CD52?style=flat&logo=qt&logoColor=white)
 
 ---
 
-## 💡 Quote  
-_"Striving for excellence in competitive programming and software development."_  
+## 💡 Quote
+
+_"Striving for excellence in competitive programming and software development."_
 
 ---
 
-## 🔥 Fun Fact  
-- 🚀 I love exploring **new technologies** and **solving complex problems**!  
+## 🔥 Fun Fact
+
+- 🚀 I love exploring **new technologies** and **solving complex problems**!
 
 ---
 
-✨ **Thank you for visiting my profile!** 😊  
+✨ **Thank you for visiting my profile!** 😊
+
