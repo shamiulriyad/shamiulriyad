@@ -30,8 +30,8 @@
 - 🎓 **Developer & Student** with a strong foundation in problem-solving.  
 - 💡 Passionate about **software development, AI, and competitive programming**.  
 - 🏆 Active participant in competitive programming contests.  
-- 🌱 Currently **learning JavaScript & QT Development** to enhance my skills.  
-- 💻 Skilled in **C, C++, Java, JavaScript, QT Dev**.
+- 🌱 Currently **learning Algorithm & participant in competitive programming** to enhance my skills.  
+- 💻 Skilled in **C, C++, Java, JavaScript, QT Dev, ML, C#, Game dev, DSA**.
 
 ---
 
