@@ -60,7 +60,6 @@
 
 ---
 
-![Visitor Count](https://komarev.com/ghpvc/?username=shamiulriyad&style=flat-square&color=blue)
 
 
 
