@@ -38,18 +38,19 @@
 ## 📊 GitHub Stats
 
 <p align="center">
-  <img src="https://github-readme-stats.vercel.app/api?username=shamiulriyad&show_icons=true&theme=tokyonight&count_private=true&v=1" alt="GitHub Stats" width="48%">
-  <img src="https://github-readme-streak-stats.herokuapp.com/?user=shamiulriyad&theme=tokyonight&v=1" alt="GitHub Streak" width="48%">
+  <img src="https://github-readme-stats.vercel.app/api?username=shamiulriyad&show_icons=true&theme=tokyonight&count_private=true&include_all_commits=true" alt="GitHub Stats" width="48%">
+  <img src="https://streak-stats.demolab.com?user=shamiulriyad&theme=tokyonight" alt="GitHub Streak" width="48%">
 </p>
 
 <p align="center">
-  <img src="https://github-profile-summary-cards.vercel.app/api/cards/stats?username=shamiulriyad&theme=tokyonight&v=1" alt="Summary Stats" width="48%">
-  <img src="https://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username=shamiulriyad&theme=tokyonight&v=1" alt="Most Used Languages" width="48%">
+  <img src="https://github-profile-summary-cards.vercel.app/api/cards/stats?username=shamiulriyad&theme=tokyonight&hide_border=true" alt="Summary Stats" width="48%">
+  <img src="https://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username=shamiulriyad&theme=tokyonight&hide_border=true" alt="Most Used Languages" width="48%">
 </p>
 
 <p align="center">
-  <img src="https://github-readme-activity-graph.vercel.app/graph?username=shamiulriyad&theme=react&v=1" alt="Contribution Graph">
+  <img src="https://github-readme-activity-graph.vercel.app/graph?username=shamiulriyad&theme=tokyo-night&hide_border=true" alt="Contribution Graph">
 </p>
+
 
 ---
 
