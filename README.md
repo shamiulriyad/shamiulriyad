@@ -23,7 +23,7 @@
 
 ---
 
-![Header](https://img.freepik.com/free-vector/coding-concept-illustration_114360-1155.jpg?w=740)
+![Header](https://i.pinimg.com/736x/94/4c/4c/944c4caf0e601ee7be24d8ed535e8943.jpg?w=740)
 
 ## 🚀 About Me
 
