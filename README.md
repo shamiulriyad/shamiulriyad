@@ -77,6 +77,9 @@
 
 ---
 
+![GitHub commit count](https://img.shields.io/github/commit-activity/y/shamiulriyad/your-repo?style=for-the-badge)
+
+
 ## 💡 Quote
 
 _"Striving for excellence in competitive programming and software development."_
