@@ -18,7 +18,7 @@
 ## 👀 Profile Views
 
 <p align="center">
-  <img src="https://komarev.com/ghpvc/?username=shamiulriyad&label=Profile%20Views&color=blue&style=for-the-badge" alt="Profile Views Counter">
+  <img src="https://i.pinimg.com/736x/94/4c/4c/944c4caf0e601ee7be24d8ed535e8943.jpgusername=shamiulriyad&label=Profile%20Views&color=blue&style=for-the-badge" alt="Profile Views Counter">
 </p>
 
 ---
