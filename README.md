@@ -31,40 +31,11 @@
 - 💡 Passionate about **software development, AI, and competitive programming**.  
 - 🏆 Active participant in competitive programming contests.  
 - 🌱 Currently **learning Algorithm & participant in competitive programming** to enhance my skills.  
-- 💻 Skilled in **C, C++, Java, JavaScript, QT Dev, ML, C#, Game dev, DSA**.
+- 💻 Skilled in **C, C++, Java, JavaScript, QT Dev, DSA**.
+- 
 
 ---
 
-## 📊 GitHub Stats
-
-<p align="center">
- 
-  <img src="https://streak-stats.demolab.com?user=shamiulriyad&theme=tokyonight&hide_border=true&v=2" alt="GitHub Streak" width="48%">
-</p>
-
-<p align="center">
-  <img src="https://github-profile-summary-cards.vercel.app/api/cards/stats?username=shamiulriyad&theme=tokyonight&hide_border=true&v=2" alt="Summary Stats" width="48%">
-  <img src="https://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username=shamiulriyad&theme=tokyonight&hide_border=true&v=2" alt="Most Used Languages" width="48%">
-</p>
-
-<p align="center">
-  <img src="https://github-readme-activity-graph.vercel.app/graph?username=shamiulriyad&theme=tokyo-night&hide_border=true&v=2" alt="Contribution Graph">
-</p>
-
----
-
-## 🏆 GitHub Trophies
-<p align="center">
-  <img src="https://github-profile-trophy.vercel.app/?username=shamiulriyad&theme=tokyonight&no-frame=true&no-bg=true&margin-w=4" />
-</p>
-
----
-
-
-
-
-
----
 
 ## 📫 Connect With Me
 
