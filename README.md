@@ -8,7 +8,7 @@
       </p>
     </td>
     <td>
-      <img src="https://img.freepik.com/premium-photo/cute-3d-style-chibi-programmer-with-cat-curled-up-their-lap-peacefully-coding-with-cat_1118790-251.jpg?w=740" width="150" style="border-radius: 50%; border: 5px solid #fff;">
+      <img src="https://img.freepik.com/premium-photo/cute-3d-style-chibi-programmer-with-cat-curled-up-their-lap-peacefully-coding-with-cat_1118790-251.jpg?w=500" width="100" style="border-radius: 50%; border: 5px solid #fff;">
     </td>
   </tr>
 </table>
