@@ -30,12 +30,25 @@
 - 🎓 **Developer & Student** with a strong foundation in problem-solving.  
 - 💡 Passionate about **software development, AI, and competitive programming**.  
 - 🏆 Active participant in competitive programming contests.  
-- 🌱 Currently **learning Algorithm & participant in competitive programming** to enhance my skills.  
+- 🌱 Currently **learning Algorithms & participating in competitive programming** to enhance my skills.  
 - 💻 Skilled in **C, C++, Java, JavaScript, QT Dev, DSA**.
-- 
 
 ---
 
+## 📊 GitHub Stats
+
+<p align="center">
+  <!-- GitHub Contribution Graph -->
+  ![Riyad's GitHub Stats](https://github-readme-stats.vercel.app/api?username=shamiulriyad&show_icons=true&theme=blue)
+  
+  <!-- Top Languages -->
+  ![Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=shamiulriyad&layout=compact&theme=blue)
+  
+  <!-- GitHub Activity -->
+  ![GitHub Commit Activity](https://img.shields.io/github/commit-activity/m/shamiulriyad?style=for-the-badge)
+</p>
+
+---
 
 ## 📫 Connect With Me
 
@@ -77,15 +90,6 @@
 
 ---
 
-![GitHub commits](https://img.shields.io/github/commit-activity/m/shamiulriyad/your-repo?style=for-the-badge)
-
-
-![GitHub commit count](https://img.shields.io/github/commit-activity/y/shamiulriyad/your-repo?style=for-the-badge)
-
-![Riyad's GitHub stats](https://github-readme-stats.vercel.app/api?username=shamiulriyad&show_icons=true&theme=blue)
-
-
-
 ## 💡 Quote
 
 _"Striving for excellence in competitive programming and software development."_
@@ -95,6 +99,11 @@ _"Striving for excellence in competitive programming and software development."_
 ## 🔥 Fun Fact
 
 - 🚀 I love exploring **new technologies** and **solving complex problems**!
+
+---
+
+✨ **Thank you for visiting my profile!** 😊
+
 
 ---
 
