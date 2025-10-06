@@ -77,7 +77,13 @@
 
 ---
 
+![GitHub commits](https://img.shields.io/github/commit-activity/m/shamiulriyad/your-repo?style=for-the-badge)
+
+
 ![GitHub commit count](https://img.shields.io/github/commit-activity/y/shamiulriyad/your-repo?style=for-the-badge)
+
+![Riyad's GitHub stats](https://github-readme-stats.vercel.app/api?username=shamiulriyad&show_icons=true&theme=blue)
+
 
 
 ## 💡 Quote
