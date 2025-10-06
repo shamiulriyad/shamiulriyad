@@ -38,14 +38,14 @@
 ## 📊 GitHub Stats
 
 <p align="center">
-  <!-- GitHub Contribution Graph -->
+  <!-- Total Stats -->
   ![Riyad's GitHub Stats](https://github-readme-stats.vercel.app/api?username=shamiulriyad&show_icons=true&theme=blue)
   
   <!-- Top Languages -->
   ![Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=shamiulriyad&layout=compact&theme=blue)
   
-  <!-- GitHub Activity -->
-  ![GitHub Commit Activity](https://img.shields.io/github/commit-activity/m/shamiulriyad?style=for-the-badge)
+  <!-- Daily Contribution Streak -->
+  ![GitHub Streak](https://github-readme-streak-stats.herokuapp.com/?user=shamiulriyad&theme=blue)
 </p>
 
 ---
@@ -101,6 +101,9 @@ _"Striving for excellence in competitive programming and software development."_
 - 🚀 I love exploring **new technologies** and **solving complex problems**!
 
 ---
+
+✨ **Thank you for visiting my profile!** 😊
+
 
 ✨ **Thank you for visiting my profile!** 😊
 
