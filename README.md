@@ -30,25 +30,12 @@
 - 🎓 **Developer & Student** with a strong foundation in problem-solving.  
 - 💡 Passionate about **software development, AI, and competitive programming**.  
 - 🏆 Active participant in competitive programming contests.  
-- 🌱 Currently **learning Algorithms & participating in competitive programming** to enhance my skills.  
+- 🌱 Currently **learning Algorithm & participant in competitive programming** to enhance my skills.  
 - 💻 Skilled in **C, C++, Java, JavaScript, QT Dev, DSA**.
+- 
 
 ---
 
-## 📊 GitHub Stats
-
-<p align="center">
-  <!-- Total Stats -->
-  ![Riyad's GitHub Stats](https://github-readme-stats.vercel.app/api?username=shamiulriyad&show_icons=true&theme=blue)
-  
-  <!-- Top Languages -->
-  ![Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=shamiulriyad&layout=compact&theme=blue)
-  
-  <!-- Daily Contribution Streak -->
-  ![GitHub Streak](https://github-readme-streak-stats.herokuapp.com/?user=shamiulriyad&theme=blue)
-</p>
-
----
 
 ## 📫 Connect With Me
 
@@ -100,15 +87,7 @@ _"Striving for excellence in competitive programming and software development."_
 
 - 🚀 I love exploring **new technologies** and **solving complex problems**!
 
----
+---  
 
-✨ **Thank you for visiting my profile!** 😊
-
-
-✨ **Thank you for visiting my profile!** 😊
-
-
----
-
-✨ **Thank you for visiting my profile!** 😊
+✨ **Thank you for visiting my profile!** 😊 
 
