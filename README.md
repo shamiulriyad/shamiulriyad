@@ -8,7 +8,7 @@
       </p>
     </td>
     <td>
-      <img src="https://i.pinimg.com/1200x/3b/63/95/3b6395dc7c57c317d7cc5f2c86af84cc.jpg?w=800" width="200" style="border-radius: 50%; border: 5px solid #fff;">
+      <img src="https://www.pinterest.com/pin/389068855327904100/?w=800" width="200" style="border-radius: 50%; border: 5px solid #fff;">
     </td>
   </tr>
 </table>
