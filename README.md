@@ -74,7 +74,7 @@
   <a href="https://www.hackerrank.com/certificates/e03379cd4242" style="margin-right: 30px;">
     <img src="https://upload.wikimedia.org/wikipedia/commons/6/65/HackerRank_logo.png" width="55" />
   </a>
-  <a href="https://raw.githubusercontent.com/YOUR_USERNAME/certificates/main/hackerrank_certificate.png">
+  <a href="https://www.hackerrank.com/certificates/e03379cd4242">
     HackerRank Certificate
   </a>
 
@@ -84,7 +84,7 @@
   <a href="DATABASE_CERT_LINK" style="margin-right: 30px;">
     <img src="https://cdn-icons-png.flaticon.com/512/4248/4248443.png" width="55" />
   </a>
-  <a href="https://raw.githubusercontent.com/YOUR_USERNAME/certificates/main/database_certificate.png">
+  <a href="https://simpli-web.app.link/e/mYkOfC4lnYb">
     Database Certificate
   </a>
 
