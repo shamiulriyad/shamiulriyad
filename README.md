@@ -69,7 +69,7 @@
 ## 🎓 Certificates
 
 ### ✔ Problem Solving Certificate – HackerRank
-![Certificate](https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/certificates/hackerrank.png)
+![Certificate](https://www.hackerrank.com/certificates/e03379cd4242)
 
 ### ✔ Java Programming Certificate
 ![Certificate](https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/certificates/java.png)
