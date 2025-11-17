@@ -73,7 +73,7 @@
   <img src="https://upload.wikimedia.org/wikipedia/commons/6/65/HackerRank_logo.png" width="40" />
 </a>
 
-[View Full Certificate](https://raw.githubusercontent.com/YOUR_USERNAME/certificates/main/hackerrank_certificate.png)
+[View Full Certificate](https://www.hackerrank.com/certificates/e03379cd4242)
 
 
 ---
