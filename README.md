@@ -66,11 +66,14 @@
 
 ---
 
-## 🎓 My Certificates
+## 🎓 Certificates
 
-**HackerRank Certificate**  
-![HackerRank Certificate](https://raw.githubusercontent.com/YOUR_USERNAME/certificates/main/hackerrank_certificate.png)  
-[Check Certificate](https://www.hackerrank.com/certificates/e03379cd4242)
+### HackerRank Certificate  
+<a href="https://www.hackerrank.com/certificates/e03379cd4242">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/6/65/HackerRank_logo.png" width="40" />
+</a>
+
+[View Full Certificate](https://raw.githubusercontent.com/YOUR_USERNAME/certificates/main/hackerrank_certificate.png)
 
 
 ---
