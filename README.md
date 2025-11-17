@@ -62,7 +62,6 @@
 - **CodeChef:** [riyad_1418](https://www.codechef.com/users/riyad_1418)  
 - **HackerRank:** [shamiulriyad96](https://www.hackerrank.com/profile/shamiulriyad96)  
 - **LeetCode:** [shamiulislamriyad](https://leetcode.com/u/shamiulislamriyad/)  
-- **GeeksforGeeks:** [shamiulrvb71](https://www.geeksforgeeks.org/user/shamiulrvb71/)
 
 ---
 
