@@ -157,10 +157,11 @@ Welcome to my project showcase! Here you'll find all the projects I've worked on
   ![Web Icon](https://img.shields.io/badge/Web-🖥️-yellow)  
   Personal portfolio website built with HTML, CSS, JS.
 
-- **[E-Learning Platfrom]([https://github.com/YOUR_USERNAME/ecommerce-store](https://github.com/shamiulriyad/DatabaseHub/tree/main/E-Learning))**  
-  ![Web Icon](https://img.shields.io/badge/Web-🖥️-yellow)  
-  Full-stack E-learning with payment integration.
-  website built with React,AspDotnet,postgresql.
+- **[E-Learning Platform](https://github.com/shamiulriyad/DatabaseHub/tree/main/E-Learning)**  
+  ![Web](https://img.shields.io/badge/Web-Application-yellow)  
+  A full-stack e-learning platform with secure payment integration.  
+  Built using **React**, **ASP.NET Core**, and **PostgreSQL**.
+
 
 ---
 
