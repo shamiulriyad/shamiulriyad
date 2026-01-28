@@ -101,17 +101,21 @@
 ![Java](https://img.shields.io/badge/Java-ED8B00?style=flat&logo=java)
 ![Python](https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat&logo=javascript&logoColor=black)
+![C#](https://img.shields.io/badge/C%23-239120?style=flat&logo=csharp&logoColor=white)
 ![QT](https://img.shields.io/badge/QT-41CD52?style=flat&logo=qt&logoColor=white)
+
 
 **Databases:**  
 ![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=flat&logo=mysql&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-336791?style=flat&logo=postgresql&logoColor=white)
 ![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=flat&logo=mongodb&logoColor=white)
 
+
 **Backend & APIs:**  
-![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat&logo=node.js&logoColor=white)
+![.NET](https://img.shields.io/badge/.NET-512BD4?style=flat&logo=dotnet&logoColor=white)
 ![PHP](https://img.shields.io/badge/PHP-777BB4?style=flat&logo=php&logoColor=white)
 ![XAMPP](https://img.shields.io/badge/XAMPP-FF6C37?style=flat&logo=apachefriends&logoColor=white)
+
 
 **Tools & Version Control:**  
 ![Git](https://img.shields.io/badge/Git-F05032?style=flat&logo=git&logoColor=white)
@@ -127,9 +131,9 @@ Welcome to my project showcase! Here you'll find all the projects I've worked on
 ---
 
 ### 🎮 Games
-- **[Snake Game](https://github.com/YOUR_USERNAME/snake-game)**  
+- **[Flappy Bird](https://github.com/shamiulriyad/lag-legend/tree/main/FlappyBird)**  
   ![Game Icon](https://img.shields.io/badge/Game-🎮-blue)  
-  Classic snake game built with Python and Pygame.
+  Classic snake game built with Java.
 
 - **[Tic Tac Toe](https://github.com/YOUR_USERNAME/tic-tac-toe)**  
   ![Game Icon](https://img.shields.io/badge/Game-🎮-blue)  
@@ -153,9 +157,10 @@ Welcome to my project showcase! Here you'll find all the projects I've worked on
   ![Web Icon](https://img.shields.io/badge/Web-🖥️-yellow)  
   Personal portfolio website built with HTML, CSS, JS.
 
-- **[E-commerce Store](https://github.com/YOUR_USERNAME/ecommerce-store)**  
+- **[E-Learning Platfrom]([https://github.com/YOUR_USERNAME/ecommerce-store](https://github.com/shamiulriyad/DatabaseHub/tree/main/E-Learning))**  
   ![Web Icon](https://img.shields.io/badge/Web-🖥️-yellow)  
-  Full-stack online store with payment integration.
+  Full-stack E-learning with payment integration.
+  website built with React,AspDotnet,postgresql.
 
 ---
 
@@ -171,9 +176,10 @@ Welcome to my project showcase! Here you'll find all the projects I've worked on
 ---
 
 ### 🗃️ Database / DBMS Projects
-- **[Library Management System](https://github.com/YOUR_USERNAME/library-management)**  
+- **[NextUniverse-E-Learning-Platfrom](https://github.com/shamiulriyad/DatabaseHub/tree/main/E-Learning)**  
   ![DB Icon](https://img.shields.io/badge/DB-🗃️-orange)  
-  SQL-based library management system.
+  postgresq-based E-learning system.
+  website built with React,AspDotnet,postgresql.
 
 - **[Grievance Redressal System](https://github.com/YOUR_USERNAME/grievance-system)**  
   ![DB Icon](https://img.shields.io/badge/DB-🗃️-orange)  
