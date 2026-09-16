@@ -153,9 +153,9 @@ Welcome to my project showcase! Here you'll find all the projects I've worked on
 ---
 
 ### 🖥️ Web Development
-- **[Portfolio Website](https://github.com/YOUR_USERNAME/portfolio)**  
+- **[Portfolio Website]([https://github.com/YOUR_USERNAME/portfolio](https://riyadsn.vercel.app/)**  
   ![Web Icon](https://img.shields.io/badge/Web-🖥️-yellow)  
-  Personal portfolio website built with HTML, CSS, JS.
+  Personal portfolio website built with react, dotnet, supabase.
 
 - **[E-Learning Platform](https://github.com/shamiulriyad/DatabaseHub/tree/main/E-Learning)**  
   ![Web](https://img.shields.io/badge/Web-Application-yellow)  
