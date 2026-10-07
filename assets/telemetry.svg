@@ -15,11 +15,8 @@
 <text x="60" y="110" font-family="Segoe UI,Helvetica Neue,Helvetica,Arial,sans-serif" font-size="13.5" font-weight="400" fill="#c9d1d9" text-anchor="start" >Stars earned</text>
 <text x="330" y="110" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13.5" font-weight="700" fill="#e6edf3" text-anchor="end" >22</text>
 <circle cx="46" cy="130" r="3" fill="#d4af37"/>
-<text x="60" y="134" font-family="Segoe UI,Helvetica Neue,Helvetica,Arial,sans-serif" font-size="13.5" font-weight="400" fill="#c9d1d9" text-anchor="start" >Followers</text>
-<text x="330" y="134" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13.5" font-weight="700" fill="#e6edf3" text-anchor="end" >0</text>
-<circle cx="46" cy="154" r="3" fill="#d4af37"/>
-<text x="60" y="158" font-family="Segoe UI,Helvetica Neue,Helvetica,Arial,sans-serif" font-size="13.5" font-weight="400" fill="#c9d1d9" text-anchor="start" >Languages</text>
-<text x="330" y="158" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13.5" font-weight="700" fill="#e6edf3" text-anchor="end" >16</text>
+<text x="60" y="134" font-family="Segoe UI,Helvetica Neue,Helvetica,Arial,sans-serif" font-size="13.5" font-weight="400" fill="#c9d1d9" text-anchor="start" >Languages</text>
+<text x="330" y="134" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13.5" font-weight="700" fill="#e6edf3" text-anchor="end" >16</text>
 <text x="400" y="56" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="12" font-weight="400" fill="#8b949e" text-anchor="start" >// languages · public repos</text>
 <clipPath id="bar"><rect x="400" y="72" width="460" height="8" rx="4"/></clipPath><g clip-path="url(#bar)">
 <rect x="400" y="72" width="460" height="8" fill="#1f2a24"/>
