@@ -29,7 +29,7 @@ SANS = "Segoe UI,Helvetica Neue,Helvetica,Arial,sans-serif"
 def request(url, token=True, data=None, accept="application/vnd.github+json"):
     headers = {"Accept": accept, "User-Agent": f"{USER}-profile-telemetry"}
     if token:
-        headers["Authorization"] = f"bearer {os.environ['GITHUB_TOKEN']}"
+        headers["Authorization"] = f"bearer {os.environ['GITHUB_TOKEN'] if token is True else token}"
     if data is not None:
         headers["Content-Type"] = "application/json"
         data = json.dumps(data).encode()
@@ -41,19 +41,43 @@ def rest(path):
     return json.loads(request(f"https://api.github.com/{path}"))
 
 
-def gql(query, variables=None):
-    body = json.loads(request("https://api.github.com/graphql", data={"query": query, "variables": variables or {}}))
+def gql(query, variables=None, token=True):
+    body = json.loads(request("https://api.github.com/graphql", token=token, data={"query": query, "variables": variables or {}}))
     if body.get("errors"):
         raise RuntimeError(body["errors"])
     return body["data"]
+
+
+def calendar_year_token(year, token):
+    """Daily counts via GraphQL using the owner's own token.
+
+    Needed when the profile is private: only the owner can see the calendar.
+    """
+    now = dt.datetime.now(dt.timezone.utc)
+    end = min(dt.datetime(year, 12, 31, 23, 59, 59, tzinfo=dt.timezone.utc), now)
+    cal = gql(
+        """query($login: String!, $from: DateTime!, $to: DateTime!) {
+          user(login: $login) {
+            contributionsCollection(from: $from, to: $to) {
+              contributionCalendar { weeks { contributionDays { date contributionCount } } }
+            }
+          }
+        }""",
+        {"login": USER, "from": f"{year}-01-01T00:00:00Z", "to": end.isoformat()},
+        token=token,
+    )["user"]["contributionsCollection"]["contributionCalendar"]
+    return {d["date"]: d["contributionCount"] for w in cal["weeks"] for d in w["contributionDays"]}
 
 
 def calendar_year(year):
     """Daily counts from the public contributions page.
 
     The Actions token cannot read contributionsCollection for a user (it
-    returns zeros), but the public calendar is available without auth.
+    returns zeros), but the public calendar is available without auth. A
+    private profile shows an empty calendar here; set TELEMETRY_TOKEN then.
     """
+    if os.environ.get("TELEMETRY_TOKEN"):
+        return calendar_year_token(year, os.environ["TELEMETRY_TOKEN"])
     page = request(
         f"https://github.com/users/{USER}/contributions?from={year}-01-01&to={year}-12-31",
         token=False, accept="text/html",
@@ -69,8 +93,7 @@ def calendar_year(year):
         cid = re.search(r'\bid="([^"]+)"', cell)
         if cid and cid.group(1) in tips:
             days[date] = tips[cid.group(1)]
-    sample = re.findall(r"<tool-tip[^>]*>(.*?)</tool-tip>", page, re.S)[:3]
-    print(f"{year}: {len(days)} days, {sum(days.values())} contributions, sample={sample}", file=sys.stderr)
+    print(f"{year}: {len(days)} days, {sum(days.values())} contributions", file=sys.stderr)
     return days
 
 
@@ -153,11 +176,17 @@ def render(data):
     first = min(days) if days else today.isoformat()
     current, current_start, longest, longest_range = streaks(days, today)
 
-    W, H = 900, 600
+    # A private profile (or no activity) yields an all-zero calendar; show
+    # only repository data rather than a wall of zeros.
+    active = total > 0
+    m = 0 if active else -180
+    W, H = 900, 600 if active else 230
     s = []
     a = s.append
+    label = (f"{total} contributions, current streak {current} days, longest streak {longest} days" if active
+             else f"{data['repos']} public repositories, {data['stars']} stars")
     a(f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" role="img" '
-      f'aria-label="GitHub telemetry for {USER}: {total} contributions, current streak {current} days, longest streak {longest} days">')
+      f'aria-label="GitHub telemetry for {USER}: {label}">')
     a(f"""<defs>
   <radialGradient id="glow" cx="0.5" cy="0" r="0.8"><stop offset="0" stop-color="{EMERALD}" stop-opacity="0.18"/><stop offset="1" stop-color="{EMERALD}" stop-opacity="0"/></radialGradient>
   <linearGradient id="rule" x1="0" x2="1"><stop offset="0" stop-color="{EMERALD}" stop-opacity="0"/><stop offset="0.5" stop-color="{EMERALD}" stop-opacity="0.5"/><stop offset="1" stop-color="{GOLD}" stop-opacity="0"/></linearGradient>
@@ -172,72 +201,75 @@ def render(data):
         a(f'<text x="{x}" y="{y}" font-family="{family}" font-size="{size}" font-weight="{weight}" fill="{fill}" '
           f'text-anchor="{anchor}" {extra}>{html.escape(str(body))}</text>')
 
-    # Streak trio
-    cols = [150, 450, 750]
-    text(cols[0], 98, f"{total:,}", 38, TEXT, weight=700, anchor="middle")
-    text(cols[0], 128, "TOTAL CONTRIBUTIONS", 11.5, GOLD, MONO, anchor="middle", extra='letter-spacing="1.5"')
-    text(cols[0], 150, f"{fmt_date(dt.date.fromisoformat(first))} – Present", 12, MUTED, anchor="middle")
+    if active:
+        cols = [150, 450, 750]
+        text(cols[0], 98, f"{total:,}", 38, TEXT, weight=700, anchor="middle")
+        text(cols[0], 128, "TOTAL CONTRIBUTIONS", 11.5, GOLD, MONO, anchor="middle", extra='letter-spacing="1.5"')
+        text(cols[0], 150, f"{fmt_date(dt.date.fromisoformat(first))} – Present", 12, MUTED, anchor="middle")
 
-    a(f'<circle cx="{cols[1]}" cy="86" r="44" fill="none" stroke="#1f2a24" stroke-width="5"/>')
-    a(f'<circle cx="{cols[1]}" cy="86" r="44" fill="none" stroke="{EMERALD}" stroke-width="5"/>')
-    a(f'<circle cx="{cols[1]}" cy="42" r="5" fill="{GOLD}" class="p"/>')
-    text(cols[1], 99, current, 36, TEXT, weight=700, anchor="middle")
-    text(cols[1], 154, "CURRENT STREAK", 11.5, EMERALD, MONO, weight=700, anchor="middle", extra='letter-spacing="1.5"')
-    cur_label = f"{fmt_date(current_start)} – {fmt_date(today)}" if current else "start one today"
-    text(cols[1], 174, cur_label, 12, MUTED, anchor="middle")
+        a(f'<circle cx="{cols[1]}" cy="86" r="44" fill="none" stroke="#1f2a24" stroke-width="5"/>')
+        a(f'<circle cx="{cols[1]}" cy="86" r="44" fill="none" stroke="{EMERALD}" stroke-width="5"/>')
+        a(f'<circle cx="{cols[1]}" cy="42" r="5" fill="{GOLD}" class="p"/>')
+        text(cols[1], 99, current, 36, TEXT, weight=700, anchor="middle")
+        text(cols[1], 154, "CURRENT STREAK", 11.5, EMERALD, MONO, weight=700, anchor="middle", extra='letter-spacing="1.5"')
+        cur_label = f"{fmt_date(current_start)} – {fmt_date(today)}" if current else "start one today"
+        text(cols[1], 174, cur_label, 12, MUTED, anchor="middle")
 
-    text(cols[2], 98, longest, 38, TEXT, weight=700, anchor="middle")
-    text(cols[2], 128, "LONGEST STREAK", 11.5, GOLD, MONO, anchor="middle", extra='letter-spacing="1.5"')
-    lr = f"{fmt_date(longest_range[0])} – {fmt_date(longest_range[1])}" if longest_range else "—"
-    text(cols[2], 150, lr, 12, MUTED, anchor="middle")
-    for x in (300, 600):
-        a(f'<rect x="{x}" y="50" width="1" height="120" fill="#1f2a24"/>')
+        text(cols[2], 98, longest, 38, TEXT, weight=700, anchor="middle")
+        text(cols[2], 128, "LONGEST STREAK", 11.5, GOLD, MONO, anchor="middle", extra='letter-spacing="1.5"')
+        lr = f"{fmt_date(longest_range[0])} – {fmt_date(longest_range[1])}" if longest_range else "—"
+        text(cols[2], 150, lr, 12, MUTED, anchor="middle")
+        for x in (300, 600):
+            a(f'<rect x="{x}" y="50" width="1" height="120" fill="#1f2a24"/>')
 
-    a(f'<rect x="40" y="200" width="{W-80}" height="1" fill="url(#rule)"/>')
+        a(f'<rect x="40" y="200" width="{W-80}" height="1" fill="url(#rule)"/>')
 
     # Counters
-    text(40, 236, f"// {today.year}", 12, MUTED, MONO)
-    rows = [("Contributions", data["year_total"]), ("Active days", data["active_days"]), ("Best day", data["best_day"]),
-            ("Public repos", data["repos"]), ("Stars earned", data["stars"]), ("Followers", data["followers"])]
+    text(40, 236 + m, f"// {today.year}" if active else "// public repos", 12, MUTED, MONO)
+    rows = [("Contributions", data["year_total"]), ("Active days", data["active_days"]), ("Best day", data["best_day"])] if active else []
+    rows += [("Public repos", data["repos"]), ("Stars earned", data["stars"]), ("Followers", data["followers"])]
+    if not active:
+        rows.append(("Languages", len(data["langs"])))
     for i, (label, value) in enumerate(rows):
-        y = 266 + i * 24
-        a(f'<circle cx="46" cy="{y-4}" r="3" fill="{EMERALD if i < 3 else GOLD}"/>')
+        y = 266 + m + i * 24
+        a(f'<circle cx="46" cy="{y-4}" r="3" fill="{EMERALD if active and i < 3 else GOLD}"/>')
         text(60, y, label, 13.5, "#c9d1d9")
         text(330, y, f"{value:,}", 13.5, TEXT, MONO, weight=700, anchor="end")
 
     # Languages
     lx, lw = 400, 460
-    text(lx, 236, "// languages · public repos", 12, MUTED, MONO)
+    text(lx, 236 + m, "// languages · public repos", 12, MUTED, MONO)
     ranked = sorted(data["langs"].items(), key=lambda kv: -kv[1][0])
     lang_total = sum(v[0] for _, v in ranked) or 1
     top = ranked[:8]
-    a(f'<clipPath id="bar"><rect x="{lx}" y="252" width="{lw}" height="8" rx="4"/></clipPath><g clip-path="url(#bar)">')
-    a(f'<rect x="{lx}" y="252" width="{lw}" height="8" fill="#1f2a24"/>')
+    a(f'<clipPath id="bar"><rect x="{lx}" y="{252 + m}" width="{lw}" height="8" rx="4"/></clipPath><g clip-path="url(#bar)">')
+    a(f'<rect x="{lx}" y="{252 + m}" width="{lw}" height="8" fill="#1f2a24"/>')
     x = lx
     for name, (size, color) in top:
         w = lw * size / lang_total
-        a(f'<rect x="{x:.2f}" y="252" width="{w:.2f}" height="8" fill="{color}"/>')
+        a(f'<rect x="{x:.2f}" y="{252 + m}" width="{w:.2f}" height="8" fill="{color}"/>')
         x += w
     a("</g>")
     for i, (name, (size, color)) in enumerate(top):
         cx = lx + (i % 2) * 235
-        cy = 286 + (i // 2) * 24
+        cy = 286 + m + (i // 2) * 24
         a(f'<circle cx="{cx+5}" cy="{cy-4}" r="4.5" fill="{color}"/>')
         text(cx + 16, cy, name, 13, "#c9d1d9")
         text(cx + 215, cy, f"{100 * size / lang_total:.1f}%", 12, MUTED, MONO, anchor="end")
 
-    a(f'<rect x="40" y="420" width="{W-80}" height="1" fill="url(#rule)"/>')
+    if active:
+        a(f'<rect x="40" y="420" width="{W-80}" height="1" fill="url(#rule)"/>')
 
-    # Last 53 weeks heatmap, columns are weeks starting on Sunday
-    start = today - dt.timedelta(days=(today.weekday() + 1) % 7 + 52 * 7)
-    cell, gap = 11, 3
-    gx = (W - 53 * (cell + gap) + gap) / 2
-    peak = max([days.get((start + dt.timedelta(i)).isoformat(), 0) for i in range(53 * 7)] + [1])
-    for i in range((today - start).days + 1):
-        d = start + dt.timedelta(i)
-        n = days.get(d.isoformat(), 0)
-        level = 0 if n == 0 else 1 + min(3, int(4 * n / (peak + 1)))
-        a(f'<rect x="{gx + (i // 7) * (cell + gap):.1f}" y="{436 + (i % 7) * (cell + gap)}" width="{cell}" height="{cell}" rx="2.5" fill="{HEAT[level]}"/>')
+        # Last 53 weeks heatmap, columns are weeks starting on Sunday
+        start = today - dt.timedelta(days=(today.weekday() + 1) % 7 + 52 * 7)
+        cell, gap = 11, 3
+        gx = (W - 53 * (cell + gap) + gap) / 2
+        peak = max([days.get((start + dt.timedelta(i)).isoformat(), 0) for i in range(53 * 7)] + [1])
+        for i in range((today - start).days + 1):
+            d = start + dt.timedelta(i)
+            n = days.get(d.isoformat(), 0)
+            level = 0 if n == 0 else 1 + min(3, int(4 * n / (peak + 1)))
+            a(f'<rect x="{gx + (i // 7) * (cell + gap):.1f}" y="{436 + (i % 7) * (cell + gap)}" width="{cell}" height="{cell}" rx="2.5" fill="{HEAT[level]}"/>')
 
     text(W - 60, H - 30, f"synced {today.isoformat()}", 10.5, "#4b5563", MONO, anchor="end")
     a("</svg>")

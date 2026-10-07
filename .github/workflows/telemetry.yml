@@ -27,6 +27,8 @@ jobs:
       - name: Render assets/telemetry.svg
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Optional: a PAT for this account, needed while the profile is private.
+          TELEMETRY_TOKEN: ${{ secrets.TELEMETRY_TOKEN }}
         run: python scripts/telemetry.py
       - name: Commit if changed
         run: |
