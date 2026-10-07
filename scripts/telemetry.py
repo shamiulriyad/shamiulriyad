@@ -1,0 +1,237 @@
+"""Render assets/telemetry.svg from the GitHub GraphQL API.
+
+Runs in GitHub Actions (see .github/workflows/telemetry.yml) so the profile
+does not depend on rate-limited public stats services.
+"""
+
+import datetime as dt
+import html
+import json
+import os
+import sys
+import urllib.request
+
+USER = os.environ.get("GH_USER", "shamiulriyad")
+OUT = os.environ.get("OUT", os.path.join(os.path.dirname(__file__), "..", "assets", "telemetry.svg"))
+
+EMERALD = "#10b981"
+EMERALD_SOFT = "#6ee7b7"
+GOLD = "#d4af37"
+TEXT = "#e6edf3"
+MUTED = "#8b949e"
+BG = "#050807"
+HEAT = ["#0f1714", "#064e3b", "#047857", "#10b981", "#d4af37"]
+MONO = "ui-monospace,SFMono-Regular,Menlo,Consolas,monospace"
+SANS = "Segoe UI,Helvetica Neue,Helvetica,Arial,sans-serif"
+
+
+def gql(query, variables=None):
+    req = urllib.request.Request(
+        "https://api.github.com/graphql",
+        data=json.dumps({"query": query, "variables": variables or {}}).encode(),
+        headers={"Authorization": f"bearer {os.environ['GITHUB_TOKEN']}", "Content-Type": "application/json"},
+    )
+    with urllib.request.urlopen(req, timeout=60) as resp:
+        body = json.load(resp)
+    if body.get("errors"):
+        raise RuntimeError(body["errors"])
+    return body["data"]
+
+
+def fetch():
+    now = dt.datetime.now(dt.timezone.utc)
+    base = gql(
+        """query($login: String!) {
+          user(login: $login) {
+            followers { totalCount }
+            contributionsCollection {
+              contributionYears
+              totalCommitContributions
+              totalPullRequestContributions
+              totalIssueContributions
+            }
+            repositories(first: 100, ownerAffiliations: OWNER, isFork: false, privacy: PUBLIC) {
+              totalCount
+              nodes {
+                stargazerCount
+                languages(first: 10, orderBy: {field: SIZE, direction: DESC}) {
+                  edges { size node { name color } }
+                }
+              }
+            }
+          }
+        }""",
+        {"login": USER},
+    )["user"]
+
+    days = {}
+    for year in base["contributionsCollection"]["contributionYears"]:
+        start = dt.datetime(year, 1, 1, tzinfo=dt.timezone.utc)
+        end = min(dt.datetime(year, 12, 31, 23, 59, 59, tzinfo=dt.timezone.utc), now)
+        cal = gql(
+            """query($login: String!, $from: DateTime!, $to: DateTime!) {
+              user(login: $login) {
+                contributionsCollection(from: $from, to: $to) {
+                  contributionCalendar { weeks { contributionDays { date contributionCount } } }
+                }
+              }
+            }""",
+            {"login": USER, "from": start.isoformat(), "to": end.isoformat()},
+        )["user"]["contributionsCollection"]["contributionCalendar"]
+        for week in cal["weeks"]:
+            for d in week["contributionDays"]:
+                days[d["date"]] = d["contributionCount"]
+
+    langs = {}
+    for repo in base["repositories"]["nodes"]:
+        for e in repo["languages"]["edges"]:
+            name = e["node"]["name"]
+            size, _ = langs.get(name, (0, None))
+            langs[name] = (size + e["size"], e["node"]["color"] or MUTED)
+
+    cc = base["contributionsCollection"]
+    return {
+        "today": now.date(),
+        "days": days,
+        "langs": langs,
+        "commits": cc["totalCommitContributions"],
+        "prs": cc["totalPullRequestContributions"],
+        "issues": cc["totalIssueContributions"],
+        "repos": base["repositories"]["totalCount"],
+        "stars": sum(r["stargazerCount"] for r in base["repositories"]["nodes"]),
+        "followers": base["followers"]["totalCount"],
+    }
+
+
+def streaks(days, today):
+    dates = sorted(dt.date.fromisoformat(d) for d in days if dt.date.fromisoformat(d) <= today)
+    longest, longest_range, run, run_start = 0, None, 0, None
+    for d in dates:
+        if days[d.isoformat()] > 0:
+            run_start = d if run == 0 else run_start
+            run += 1
+            if run > longest:
+                longest, longest_range = run, (run_start, d)
+        else:
+            run = 0
+
+    # Today without contributions yet does not break the current streak.
+    cursor = today if days.get(today.isoformat(), 0) > 0 else today - dt.timedelta(days=1)
+    current, current_start = 0, None
+    while days.get(cursor.isoformat(), 0) > 0:
+        current, current_start = current + 1, cursor
+        cursor -= dt.timedelta(days=1)
+    return current, current_start, longest, longest_range
+
+
+def fmt_date(d):
+    return d.strftime("%b %-d, %Y") if d else "—"
+
+
+def render(data):
+    today = data["today"]
+    days = data["days"]
+    total = sum(days.values())
+    first = min(days) if days else today.isoformat()
+    current, current_start, longest, longest_range = streaks(days, today)
+
+    W, H = 900, 600
+    s = []
+    a = s.append
+    a(f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" role="img" '
+      f'aria-label="GitHub telemetry for {USER}: {total} contributions, current streak {current} days, longest streak {longest} days">')
+    a(f"""<defs>
+  <radialGradient id="glow" cx="0.5" cy="0" r="0.8"><stop offset="0" stop-color="{EMERALD}" stop-opacity="0.18"/><stop offset="1" stop-color="{EMERALD}" stop-opacity="0"/></radialGradient>
+  <linearGradient id="rule" x1="0" x2="1"><stop offset="0" stop-color="{EMERALD}" stop-opacity="0"/><stop offset="0.5" stop-color="{EMERALD}" stop-opacity="0.5"/><stop offset="1" stop-color="{GOLD}" stop-opacity="0"/></linearGradient>
+  <style>.p{{animation:p 2.4s ease-in-out infinite}}@keyframes p{{0%,100%{{opacity:.4}}50%{{opacity:1}}}}</style>
+</defs>""")
+    a(f'<rect width="{W}" height="{H}" rx="14" fill="{BG}"/><rect width="{W}" height="{H}" rx="14" fill="url(#glow)"/>')
+    a(f'<rect x="0.5" y="0.5" width="{W-1}" height="{H-1}" rx="14" fill="none" stroke="{EMERALD}" stroke-opacity="0.25"/>')
+    a(f'<g stroke="{GOLD}" stroke-width="2" fill="none" stroke-linecap="round"><path d="M18 40V18H40"/><path d="M{W-40} 18H{W-18}V40"/>'
+      f'<path d="M18 {H-40}V{H-18}H40"/><path d="M{W-40} {H-18}H{W-18}V{H-40}"/></g>')
+
+    def text(x, y, body, size, fill, family=SANS, weight=400, anchor="start", extra=""):
+        a(f'<text x="{x}" y="{y}" font-family="{family}" font-size="{size}" font-weight="{weight}" fill="{fill}" '
+          f'text-anchor="{anchor}" {extra}>{html.escape(str(body))}</text>')
+
+    # Streak trio
+    cols = [150, 450, 750]
+    text(cols[0], 98, f"{total:,}", 38, TEXT, weight=700, anchor="middle")
+    text(cols[0], 128, "TOTAL CONTRIBUTIONS", 11.5, GOLD, MONO, anchor="middle", extra='letter-spacing="1.5"')
+    text(cols[0], 150, f"{fmt_date(dt.date.fromisoformat(first))} – Present", 12, MUTED, anchor="middle")
+
+    a(f'<circle cx="{cols[1]}" cy="86" r="44" fill="none" stroke="#1f2a24" stroke-width="5"/>')
+    a(f'<circle cx="{cols[1]}" cy="86" r="44" fill="none" stroke="{EMERALD}" stroke-width="5"/>')
+    a(f'<circle cx="{cols[1]}" cy="42" r="5" fill="{GOLD}" class="p"/>')
+    text(cols[1], 99, current, 36, TEXT, weight=700, anchor="middle")
+    text(cols[1], 154, "CURRENT STREAK", 11.5, EMERALD, MONO, weight=700, anchor="middle", extra='letter-spacing="1.5"')
+    cur_label = f"{fmt_date(current_start)} – {fmt_date(today)}" if current else "start one today"
+    text(cols[1], 174, cur_label, 12, MUTED, anchor="middle")
+
+    text(cols[2], 98, longest, 38, TEXT, weight=700, anchor="middle")
+    text(cols[2], 128, "LONGEST STREAK", 11.5, GOLD, MONO, anchor="middle", extra='letter-spacing="1.5"')
+    lr = f"{fmt_date(longest_range[0])} – {fmt_date(longest_range[1])}" if longest_range else "—"
+    text(cols[2], 150, lr, 12, MUTED, anchor="middle")
+    for x in (300, 600):
+        a(f'<rect x="{x}" y="50" width="1" height="120" fill="#1f2a24"/>')
+
+    a(f'<rect x="40" y="200" width="{W-80}" height="1" fill="url(#rule)"/>')
+
+    # Counters
+    text(40, 236, f"// {today.year}", 12, MUTED, MONO)
+    rows = [("Commits", data["commits"]), ("Pull requests", data["prs"]), ("Issues", data["issues"]),
+            ("Public repos", data["repos"]), ("Stars earned", data["stars"]), ("Followers", data["followers"])]
+    for i, (label, value) in enumerate(rows):
+        y = 266 + i * 24
+        a(f'<circle cx="46" cy="{y-4}" r="3" fill="{EMERALD if i < 3 else GOLD}"/>')
+        text(60, y, label, 13.5, "#c9d1d9")
+        text(330, y, f"{value:,}", 13.5, TEXT, MONO, weight=700, anchor="end")
+
+    # Languages
+    lx, lw = 400, 460
+    text(lx, 236, "// languages · public repos", 12, MUTED, MONO)
+    ranked = sorted(data["langs"].items(), key=lambda kv: -kv[1][0])
+    lang_total = sum(v[0] for _, v in ranked) or 1
+    top = ranked[:8]
+    a(f'<clipPath id="bar"><rect x="{lx}" y="252" width="{lw}" height="8" rx="4"/></clipPath><g clip-path="url(#bar)">')
+    a(f'<rect x="{lx}" y="252" width="{lw}" height="8" fill="#1f2a24"/>')
+    x = lx
+    for name, (size, color) in top:
+        w = lw * size / lang_total
+        a(f'<rect x="{x:.2f}" y="252" width="{w:.2f}" height="8" fill="{color}"/>')
+        x += w
+    a("</g>")
+    for i, (name, (size, color)) in enumerate(top):
+        cx = lx + (i % 2) * 235
+        cy = 286 + (i // 2) * 24
+        a(f'<circle cx="{cx+5}" cy="{cy-4}" r="4.5" fill="{color}"/>')
+        text(cx + 16, cy, name, 13, "#c9d1d9")
+        text(cx + 215, cy, f"{100 * size / lang_total:.1f}%", 12, MUTED, MONO, anchor="end")
+
+    a(f'<rect x="40" y="420" width="{W-80}" height="1" fill="url(#rule)"/>')
+
+    # Last 53 weeks heatmap, columns are weeks starting on Sunday
+    start = today - dt.timedelta(days=(today.weekday() + 1) % 7 + 52 * 7)
+    cell, gap = 11, 3
+    gx = (W - 53 * (cell + gap) + gap) / 2
+    peak = max([days.get((start + dt.timedelta(i)).isoformat(), 0) for i in range(53 * 7)] + [1])
+    for i in range((today - start).days + 1):
+        d = start + dt.timedelta(i)
+        n = days.get(d.isoformat(), 0)
+        level = 0 if n == 0 else 1 + min(3, int(4 * n / (peak + 1)))
+        a(f'<rect x="{gx + (i // 7) * (cell + gap):.1f}" y="{436 + (i % 7) * (cell + gap)}" width="{cell}" height="{cell}" rx="2.5" fill="{HEAT[level]}"/>')
+
+    text(W - 60, H - 30, f"synced {today.isoformat()}", 10.5, "#4b5563", MONO, anchor="end")
+    a("</svg>")
+    return "\n".join(s) + "\n"
+
+
+def main():
+    svg = render(fetch())
+    with open(OUT, "w", encoding="utf-8") as f:
+        f.write(svg)
+    print(f"wrote {OUT}", file=sys.stderr)
+
+
+if __name__ == "__main__":
+    main()

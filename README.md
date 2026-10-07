@@ -231,13 +231,7 @@ I'm a CSE student who builds AI systems the full way through: the model or retri
 <!-- ───────────────────────────── 07 STATS ───────────────────────────── -->
 <img src="./assets/h-stats.svg" alt="GitHub Stats" width="100%" />
 
-<p align="center">
-  <img src="https://github-readme-stats.vercel.app/api?username=shamiulriyad&show_icons=true&hide_border=true&bg_color=0a0f0d&title_color=10b981&icon_color=d4af37&text_color=c9d1d9&ring_color=10b981&include_all_commits=true" alt="GitHub stats" height="165" />
-  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=shamiulriyad&layout=compact&hide_border=true&bg_color=0a0f0d&title_color=10b981&text_color=c9d1d9&langs_count=8" alt="Top languages" height="165" />
-</p>
-<p align="center">
-  <img src="https://streak-stats.demolab.com?user=shamiulriyad&hide_border=true&background=0a0f0d&ring=10b981&fire=d4af37&currStreakNum=e6edf3&sideNums=e6edf3&currStreakLabel=10b981&sideLabels=d4af37&dates=8b949e&stroke=1f2a24" alt="GitHub streak" />
-</p>
+<img src="./assets/telemetry.svg" alt="GitHub contributions, streaks, languages and activity for shamiulriyad" width="100%" />
 
 <!-- ───────────────────────────── 08 CONNECT ───────────────────────────── -->
 <img src="./assets/h-connect.svg" alt="Connect" width="100%" />
