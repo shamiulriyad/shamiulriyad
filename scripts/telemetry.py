@@ -10,7 +10,6 @@ import json
 import os
 import re
 import sys
-import urllib.parse
 import urllib.request
 
 USER = os.environ.get("GH_USER", "shamiulriyad")
@@ -73,10 +72,6 @@ def calendar_year(year):
     return days
 
 
-def search_count(kind, query):
-    return rest(f"search/{kind}?q={urllib.parse.quote(query)}&per_page=1")["total_count"]
-
-
 def fetch():
     now = dt.datetime.now(dt.timezone.utc)
     profile = rest(f"users/{USER}")
@@ -110,14 +105,14 @@ def fetch():
             size, _ = langs.get(name, (0, None))
             langs[name] = (size + e["size"], e["node"]["color"] or MUTED)
 
-    since = f"{now.year}-01-01"
+    year = [n for d, n in days.items() if d.startswith(str(now.year))]
     return {
         "today": now.date(),
         "days": days,
         "langs": langs,
-        "commits": search_count("commits", f"author:{USER} author-date:>={since}"),
-        "prs": search_count("issues", f"author:{USER} type:pr created:>={since}"),
-        "issues": search_count("issues", f"author:{USER} type:issue created:>={since}"),
+        "year_total": sum(year),
+        "active_days": sum(1 for n in year if n),
+        "best_day": max(year, default=0),
         "repos": repos["totalCount"],
         "stars": sum(r["stargazerCount"] for r in repos["nodes"]),
         "followers": profile["followers"],
@@ -200,7 +195,7 @@ def render(data):
 
     # Counters
     text(40, 236, f"// {today.year}", 12, MUTED, MONO)
-    rows = [("Public commits", data["commits"]), ("Pull requests", data["prs"]), ("Issues", data["issues"]),
+    rows = [("Contributions", data["year_total"]), ("Active days", data["active_days"]), ("Best day", data["best_day"]),
             ("Public repos", data["repos"]), ("Stars earned", data["stars"]), ("Followers", data["followers"])]
     for i, (label, value) in enumerate(rows):
         y = 266 + i * 24
