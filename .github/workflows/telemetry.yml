@@ -5,6 +5,8 @@ on:
     - cron: "17 */6 * * *"
   workflow_dispatch:
   push:
+    # Only main: bot commits on feature branches conflict with main's copy of the SVG.
+    branches: [main]
     paths:
       - scripts/telemetry.py
       - .github/workflows/telemetry.yml
