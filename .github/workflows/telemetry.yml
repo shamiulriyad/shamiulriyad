@@ -5,6 +5,8 @@ on:
     - cron: "17 */6 * * *"
   workflow_dispatch:
   push:
+    # Only main: bot commits on feature branches conflict with main's copy of the SVG.
+    branches: [main]
     paths:
       - scripts/telemetry.py
       - .github/workflows/telemetry.yml
@@ -29,6 +31,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # Optional: a PAT for this account, needed while the profile is private.
           TELEMETRY_TOKEN: ${{ secrets.TELEMETRY_TOKEN }}
+          TZ_OFFSET_HOURS: "6"
         run: python scripts/telemetry.py
       - name: Commit if changed
         run: |
