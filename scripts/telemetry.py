@@ -5,7 +5,6 @@ does not depend on rate-limited public stats services.
 """
 
 import datetime as dt
-import html
 import json
 import os
 import re
@@ -17,15 +16,10 @@ USER = os.environ.get("GH_USER", "shamiulriyad")
 TZ = dt.timezone(dt.timedelta(hours=float(os.environ.get("TZ_OFFSET_HOURS", "0"))))
 OUT = os.environ.get("OUT", os.path.join(os.path.dirname(__file__), "..", "assets", "telemetry.svg"))
 
-EMERALD = "#10b981"
-EMERALD_SOFT = "#6ee7b7"
-GOLD = "#d4af37"
-TEXT = "#e6edf3"
-MUTED = "#8b949e"
-BG = "#050807"
-HEAT = ["#0f1714", "#064e3b", "#047857", "#10b981", "#d4af37"]
-MONO = "ui-monospace,SFMono-Regular,Menlo,Consolas,monospace"
-SANS = "Segoe UI,Helvetica Neue,Helvetica,Arial,sans-serif"
+from brand import BG, DIM, DISPLAY, EMERALD, EMERALD_SOFT, GOLD, LINE, MONO, MUTED, OFF, SANS, SERIF_IT, fit, hairline, panel
+from typeset import Doc
+
+HEAT = ["#151517", "#0b3d2e", "#0f6b4c", "#10b981", GOLD]
 
 
 def request(url, token=True, data=None, accept="application/vnd.github+json"):
@@ -203,114 +197,107 @@ def fmt_date(d):
 
 def render(data):
     today = data["today"]
-    unit = data.get("source", "contributions")
     days = data["days"]
+    unit = data.get("source", "contributions")
     total = sum(days.values())
     first = min(days) if days else today.isoformat()
     current, current_start, longest, longest_range = streaks(days, today)
 
-    # A private profile (or no activity) yields an all-zero calendar; show
-    # only repository data rather than a wall of zeros.
+    # A hidden calendar (or no activity) yields all zeros; show only repository data then.
     active = total > 0
-    m = 0 if active else -180
-    W, H = 900, 600 if active else 230
-    s = []
-    a = s.append
+    W, X = 1200, 80
+    H = 820 if active else 340
     label = (f"{total} {unit}, current streak {current} days, longest streak {longest} days" if active
              else f"{data['repos']} public repositories, {data['stars']} stars")
-    a(f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" role="img" '
-      f'aria-label="GitHub telemetry for {USER}: {label}">')
-    a(f"""<defs>
-  <radialGradient id="glow" cx="0.5" cy="0" r="0.8"><stop offset="0" stop-color="{EMERALD}" stop-opacity="0.18"/><stop offset="1" stop-color="{EMERALD}" stop-opacity="0"/></radialGradient>
-  <linearGradient id="rule" x1="0" x2="1"><stop offset="0" stop-color="{EMERALD}" stop-opacity="0"/><stop offset="0.5" stop-color="{EMERALD}" stop-opacity="0.5"/><stop offset="1" stop-color="{GOLD}" stop-opacity="0"/></linearGradient>
-  <style>.p{{animation:p 2.4s ease-in-out infinite}}@keyframes p{{0%,100%{{opacity:.4}}50%{{opacity:1}}}}</style>
-</defs>""")
-    a(f'<rect width="{W}" height="{H}" rx="14" fill="{BG}"/><rect width="{W}" height="{H}" rx="14" fill="url(#glow)"/>')
-    a(f'<rect x="0.5" y="0.5" width="{W-1}" height="{H-1}" rx="14" fill="none" stroke="{EMERALD}" stroke-opacity="0.25"/>')
-    a(f'<g stroke="{GOLD}" stroke-width="2" fill="none" stroke-linecap="round"><path d="M18 40V18H40"/><path d="M{W-40} 18H{W-18}V40"/>'
-      f'<path d="M18 {H-40}V{H-18}H40"/><path d="M{W-40} {H-18}H{W-18}V{H-40}"/></g>')
+    doc = Doc(W, H, f"GitHub performance for {USER}: {label}")
+    panel(doc, H)
 
-    def text(x, y, body, size, fill, family=SANS, weight=400, anchor="start", extra=""):
-        a(f'<text x="{x}" y="{y}" font-family="{family}" font-size="{size}" font-weight="{weight}" fill="{fill}" '
-          f'text-anchor="{anchor}" {extra}>{html.escape(str(body))}</text>')
-
+    top = 0
     if active:
-        cols = [150, 450, 750]
-        text(cols[0], 98, f"{total:,}", 38, TEXT, weight=700, anchor="middle")
-        text(cols[0], 128, f"TOTAL {unit.upper()}", 11.5, GOLD, MONO, anchor="middle", extra='letter-spacing="1.5"')
-        text(cols[0], 150, f"{fmt_date(dt.date.fromisoformat(first))} – Present", 12, MUTED, anchor="middle")
+        stats = [
+            (f"TOTAL {unit.upper()}", f"{total:,}", f"{fmt_date(dt.date.fromisoformat(first))} — present"),
+            ("CURRENT STREAK", str(current),
+             f"{fmt_date(current_start)} — {fmt_date(today)}" if current else "Next commit starts it"),
+            ("LONGEST STREAK", str(longest),
+             f"{fmt_date(longest_range[0])} — {fmt_date(longest_range[1])}" if longest_range else "—"),
+        ]
+        colw = (W - 2 * X) / 3
+        for i, (k, v, sub) in enumerate(stats):
+            x = X + i * colw + (36 if i else 0)
+            if i:
+                doc.add(f'<rect x="{X + i * colw:.0f}" y="64" width="1" height="150" fill="{LINE}"/>')
+            if i == 1:
+                doc.add(f'<circle cx="{x + 4}" cy="86" r="3.5" fill="{EMERALD}"/>')
+            doc.text(MONO, k, x + (16 if i == 1 else 0), 90, 10.5, EMERALD_SOFT if i == 1 else DIM, tracking=2.4)
+            w = doc.text(DISPLAY, v, x - 3, 168, 76, OFF)
+            if i:
+                doc.text(SERIF_IT, "days", x + w + 8, 168, 26, MUTED)
+            doc.text(SANS, sub, x, 204, 14, MUTED)
+        hairline(doc, X, 252, W - X)
+        top = 252
 
-        a(f'<circle cx="{cols[1]}" cy="86" r="44" fill="none" stroke="#1f2a24" stroke-width="5"/>')
-        a(f'<circle cx="{cols[1]}" cy="86" r="44" fill="none" stroke="{EMERALD}" stroke-width="5"/>')
-        a(f'<circle cx="{cols[1]}" cy="42" r="5" fill="{GOLD}" class="p"/>')
-        text(cols[1], 99, current, 36, TEXT, weight=700, anchor="middle")
-        text(cols[1], 154, "CURRENT STREAK", 11.5, EMERALD, MONO, weight=700, anchor="middle", extra='letter-spacing="1.5"')
-        cur_label = f"{fmt_date(current_start)} – {fmt_date(today)}" if current else "start one today"
-        text(cols[1], 174, cur_label, 12, MUTED, anchor="middle")
-
-        text(cols[2], 98, longest, 38, TEXT, weight=700, anchor="middle")
-        text(cols[2], 128, "LONGEST STREAK", 11.5, GOLD, MONO, anchor="middle", extra='letter-spacing="1.5"')
-        lr = f"{fmt_date(longest_range[0])} – {fmt_date(longest_range[1])}" if longest_range else "—"
-        text(cols[2], 150, lr, 12, MUTED, anchor="middle")
-        for x in (300, 600):
-            a(f'<rect x="{x}" y="50" width="1" height="120" fill="#1f2a24"/>')
-
-        a(f'<rect x="40" y="200" width="{W-80}" height="1" fill="url(#rule)"/>')
-
-    # Counters
-    text(40, 236 + m, f"// {today.year}" if active else "// public repos", 12, MUTED, MONO)
-    rows = [(unit.capitalize(), data["year_total"]), ("Active days", data["active_days"]), ("Best day", data["best_day"])] if active else []
+    # season counters
+    y0 = top + 70
+    doc.text(MONO, f"SEASON {today.year}" if active else "PUBLIC REPOSITORIES", X, y0, 10.5, DIM, tracking=2.4)
+    rows = [(unit.capitalize(), data["year_total"]), ("Active days", data["active_days"]),
+            ("Best day", data["best_day"])] if active else []
     rows += [("Public repos", data["repos"]), ("Stars earned", data["stars"])]
     if data["followers"]:
         rows.append(("Followers", data["followers"]))
     if not active:
         rows.append(("Languages", len(data["langs"])))
-    for i, (label, value) in enumerate(rows):
-        y = 266 + m + i * 24
-        a(f'<circle cx="46" cy="{y-4}" r="3" fill="{EMERALD if active and i < 3 else GOLD}"/>')
-        text(60, y, label, 13.5, "#c9d1d9")
-        text(330, y, f"{value:,}", 13.5, TEXT, MONO, weight=700, anchor="end")
+    rows = rows[:5]
+    for i, (k, v) in enumerate(rows):
+        y = y0 + 44 + i * 40
+        doc.text(SANS, k, X, y, 15, MUTED)
+        doc.text(DISPLAY, f"{v:,}", 520, y + 1, 19, OFF, anchor="end")
+        hairline(doc, X, y + 15, 520)
 
-    # Languages
-    lx, lw = 400, 460
-    text(lx, 236 + m, "// languages · public repos", 12, MUTED, MONO)
+    # languages
+    lx, lw = 620, W - X - 620
+    doc.text(MONO, "LANGUAGES  ·  PUBLIC REPOS", lx, y0, 10.5, DIM, tracking=2.4)
     ranked = sorted(data["langs"].items(), key=lambda kv: -kv[1][0])
     lang_total = sum(v[0] for _, v in ranked) or 1
-    top = ranked[:8]
-    a(f'<clipPath id="bar"><rect x="{lx}" y="{252 + m}" width="{lw}" height="8" rx="4"/></clipPath><g clip-path="url(#bar)">')
-    a(f'<rect x="{lx}" y="{252 + m}" width="{lw}" height="8" fill="#1f2a24"/>')
+    shown = ranked[:8]
+    doc.define(f'<clipPath id="bar"><rect x="{lx}" y="{y0 + 24}" width="{lw}" height="6" rx="3"/></clipPath>')
+    doc.add(f'<g clip-path="url(#bar)"><rect x="{lx}" y="{y0 + 24}" width="{lw}" height="6" fill="#1a1a1d"/>')
     x = lx
-    for name, (size, color) in top:
+    for name, (size, color) in shown:
         w = lw * size / lang_total
-        a(f'<rect x="{x:.2f}" y="{252 + m}" width="{w:.2f}" height="8" fill="{color}"/>')
+        doc.add(f'<rect x="{x:.2f}" y="{y0 + 24}" width="{w:.2f}" height="6" fill="{color}"/>')
         x += w
-    a("</g>")
-    for i, (name, (size, color)) in enumerate(top):
-        cx = lx + (i % 2) * 235
-        cy = 286 + m + (i // 2) * 24
-        a(f'<circle cx="{cx+5}" cy="{cy-4}" r="4.5" fill="{color}"/>')
-        text(cx + 16, cy, name, 13, "#c9d1d9")
-        text(cx + 215, cy, f"{100 * size / lang_total:.1f}%", 12, MUTED, MONO, anchor="end")
+    doc.add("</g>")
+    half = lw / 2
+    for i, (name, (size, color)) in enumerate(shown):
+        cx = lx + (i % 2) * (half + 20)
+        cy = y0 + 72 + (i // 2) * 40
+        doc.add(f'<circle cx="{cx + 4}" cy="{cy - 5}" r="4" fill="{color}"/>')
+        doc.text(SANS, name, cx + 18, cy, 15, OFF)
+        doc.text(MONO, f"{100 * size / lang_total:.1f}%", cx + half - 20, cy, 12, DIM, anchor="end")
 
     if active:
-        a(f'<rect x="40" y="420" width="{W-80}" height="1" fill="url(#rule)"/>')
-
-        # Last 53 weeks heatmap, columns are weeks starting on Sunday
+        hy = top + 330
+        hairline(doc, X, hy, W - X)
+        doc.text(MONO, "LAST 53 WEEKS", X, hy + 44, 10.5, DIM, tracking=2.4)
+        # columns are weeks starting on Sunday
         start = today - dt.timedelta(days=(today.weekday() + 1) % 7 + 52 * 7)
-        cell, gap = 11, 3
-        gx = (W - 53 * (cell + gap) + gap) / 2
-        # Shade by quartile of active days so one huge day doesn't wash out the rest.
-        active_counts = sorted(n for n in (days.get((start + dt.timedelta(i)).isoformat(), 0) for i in range(53 * 7)) if n)
+        cell, gap = 13, 4
+        gx = W - X - 53 * (cell + gap) + gap
+        # shade by quartile of active days so one huge day doesn't wash out the rest
+        window = [days.get((start + dt.timedelta(i)).isoformat(), 0) for i in range(53 * 7)]
+        active_counts = sorted(n for n in window if n)
         cuts = [active_counts[len(active_counts) * q // 4] for q in (1, 2, 3)] if active_counts else [1, 1, 1]
         for i in range((today - start).days + 1):
-            d = start + dt.timedelta(i)
-            n = days.get(d.isoformat(), 0)
+            n = days.get((start + dt.timedelta(i)).isoformat(), 0)
             level = 0 if n == 0 else 1 + sum(n >= c for c in cuts)
-            a(f'<rect x="{gx + (i // 7) * (cell + gap):.1f}" y="{436 + (i % 7) * (cell + gap)}" width="{cell}" height="{cell}" rx="2.5" fill="{HEAT[level]}"/>')
+            doc.add(f'<rect x="{gx + (i // 7) * (cell + gap):.1f}" y="{hy + 70 + (i % 7) * (cell + gap)}" '
+                    f'width="{cell}" height="{cell}" rx="3" fill="{HEAT[level]}"/>')
+        for i, c in enumerate(HEAT):
+            doc.add(f'<rect x="{X + i * 16}" y="{hy + 70 + 6 * (cell + gap)}" width="11" height="11" rx="2.5" fill="{c}"/>')
+        doc.text(MONO, "LESS → MORE", X, hy + 70 + 5 * (cell + gap), 9, DIM, tracking=1.6)
 
-    text(W - 60, H - 30, f"synced {today.isoformat()}", 10.5, "#4b5563", MONO, anchor="end")
-    a("</svg>")
-    return "\n".join(s) + "\n"
+    doc.text(MONO, f"SYNCED {today.isoformat()}", W - X, H - 34, 9.5, DIM, anchor="end", tracking=2)
+    return doc.render()
 
 
 def main():

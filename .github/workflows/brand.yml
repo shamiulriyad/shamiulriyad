@@ -1,0 +1,43 @@
+name: Profile brand assets
+
+# Builds assets/*.svg, including the hero with the photo embedded (GitHub blocks
+# external images inside SVGs). Output is deterministic, so a run on main after
+# merging a branch that already built it produces no new commit.
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - scripts/brand.py
+      - scripts/typeset.py
+      - scripts/fonts/**
+      - .github/workflows/brand.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: brand-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install fonttools==4.66.1
+      - name: Download hero photo
+        run: |
+          curl -fsSL -A "Mozilla/5.0" -o "$RUNNER_TEMP/hero.jpg" \
+            "https://i.pinimg.com/736x/c8/eb/93/c8eb9378273e52fc21a5aaca9ea7dc64.jpg"
+          file "$RUNNER_TEMP/hero.jpg" | grep -q "JPEG image data"
+      - name: Build assets
+        run: python scripts/brand.py --photo "$RUNNER_TEMP/hero.jpg"
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git add assets
+          git diff --cached --quiet || { git commit -m "Build profile brand assets"; git pull --rebase; git push; }
