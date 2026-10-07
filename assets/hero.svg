@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="380" viewBox="0 0 600 380" role="img" aria-label="Md Shamiul Islam Riyad — AI/ML Engineer, Software Engineer, CSE Student">
+  <defs>
+    <radialGradient id="glow" cx="0.15" cy="0.1" r="0.9">
+      <stop offset="0" stop-color="#10b981" stop-opacity="0.28"/>
+      <stop offset="0.55" stop-color="#10b981" stop-opacity="0.04"/>
+      <stop offset="1" stop-color="#000" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="name" x1="0" x2="1">
+      <stop offset="0" stop-color="#34d399"/>
+      <stop offset="0.55" stop-color="#10b981"/>
+      <stop offset="1" stop-color="#d4af37"/>
+    </linearGradient>
+    <linearGradient id="rule" x1="0" x2="1">
+      <stop offset="0" stop-color="#d4af37"/>
+      <stop offset="1" stop-color="#d4af37" stop-opacity="0"/>
+    </linearGradient>
+    <pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse">
+      <path d="M24 0H0V24" fill="none" stroke="#10b981" stroke-opacity="0.06" stroke-width="1"/>
+    </pattern>
+    <style>
+      .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+      .sans { font-family: 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+      .fade { opacity: 0; animation: in 0.9s ease-out forwards; }
+      .d1 { animation-delay: 0.1s; } .d2 { animation-delay: 0.45s; } .d3 { animation-delay: 0.8s; }
+      .d4 { animation-delay: 1.15s; } .d5 { animation-delay: 1.5s; }
+      @keyframes in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+      .cursor { animation: blink 1.1s steps(1) infinite; }
+      @keyframes blink { 50% { opacity: 0; } }
+      .pulse { animation: pulse 2.4s ease-in-out infinite; }
+      @keyframes pulse { 0%,100% { opacity: 0.35; } 50% { opacity: 1; } }
+    </style>
+  </defs>
+
+  <rect width="600" height="380" rx="14" fill="#050807"/>
+  <rect width="600" height="380" rx="14" fill="url(#grid)"/>
+  <rect width="600" height="380" rx="14" fill="url(#glow)"/>
+  <rect x="0.5" y="0.5" width="599" height="379" rx="14" fill="none" stroke="#10b981" stroke-opacity="0.25"/>
+
+  <!-- gold corner brackets -->
+  <g stroke="#d4af37" stroke-width="2" fill="none" stroke-linecap="round">
+    <path d="M18 40V18H40"/><path d="M560 18H582V40"/>
+    <path d="M18 340V362H40"/><path d="M560 362H582V340"/>
+  </g>
+
+  <!-- status line -->
+  <g class="fade d1">
+    <circle cx="44" cy="58" r="4" fill="#10b981" class="pulse"/>
+    <text x="56" y="62" class="mono" font-size="12" fill="#6ee7b7" letter-spacing="1.5">ONLINE · BANGLADESH · BUILDING</text>
+  </g>
+
+  <!-- name -->
+  <g class="fade d2">
+    <text x="40" y="122" class="sans" font-size="40" font-weight="300" fill="#e6edf3" letter-spacing="0.5">Md Shamiul Islam</text>
+    <text x="40" y="176" class="sans" font-size="52" font-weight="800" fill="url(#name)" letter-spacing="1">Riyad</text>
+  </g>
+
+  <rect x="40" y="196" width="220" height="1.5" fill="url(#rule)" class="fade d3"/>
+
+  <!-- roles -->
+  <text x="40" y="226" class="mono fade d3" font-size="13.5" fill="#d4af37" letter-spacing="1.2">AI/ML ENGINEER  •  SOFTWARE ENGINEER  •  CSE STUDENT</text>
+
+  <!-- tagline -->
+  <g class="fade d4">
+    <text x="40" y="262" class="sans" font-size="15" fill="#9aa4ad">I build retrieval systems, LLM agents and vision models</text>
+    <text x="40" y="284" class="sans" font-size="15" fill="#9aa4ad">and ship them as full-stack products.</text>
+  </g>
+
+  <!-- prompt -->
+  <g class="fade d5">
+    <text x="40" y="332" class="mono" font-size="13" fill="#4b5563">~/riyad</text>
+    <text x="100" y="332" class="mono" font-size="13" fill="#10b981">❯</text>
+    <text x="116" y="332" class="mono" font-size="13" fill="#c9d1d9">focus --on nlp rag agents vision full-stack</text>
+    <rect x="456" y="321" width="8" height="14" fill="#10b981" class="cursor"/>
+  </g>
+</svg>
