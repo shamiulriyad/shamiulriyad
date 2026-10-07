@@ -20,14 +20,14 @@
 <text x="400" y="56" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="12" font-weight="400" fill="#8b949e" text-anchor="start" >// languages · public repos</text>
 <clipPath id="bar"><rect x="400" y="72" width="460" height="8" rx="4"/></clipPath><g clip-path="url(#bar)">
 <rect x="400" y="72" width="460" height="8" fill="#1f2a24"/>
-<rect x="400.00" y="72" width="215.82" height="8" fill="#7355dd"/>
-<rect x="615.82" y="72" width="165.11" height="8" fill="#f1e05a"/>
-<rect x="780.93" y="72" width="30.35" height="8" fill="#3572A5"/>
-<rect x="811.29" y="72" width="16.59" height="8" fill="#3178c6"/>
-<rect x="827.87" y="72" width="11.55" height="8" fill="#e34c26"/>
-<rect x="839.43" y="72" width="8.81" height="8" fill="#f34b7d"/>
-<rect x="848.24" y="72" width="6.61" height="8" fill="#663399"/>
-<rect x="854.85" y="72" width="2.02" height="8" fill="#b07219"/>
+<rect x="400.00" y="72" width="215.70" height="8" fill="#7355dd"/>
+<rect x="615.70" y="72" width="165.02" height="8" fill="#f1e05a"/>
+<rect x="780.72" y="72" width="30.60" height="8" fill="#3572A5"/>
+<rect x="811.31" y="72" width="16.58" height="8" fill="#3178c6"/>
+<rect x="827.89" y="72" width="11.55" height="8" fill="#e34c26"/>
+<rect x="839.44" y="72" width="8.81" height="8" fill="#f34b7d"/>
+<rect x="848.25" y="72" width="6.61" height="8" fill="#663399"/>
+<rect x="854.86" y="72" width="2.01" height="8" fill="#b07219"/>
 </g>
 <circle cx="405" cy="102" r="4.5" fill="#7355dd"/>
 <text x="416" y="106" font-family="Segoe UI,Helvetica Neue,Helvetica,Arial,sans-serif" font-size="13" font-weight="400" fill="#c9d1d9" text-anchor="start" >C#</text>
@@ -37,7 +37,7 @@
 <text x="850" y="106" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="12" font-weight="400" fill="#8b949e" text-anchor="end" >35.9%</text>
 <circle cx="405" cy="126" r="4.5" fill="#3572A5"/>
 <text x="416" y="130" font-family="Segoe UI,Helvetica Neue,Helvetica,Arial,sans-serif" font-size="13" font-weight="400" fill="#c9d1d9" text-anchor="start" >Python</text>
-<text x="615" y="130" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="12" font-weight="400" fill="#8b949e" text-anchor="end" >6.6%</text>
+<text x="615" y="130" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="12" font-weight="400" fill="#8b949e" text-anchor="end" >6.7%</text>
 <circle cx="640" cy="126" r="4.5" fill="#3178c6"/>
 <text x="651" y="130" font-family="Segoe UI,Helvetica Neue,Helvetica,Arial,sans-serif" font-size="13" font-weight="400" fill="#c9d1d9" text-anchor="start" >TypeScript</text>
 <text x="850" y="130" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="12" font-weight="400" fill="#8b949e" text-anchor="end" >3.6%</text>
