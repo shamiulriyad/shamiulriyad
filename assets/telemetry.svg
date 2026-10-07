@@ -24,13 +24,13 @@
 <rect x="40" y="200" width="820" height="1" fill="url(#rule)"/>
 <text x="40" y="236" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="12" font-weight="400" fill="#8b949e" text-anchor="start" >// 2026</text>
 <circle cx="46" cy="262" r="3" fill="#10b981"/>
-<text x="60" y="266" font-family="Segoe UI,Helvetica Neue,Helvetica,Arial,sans-serif" font-size="13.5" font-weight="400" fill="#c9d1d9" text-anchor="start" >Commits</text>
+<text x="60" y="266" font-family="Segoe UI,Helvetica Neue,Helvetica,Arial,sans-serif" font-size="13.5" font-weight="400" fill="#c9d1d9" text-anchor="start" >Contributions</text>
 <text x="330" y="266" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13.5" font-weight="700" fill="#e6edf3" text-anchor="end" >0</text>
 <circle cx="46" cy="286" r="3" fill="#10b981"/>
-<text x="60" y="290" font-family="Segoe UI,Helvetica Neue,Helvetica,Arial,sans-serif" font-size="13.5" font-weight="400" fill="#c9d1d9" text-anchor="start" >Pull requests</text>
+<text x="60" y="290" font-family="Segoe UI,Helvetica Neue,Helvetica,Arial,sans-serif" font-size="13.5" font-weight="400" fill="#c9d1d9" text-anchor="start" >Active days</text>
 <text x="330" y="290" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13.5" font-weight="700" fill="#e6edf3" text-anchor="end" >0</text>
 <circle cx="46" cy="310" r="3" fill="#10b981"/>
-<text x="60" y="314" font-family="Segoe UI,Helvetica Neue,Helvetica,Arial,sans-serif" font-size="13.5" font-weight="400" fill="#c9d1d9" text-anchor="start" >Issues</text>
+<text x="60" y="314" font-family="Segoe UI,Helvetica Neue,Helvetica,Arial,sans-serif" font-size="13.5" font-weight="400" fill="#c9d1d9" text-anchor="start" >Best day</text>
 <text x="330" y="314" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13.5" font-weight="700" fill="#e6edf3" text-anchor="end" >0</text>
 <circle cx="46" cy="334" r="3" fill="#d4af37"/>
 <text x="60" y="338" font-family="Segoe UI,Helvetica Neue,Helvetica,Arial,sans-serif" font-size="13.5" font-weight="400" fill="#c9d1d9" text-anchor="start" >Public repos</text>
