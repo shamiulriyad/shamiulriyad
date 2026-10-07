@@ -10,9 +10,11 @@ import json
 import os
 import re
 import sys
+import urllib.error
 import urllib.request
 
 USER = os.environ.get("GH_USER", "shamiulriyad")
+TZ = dt.timezone(dt.timedelta(hours=float(os.environ.get("TZ_OFFSET_HOURS", "0"))))
 OUT = os.environ.get("OUT", os.path.join(os.path.dirname(__file__), "..", "assets", "telemetry.svg"))
 
 EMERALD = "#10b981"
@@ -97,6 +99,29 @@ def calendar_year(year):
     return days
 
 
+def commit_days(repo_names):
+    """Commits authored by USER per local day across public repos (default branches)."""
+    days = {}
+    for name in repo_names:
+        page = 1
+        while True:
+            try:
+                commits = rest(f"repos/{USER}/{name}/commits?author={USER}&per_page=100&page={page}")
+            except urllib.error.HTTPError as e:
+                if e.code == 409:  # empty repository
+                    break
+                raise
+            for c in commits:
+                when = dt.datetime.fromisoformat(c["commit"]["author"]["date"].replace("Z", "+00:00"))
+                key = when.astimezone(TZ).date().isoformat()
+                days[key] = days.get(key, 0) + 1
+            if len(commits) < 100:
+                break
+            page += 1
+    print(f"commit fallback: {sum(days.values())} commits on {len(days)} days", file=sys.stderr)
+    return days
+
+
 def fetch():
     now = dt.datetime.now(dt.timezone.utc)
     profile = rest(f"users/{USER}")
@@ -106,6 +131,7 @@ def fetch():
             repositories(first: 100, ownerAffiliations: OWNER, isFork: false, privacy: PUBLIC) {
               totalCount
               nodes {
+                name
                 stargazerCount
                 languages(first: 10, orderBy: {field: SIZE, direction: DESC}) {
                   edges { size node { name color } }
@@ -122,6 +148,10 @@ def fetch():
         days.update(calendar_year(year))
     if not days:
         raise RuntimeError("could not parse the contribution calendar; refusing to render zeros")
+    source = "contributions"
+    if not any(days.values()):
+        # Private profile: the calendar is hidden, so count commits in public repos instead.
+        days, source = commit_days([r["name"] for r in repos["nodes"]]), "commits"
 
     langs = {}
     for repo in repos["nodes"]:
@@ -130,9 +160,11 @@ def fetch():
             size, _ = langs.get(name, (0, None))
             langs[name] = (size + e["size"], e["node"]["color"] or MUTED)
 
-    year = [n for d, n in days.items() if d.startswith(str(now.year))]
+    today = now.astimezone(TZ).date()
+    year = [n for d, n in days.items() if d.startswith(str(today.year))]
     return {
-        "today": now.date(),
+        "today": today,
+        "source": source,
         "days": days,
         "langs": langs,
         "year_total": sum(year),
@@ -145,16 +177,16 @@ def fetch():
 
 
 def streaks(days, today):
-    dates = sorted(dt.date.fromisoformat(d) for d in days if dt.date.fromisoformat(d) <= today)
-    longest, longest_range, run, run_start = 0, None, 0, None
+    dates = sorted(dt.date.fromisoformat(d) for d, n in days.items() if n > 0 and dt.date.fromisoformat(d) <= today)
+    longest, longest_range, run, run_start, prev = 0, None, 0, None, None
     for d in dates:
-        if days[d.isoformat()] > 0:
-            run_start = d if run == 0 else run_start
+        if prev is not None and d - prev == dt.timedelta(days=1):
             run += 1
-            if run > longest:
-                longest, longest_range = run, (run_start, d)
         else:
-            run = 0
+            run, run_start = 1, d
+        prev = d
+        if run > longest:
+            longest, longest_range = run, (run_start, d)
 
     # Today without contributions yet does not break the current streak.
     cursor = today if days.get(today.isoformat(), 0) > 0 else today - dt.timedelta(days=1)
@@ -171,6 +203,7 @@ def fmt_date(d):
 
 def render(data):
     today = data["today"]
+    unit = data.get("source", "contributions")
     days = data["days"]
     total = sum(days.values())
     first = min(days) if days else today.isoformat()
@@ -183,7 +216,7 @@ def render(data):
     W, H = 900, 600 if active else 230
     s = []
     a = s.append
-    label = (f"{total} contributions, current streak {current} days, longest streak {longest} days" if active
+    label = (f"{total} {unit}, current streak {current} days, longest streak {longest} days" if active
              else f"{data['repos']} public repositories, {data['stars']} stars")
     a(f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" role="img" '
       f'aria-label="GitHub telemetry for {USER}: {label}">')
@@ -204,7 +237,7 @@ def render(data):
     if active:
         cols = [150, 450, 750]
         text(cols[0], 98, f"{total:,}", 38, TEXT, weight=700, anchor="middle")
-        text(cols[0], 128, "TOTAL CONTRIBUTIONS", 11.5, GOLD, MONO, anchor="middle", extra='letter-spacing="1.5"')
+        text(cols[0], 128, f"TOTAL {unit.upper()}", 11.5, GOLD, MONO, anchor="middle", extra='letter-spacing="1.5"')
         text(cols[0], 150, f"{fmt_date(dt.date.fromisoformat(first))} – Present", 12, MUTED, anchor="middle")
 
         a(f'<circle cx="{cols[1]}" cy="86" r="44" fill="none" stroke="#1f2a24" stroke-width="5"/>')
@@ -226,7 +259,7 @@ def render(data):
 
     # Counters
     text(40, 236 + m, f"// {today.year}" if active else "// public repos", 12, MUTED, MONO)
-    rows = [("Contributions", data["year_total"]), ("Active days", data["active_days"]), ("Best day", data["best_day"])] if active else []
+    rows = [(unit.capitalize(), data["year_total"]), ("Active days", data["active_days"]), ("Best day", data["best_day"])] if active else []
     rows += [("Public repos", data["repos"]), ("Stars earned", data["stars"])]
     if data["followers"]:
         rows.append(("Followers", data["followers"]))
