@@ -1,4 +1,4 @@
-"""Render assets/telemetry.svg from the GitHub GraphQL API.
+"""Render assets/telemetry.svg from GitHub's API and public contribution calendar.
 
 Runs in GitHub Actions (see .github/workflows/telemetry.yml) so the profile
 does not depend on rate-limited public stats services.
@@ -8,7 +8,9 @@ import datetime as dt
 import html
 import json
 import os
+import re
 import sys
+import urllib.parse
 import urllib.request
 
 USER = os.environ.get("GH_USER", "shamiulriyad")
@@ -25,31 +27,62 @@ MONO = "ui-monospace,SFMono-Regular,Menlo,Consolas,monospace"
 SANS = "Segoe UI,Helvetica Neue,Helvetica,Arial,sans-serif"
 
 
+def request(url, token=True, data=None, accept="application/vnd.github+json"):
+    headers = {"Accept": accept, "User-Agent": f"{USER}-profile-telemetry"}
+    if token:
+        headers["Authorization"] = f"bearer {os.environ['GITHUB_TOKEN']}"
+    if data is not None:
+        headers["Content-Type"] = "application/json"
+        data = json.dumps(data).encode()
+    with urllib.request.urlopen(urllib.request.Request(url, data=data, headers=headers), timeout=60) as resp:
+        return resp.read().decode()
+
+
+def rest(path):
+    return json.loads(request(f"https://api.github.com/{path}"))
+
+
 def gql(query, variables=None):
-    req = urllib.request.Request(
-        "https://api.github.com/graphql",
-        data=json.dumps({"query": query, "variables": variables or {}}).encode(),
-        headers={"Authorization": f"bearer {os.environ['GITHUB_TOKEN']}", "Content-Type": "application/json"},
-    )
-    with urllib.request.urlopen(req, timeout=60) as resp:
-        body = json.load(resp)
+    body = json.loads(request("https://api.github.com/graphql", data={"query": query, "variables": variables or {}}))
     if body.get("errors"):
         raise RuntimeError(body["errors"])
     return body["data"]
 
 
+def calendar_year(year):
+    """Daily counts from the public contributions page.
+
+    The Actions token cannot read contributionsCollection for a user (it
+    returns zeros), but the public calendar is available without auth.
+    """
+    page = request(
+        f"https://github.com/users/{USER}/contributions?from={year}-01-01&to={year}-12-31",
+        token=False, accept="text/html",
+    )
+    tips = {}
+    for tip_for, body in re.findall(r'<tool-tip[^>]*\bfor="([^"]+)"[^>]*>(.*?)</tool-tip>', page, re.S):
+        m = re.match(r"\s*([\d,]+|No) contributions?", body)
+        if m:
+            tips[tip_for] = 0 if m.group(1) == "No" else int(m.group(1).replace(",", ""))
+    days = {}
+    for cell in re.findall(r"<td\b[^>]*\bdata-date=[^>]*>", page):
+        date = re.search(r'data-date="([^"]+)"', cell).group(1)
+        cid = re.search(r'\bid="([^"]+)"', cell)
+        if cid and cid.group(1) in tips:
+            days[date] = tips[cid.group(1)]
+    return days
+
+
+def search_count(kind, query):
+    return rest(f"search/{kind}?q={urllib.parse.quote(query)}&per_page=1")["total_count"]
+
+
 def fetch():
     now = dt.datetime.now(dt.timezone.utc)
-    base = gql(
+    profile = rest(f"users/{USER}")
+    repos = gql(
         """query($login: String!) {
           user(login: $login) {
-            followers { totalCount }
-            contributionsCollection {
-              contributionYears
-              totalCommitContributions
-              totalPullRequestContributions
-              totalIssueContributions
-            }
             repositories(first: 100, ownerAffiliations: OWNER, isFork: false, privacy: PUBLIC) {
               totalCount
               nodes {
@@ -62,44 +95,32 @@ def fetch():
           }
         }""",
         {"login": USER},
-    )["user"]
+    )["user"]["repositories"]
 
     days = {}
-    for year in base["contributionsCollection"]["contributionYears"]:
-        start = dt.datetime(year, 1, 1, tzinfo=dt.timezone.utc)
-        end = min(dt.datetime(year, 12, 31, 23, 59, 59, tzinfo=dt.timezone.utc), now)
-        cal = gql(
-            """query($login: String!, $from: DateTime!, $to: DateTime!) {
-              user(login: $login) {
-                contributionsCollection(from: $from, to: $to) {
-                  contributionCalendar { weeks { contributionDays { date contributionCount } } }
-                }
-              }
-            }""",
-            {"login": USER, "from": start.isoformat(), "to": end.isoformat()},
-        )["user"]["contributionsCollection"]["contributionCalendar"]
-        for week in cal["weeks"]:
-            for d in week["contributionDays"]:
-                days[d["date"]] = d["contributionCount"]
+    for year in range(int(profile["created_at"][:4]), now.year + 1):
+        days.update(calendar_year(year))
+    if not days:
+        raise RuntimeError("could not parse the contribution calendar; refusing to render zeros")
 
     langs = {}
-    for repo in base["repositories"]["nodes"]:
+    for repo in repos["nodes"]:
         for e in repo["languages"]["edges"]:
             name = e["node"]["name"]
             size, _ = langs.get(name, (0, None))
             langs[name] = (size + e["size"], e["node"]["color"] or MUTED)
 
-    cc = base["contributionsCollection"]
+    since = f"{now.year}-01-01"
     return {
         "today": now.date(),
         "days": days,
         "langs": langs,
-        "commits": cc["totalCommitContributions"],
-        "prs": cc["totalPullRequestContributions"],
-        "issues": cc["totalIssueContributions"],
-        "repos": base["repositories"]["totalCount"],
-        "stars": sum(r["stargazerCount"] for r in base["repositories"]["nodes"]),
-        "followers": base["followers"]["totalCount"],
+        "commits": search_count("commits", f"author:{USER} author-date:>={since}"),
+        "prs": search_count("issues", f"author:{USER} type:pr created:>={since}"),
+        "issues": search_count("issues", f"author:{USER} type:issue created:>={since}"),
+        "repos": repos["totalCount"],
+        "stars": sum(r["stargazerCount"] for r in repos["nodes"]),
+        "followers": profile["followers"],
     }
 
 
@@ -179,7 +200,7 @@ def render(data):
 
     # Counters
     text(40, 236, f"// {today.year}", 12, MUTED, MONO)
-    rows = [("Commits", data["commits"]), ("Pull requests", data["prs"]), ("Issues", data["issues"]),
+    rows = [("Public commits", data["commits"]), ("Pull requests", data["prs"]), ("Issues", data["issues"]),
             ("Public repos", data["repos"]), ("Stars earned", data["stars"]), ("Followers", data["followers"])]
     for i, (label, value) in enumerate(rows):
         y = 266 + i * 24
