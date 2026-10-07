@@ -227,7 +227,9 @@ def render(data):
     # Counters
     text(40, 236 + m, f"// {today.year}" if active else "// public repos", 12, MUTED, MONO)
     rows = [("Contributions", data["year_total"]), ("Active days", data["active_days"]), ("Best day", data["best_day"])] if active else []
-    rows += [("Public repos", data["repos"]), ("Stars earned", data["stars"]), ("Followers", data["followers"])]
+    rows += [("Public repos", data["repos"]), ("Stars earned", data["stars"])]
+    if data["followers"]:
+        rows.append(("Followers", data["followers"]))
     if not active:
         rows.append(("Languages", len(data["langs"])))
     for i, (label, value) in enumerate(rows):
