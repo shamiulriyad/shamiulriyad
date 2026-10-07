@@ -300,8 +300,8 @@ def render(data):
         cell, gap = 11, 3
         gx = (W - 53 * (cell + gap) + gap) / 2
         # Shade by quartile of active days so one huge day doesn't wash out the rest.
-    active_counts = sorted(n for n in (days.get((start + dt.timedelta(i)).isoformat(), 0) for i in range(53 * 7)) if n)
-    cuts = [active_counts[len(active_counts) * q // 4] for q in (1, 2, 3)] if active_counts else [1, 1, 1]
+        active_counts = sorted(n for n in (days.get((start + dt.timedelta(i)).isoformat(), 0) for i in range(53 * 7)) if n)
+        cuts = [active_counts[len(active_counts) * q // 4] for q in (1, 2, 3)] if active_counts else [1, 1, 1]
         for i in range((today - start).days + 1):
             d = start + dt.timedelta(i)
             n = days.get(d.isoformat(), 0)
