@@ -69,6 +69,8 @@ def calendar_year(year):
         cid = re.search(r'\bid="([^"]+)"', cell)
         if cid and cid.group(1) in tips:
             days[date] = tips[cid.group(1)]
+    sample = re.findall(r"<tool-tip[^>]*>(.*?)</tool-tip>", page, re.S)[:3]
+    print(f"{year}: {len(days)} days, {sum(days.values())} contributions, sample={sample}", file=sys.stderr)
     return days
 
 
