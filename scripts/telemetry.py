@@ -299,11 +299,13 @@ def render(data):
         start = today - dt.timedelta(days=(today.weekday() + 1) % 7 + 52 * 7)
         cell, gap = 11, 3
         gx = (W - 53 * (cell + gap) + gap) / 2
-        peak = max([days.get((start + dt.timedelta(i)).isoformat(), 0) for i in range(53 * 7)] + [1])
+        # Shade by quartile of active days so one huge day doesn't wash out the rest.
+    active_counts = sorted(n for n in (days.get((start + dt.timedelta(i)).isoformat(), 0) for i in range(53 * 7)) if n)
+    cuts = [active_counts[len(active_counts) * q // 4] for q in (1, 2, 3)] if active_counts else [1, 1, 1]
         for i in range((today - start).days + 1):
             d = start + dt.timedelta(i)
             n = days.get(d.isoformat(), 0)
-            level = 0 if n == 0 else 1 + min(3, int(4 * n / (peak + 1)))
+            level = 0 if n == 0 else 1 + sum(n >= c for c in cuts)
             a(f'<rect x="{gx + (i // 7) * (cell + gap):.1f}" y="{436 + (i % 7) * (cell + gap)}" width="{cell}" height="{cell}" rx="2.5" fill="{HEAT[level]}"/>')
 
     text(W - 60, H - 30, f"synced {today.isoformat()}", 10.5, "#4b5563", MONO, anchor="end")
