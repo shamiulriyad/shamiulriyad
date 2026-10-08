@@ -111,6 +111,10 @@
 
 <img src="./assets/telemetry.svg" width="100%" alt="GitHub performance: commits, streaks, languages and the last 53 weeks of activity" />
 
+<p align="right">
+  <img src="https://komarev.com/ghpvc/?username=shamiulriyad&label=PROFILE%20VIEWS&color=10b981&style=flat-square" alt="Profile views" />
+</p>
+
 <br /><br />
 
 <a name="connect"></a>
