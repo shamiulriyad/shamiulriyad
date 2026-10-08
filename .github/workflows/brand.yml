@@ -1,6 +1,7 @@
 name: Profile brand assets
 
-# Builds assets/*.svg. The hero embeds assets/hero-photo.jpg (or .png) when present,
+# Builds assets/*.svg. The hero embeds assets/hero-photo.jpg (or .png) when present;
+# a URL in assets/hero-photo.url is downloaded to that file first.
 # since GitHub blocks external images inside SVGs. Output is deterministic, so a run on main after
 # merging a branch that already built it produces no new commit.
 on:
@@ -29,6 +30,18 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install fonttools==4.66.1
+      - name: Fetch hero photo from assets/hero-photo.url
+        run: |
+          if [ -f assets/hero-photo.url ] && ! ls assets/hero-photo.jpg assets/hero-photo.png >/dev/null 2>&1; then
+            curl -fsSL -A "Mozilla/5.0" -H "Accept: image/jpeg,image/png" -o "$RUNNER_TEMP/photo" "$(head -1 assets/hero-photo.url)"
+            kind=$(file -b "$RUNNER_TEMP/photo")
+            echo "downloaded: $kind"
+            case "$kind" in
+              JPEG*) mv "$RUNNER_TEMP/photo" assets/hero-photo.jpg ;;
+              PNG*) mv "$RUNNER_TEMP/photo" assets/hero-photo.png ;;
+              *) echo "hero-photo.url did not return a JPEG or PNG"; exit 1 ;;
+            esac
+          fi
       - name: Build assets
         run: |
           photo=$(ls assets/hero-photo.jpg assets/hero-photo.jpeg assets/hero-photo.png 2>/dev/null | head -1)
