@@ -204,7 +204,7 @@ def identity(out):
         ("STUDY", "BSc CSE · United International University"),
         ("BASE", "Bangladesh"),
         ("NOW", "Multi-tenant RAG and LLM agents"),
-        ("TRAINING", "Daily DSA · Codeforces · LeetCode"),
+        ("TRAINING", "575+ problems solved · 55+ contests"),
     ]
     for i, (k, v) in enumerate(facts):
         y = 92 + i * 58
@@ -322,14 +322,150 @@ def toolkit(out):
 
 # ─────────────────────────────── 05 achievements ───────────────────────────────
 
+SCOREBOARD = [("55", "CONTESTS", "Programming contests entered"),
+              ("575", "PROBLEMS SOLVED", "Across three online judges"),
+              ("7", "HACKATHONS", "Built against the clock"),
+              ("5", "CERTIFICATIONS", "Professional and bootcamp")]
+
+HONOURS = [
+    ("2nd", "RUNNER-UP", "UIU CSE Project Show", "United International University · Mar 2026",
+     "Full-stack application, industry judges"),
+    ("GDE", "FEATURED", "Build with Gemma @ Bangladesh", "Machine Learning Bangladesh · Jul 2026",
+     "Google Developer Experts AI Community Highlights"),
+    ("Top 10%", "OF 700+ TEAMS", "Infinity AI BuildFest", "CloudCamp Bangladesh · Jun 2026",
+     "Top 70 · team Nurtureglow"),
+    ("4th", "PLACE", "UIU Team Contest", "United International University · Jul 2026", "Team UIU_No_Signal"),
+    ("15th", "PLACE", "Beatcode", "UIU Intra Junior Programming Contest · Mar 2024", ""),
+]
+
+CP = [("Codeforces", "Riyad_shamiul", 1035, 252),
+      ("CodeChef", "riyad_1418", 1448, 192),
+      ("LeetCode", "shamiulislamriyad", 1562, 131)]
+LEETCODE_SPLIT = [("EASY", 65, EMERALD), ("MEDIUM", 50, GOLD), ("HARD", 16, "#c2654f")]
+
+CERTIFICATIONS = [
+    ("LofiStack Hackathon 2026", "Certificate of Participation", "LofiStack", "Aug 2026"),
+    ("The Infinity AI BuildFest 2026", "Certificate of Participation", "CloudCamp Bangladesh", "Jun 2026"),
+    ("ICPC Preparation Bootcamp", "Batch 5", "Shohoj Coding", "Dec 2025"),
+    ("Problem Solving (Basic)", "", "HackerRank", "Nov 2025"),
+    ("Introduction to the Fundamentals of Databases", "", "Simplilearn", "Nov 2025"),
+]
+
 TROPHIES = [
-    ("gemma", "2026", "Gemma Hackathon", "United International University", "Autonomous Agent Track", "NOGORSATHI AI"),
-    ("ictfest", "2026", "IUT 12th ICT Fest", "Bdapps Agentic AI Hackathon", "Preliminary round entry", "COWORK BOOKING API"),
-    ("techathon", "2026", "IUT Techathon", "Nationals & Rover Summit", "Team build · IoT + Discord", "SMART OFFICE MONITOR"),
+    ("gemma", "JUL 2026", "Build with Gemma @ Bangladesh", "Machine Learning Bangladesh · 42+ universities",
+     "GDE AI Highlights", "NOGORSATHI AI"),
+    ("buildfest", "JUN 2026", "Infinity AI BuildFest", "CloudCamp Bangladesh · 700+ teams", "Top 70 · top 10%", "NURTURE-GLOW"),
+    ("lofistack", "AUG 2026", "LofiStack Hackathon", "Team T035 · two problem tracks", "P01 + P12", "TAKARUNWAY · LOADSHED"),
     ("mlbd", "2026", "ML Bangladesh Hackathon", "Accessibility · Computer vision", "Deployed live", "CHOKH"),
     ("sust", "2026", "bKash SUST CSE Carnival", "Codex Community Hackathon", "Online preliminary", "QUEUESTORM INVESTIGATOR"),
-    ("lsh26", "2026", "LSH26 Build Event", "Team T035 · two problem tracks", "Problems P01 + P12", "TAKARUNWAY · LOADSHED"),
+    ("ictfest", "2026", "IUT 12th ICT Fest", "Bdapps Agentic AI Hackathon", "Preliminary round", "COWORK BOOKING API"),
+    ("techathon", "2026", "IUT Techathon", "Nationals & Rover Summit", "IoT + Discord", "SMART OFFICE MONITOR"),
 ]
+
+
+def section_label(doc, label, note=None, y=74):
+    doc.add(f'<circle cx="{PAD + 4}" cy="{y - 4}" r="3.5" fill="{GOLD}"/>')
+    doc.text(MONO, label, PAD + 20, y, 12, OFF, tracking=3.6)
+    if note:
+        doc.text(MONO, note, W - PAD, y, 10.5, DIM, anchor="end", tracking=2.4)
+
+
+def scoreboard(out):
+    H = 300
+    doc = Doc(W, H, "Highlights: " + ", ".join(f"{n}+ {k.lower()}" if k != "HACKATHONS" and k != "CERTIFICATIONS"
+                                               else f"{n} {k.lower()}" for n, k, _ in SCOREBOARD))
+    panel(doc, H)
+    section_label(doc, "SEASON TOTALS", "AS OF OCT 2026")
+    colw = (W - 2 * PAD) / 4
+    for i, (n, k, sub) in enumerate(SCOREBOARD):
+        x = PAD + i * colw + (32 if i else 0)
+        if i:
+            doc.add(f'<rect x="{PAD + i * colw:.0f}" y="118" width="1" height="130" fill="{LINE}"/>')
+        w = doc.text(DISPLAY, n, x - 4, 198, 92, OFF)
+        if k in ("CONTESTS", "PROBLEMS SOLVED"):
+            doc.text(SERIF, "+", x + w + 2, 170, 48, GOLD)
+        doc.text(MONO, k, x, 230, 11, EMERALD_SOFT, tracking=2.6)
+        doc.text(SANS, sub, x, 254, 13.5, DIM)
+    save(doc, "ach-scoreboard.svg", out)
+
+
+def honours(out):
+    row = 106
+    H = 116 + row * len(HONOURS) + 30
+    doc = Doc(W, H, "Honours: " + "; ".join(f"{a} {b.lower()}, {c}" for a, b, c, _, _ in HONOURS))
+    panel(doc, H)
+    section_label(doc, "HONOURS BOARD", "COMPETITIONS & AWARDS")
+    for i, (big, small, event, meta, detail) in enumerate(HONOURS):
+        y = 116 + i * row
+        hairline(doc, PAD, y, W - PAD)
+        doc.text(SERIF, big, PAD - 2, y + 62, fit(SERIF, big, 50, 190), GOLD if i < 3 else OFF)
+        doc.text(MONO, small, PAD, y + 86, 9.5, DIM, tracking=2.4)
+        doc.text(DISPLAY, event, 310, y + 50, fit(DISPLAY, event, 27, 460), OFF)
+        doc.text(SANS, meta, 310, y + 78, 14, MUTED)
+        doc.text(SANS, detail, W - PAD, y + 50, fit(SANS, detail, 14.5, 330), EMERALD_SOFT if i < 3 else MUTED,
+                 anchor="end")
+    hairline(doc, PAD, 116 + row * len(HONOURS), W - PAD)
+    save(doc, "ach-honours.svg", out)
+
+
+def competitive(out):
+    H = 400
+    total = sum(c[3] for c in CP)
+    doc = Doc(W, H, "Competitive programming: " + "; ".join(f"{p} {h}: rating {r}, {n} solved" for p, h, r, n in CP))
+    panel(doc, H)
+    section_label(doc, "COMPETITIVE PROGRAMMING", f"{total} SOLVED ACROSS PLATFORMS")
+    gap = 48
+    colw = (W - 2 * PAD - 2 * gap) / 3
+    for i, (plat, handle, rating, solved) in enumerate(CP):
+        x = PAD + i * (colw + gap)
+        hairline(doc, x, 116, x + colw, EMERALD if i == 0 else LINE, 1.5 if i == 0 else 1)
+        doc.text(DISPLAY, plat, x, 160, 26, OFF)
+        doc.text(MONO, handle, x, 184, 10.5, DIM, tracking=1.2)
+        doc.text(DISPLAY, str(rating), x - 3, 262, 66, OFF)
+        doc.text(MONO, "RATING", x + DISPLAY.width(str(rating), 66) + 12, 262, 10, EMERALD_SOFT, tracking=2.4)
+        doc.text(SANS, f"{solved} problems solved", x, 298, 14.5, MUTED)
+        by = 326
+        doc.add(f'<rect x="{x}" y="{by}" width="{colw:.0f}" height="5" rx="2.5" fill="#1a1a1d"/>')
+        if plat == "LeetCode":
+            bx = x
+            for name, n, color in LEETCODE_SPLIT:
+                w = colw * n / solved
+                doc.add(f'<rect x="{bx:.1f}" y="{by}" width="{w:.1f}" height="5" fill="{color}"/>')
+                bx += w
+            legend = "  ·  ".join(f"{n} {name}" for name, n, _ in LEETCODE_SPLIT)
+            doc.text(MONO, legend, x, by + 32, 9.5, DIM, tracking=1.6)
+        else:
+            doc.add(f'<rect x="{x}" y="{by}" width="{colw * solved / total:.1f}" height="5" rx="2.5" fill="{EMERALD}"/>')
+            doc.text(MONO, f"{100 * solved / total:.0f}% OF ALL SOLVES", x, by + 32, 9.5, DIM, tracking=1.6)
+    save(doc, "ach-cp.svg", out)
+
+
+def certifications(out):
+    row = 64
+    H = 116 + row * len(CERTIFICATIONS) + 40
+    doc = Doc(W, H, "Certifications: " + "; ".join(f"{n} — {iss}, {d}" for n, _, iss, d in CERTIFICATIONS))
+    panel(doc, H)
+    section_label(doc, "CERTIFICATIONS", f"{len(CERTIFICATIONS)} EARNED")
+    for i, (name, kind, issuer, date) in enumerate(CERTIFICATIONS):
+        y = 116 + i * row
+        hairline(doc, PAD, y, W - PAD)
+        doc.text(MONO, f"{i + 1:02d}", PAD, y + 40, 10.5, GOLD, tracking=1.5)
+        doc.text(DISPLAY, name, PAD + 54, y + 41, 21, OFF)
+        doc.text(SANS, kind, 640, y + 40, 14, MUTED)
+        doc.text(MONO, f"{issuer.upper()}  ·  {date.upper()}", W - PAD, y + 40, 10, EMERALD_SOFT, anchor="end", tracking=1.6)
+    hairline(doc, PAD, 116 + row * len(CERTIFICATIONS), W - PAD)
+    save(doc, "ach-certs.svg", out)
+
+
+def cabinet_summary(out):
+    PW, PH = 580, 210
+    doc = Doc(PW, PH, f"{len(TROPHIES)} hackathons in 2026")
+    panel(doc, PH, 16)
+    doc.text(SERIF, f"{len(TROPHIES):02d}", 44, 136, 104, GOLD)
+    doc.text(MONO, "HACKATHONS", 200, 92, 12, OFF, tracking=3.6)
+    doc.text(SANS, "Seven builds under the clock in 2026,", 200, 124, 15, MUTED)
+    doc.text(SANS, "from agents and vision to fintech.", 200, 148, 15, MUTED)
+    save(doc, "trophy-summary.svg", out)
 
 
 def trophy_icon(doc, cx, cy):
@@ -434,13 +570,19 @@ def main():
         band(args.out, slug, num, title, note)
     subband(args.out, "squad", "THE FULL SQUAD", "EVERY OTHER PROJECT")
     subband(args.out, "practice", "TRAINING GROUND", "PROBLEM-SOLVING ARCHIVES")
+    subband(args.out, "cabinet", "HACKATHON CABINET", "SEVEN BUILDS · 2026")
     identity(args.out)
     form(args.out)
     for i, p in enumerate(PROJECTS, 1):
         project_card(args.out, i, *p)
     toolkit(args.out)
+    scoreboard(args.out)
+    honours(args.out)
+    competitive(args.out)
+    certifications(args.out)
     for t in TROPHIES:
         plaque(args.out, *t)
+    cabinet_summary(args.out)
     for c in CONTACTS:
         contact(args.out, *c)
     footer(args.out)
