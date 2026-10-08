@@ -54,8 +54,18 @@
       <br /><sub>&nbsp;<a href="https://github.com/shamiulriyad/Ml-bangladesh-hackthon">Repository ↗</a> &nbsp;·&nbsp; <a href="https://ml-bangladesh-hackthon-1.onrender.com/">Live demo ↗</a></sub>
     </td>
     <td width="50%" valign="top">
+      <a href="https://github.com/shamiulriyad/lsh26-t035-p12"><img src="./assets/work-takarunway.svg" width="100%" alt="TakaRunway — personal ledger and cashflow-runway manager" /></a>
+      <br /><sub>&nbsp;<a href="https://github.com/shamiulriyad/lsh26-t035-p12">Repository ↗</a> &nbsp;·&nbsp; <a href="https://lsh26-t035-p12.onrender.com">Live demo ↗</a></sub>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
       <a href="https://github.com/shamiulriyad/mango-fraud-detection-system"><img src="./assets/work-mango.svg" width="100%" alt="Mango Fraud Detection — computer vision" /></a>
       <br /><sub>&nbsp;<a href="https://github.com/shamiulriyad/mango-fraud-detection-system">Repository ↗</a></sub>
+    </td>
+    <td width="50%" valign="top">
+      <a href="https://github.com/shamiulriyad/sust_preli"><img src="./assets/work-queuestorm.svg" width="100%" alt="QueueStorm Investigator — AI support copilot for digital finance" /></a>
+      <br /><sub>&nbsp;<a href="https://github.com/shamiulriyad/sust_preli">Repository ↗</a></sub>
     </td>
   </tr>
   <tr>
@@ -70,12 +80,50 @@
   </tr>
 </table>
 
+<img src="./assets/sub-squad.svg" width="100%" alt="The full squad — every other project" />
+
+| | Project | What it is | Stack |
+|:--|:--|:--|:--|
+| `01` | [**AI Study Assistant**](https://github.com/shamiulriyad/AI-Study-Assistant) | Ask by text or voice and get a simple Bangla answer, read aloud | <sub>React · .NET 8 · Gemini</sub> |
+| `02` | [**LoadShed Planner**](https://github.com/shamiulriyad/lsh26-t035-p01) | LSH26 build: schedules a print shop's jobs around rotating power cuts | <sub>Spring Boot · Java · JavaScript · Docker</sub> |
+| `03` | [**Nurture-Glow**](https://github.com/shamiulriyad/Nurture-Glow) | Team platform for mothers, pregnancy and baby care, with a local RAG assistant | <sub>React · Express · MySQL · Qdrant</sub> |
+| `04` | [**Smart Shelf Robot**](https://github.com/shamiulriyad/smart-shelf-autonomous-robot) | Vision-guided pick-and-place prototype with ArUco markers and A* planning | <sub>Python · OpenCV</sub> |
+| `05` | [**Smart Office Monitor**](https://github.com/shamiulriyad/Techathon_TheLastDance) | IUT Techathon: simulated IoT office with a live 3D dashboard and a Discord bot | <sub>Node.js · Socket.IO · React · SQLite</sub> |
+| `06` | [**CoWork Booking API**](https://github.com/shamiulriyad/ICT_Fest_Hackathon_Preliminary) | IUT ICT Fest agentic AI hackathon: multi-tenant booking API, bugs fixed to contract | <sub>FastAPI · SQLAlchemy · JWT</sub> |
+| `07` | [**QueueStorm Ticket Sorter**](https://github.com/shamiulriyad/sust_hacathon) | bKash SUST mock round: rules-based Bangla and English ticket classifier | <sub>ASP.NET Core 8</sub> |
+| `08` | [**Doctor MCP Server**](https://github.com/shamiulriyad/make-my-mcp-server) | MCP server foundation for doctor scheduling over an existing MySQL database | <sub>Node.js · Express · MySQL</sub> |
+| `09` | [**E-Learning API**](https://github.com/shamiulriyad/DatabaseHub) | Courses, assessments, payments and gamification behind a REST API | <sub>ASP.NET Core · PostgreSQL</sub> |
+| `10` | [**learnEnglish & web builds**](https://github.com/shamiulriyad/web-Project) | AI grammar-learning platform plus FreshBox, Startup and coding-platform builds | <sub>React · ASP.NET Core · OpenAI</sub> |
+| `11` | [**Flappy Bird**](https://github.com/shamiulriyad/lag-legend) | A Java Swing clone of Flappy Bird | <sub>Java · Swing</sub> |
+| `12` | [**AI Algorithms**](https://github.com/shamiulriyad/AI-ML) | Constraint satisfaction and A* search, implemented from scratch | <sub>Python</sub> |
+| `13` | [**Portfolio**](https://riyadsn.vercel.app/) | Personal portfolio site (live, private repo) | <sub>React · .NET · Supabase</sub> |
+
+<img src="./assets/sub-practice.svg" width="100%" alt="Training ground — problem-solving archives" />
+
 <p align="center"><sub>
-  ALSO ON THE PITCH &nbsp;—&nbsp;
-  <a href="https://github.com/shamiulriyad/AI-Study-Assistant">AI Study Assistant</a> &nbsp;·&nbsp;
-  <a href="https://github.com/shamiulriyad/smart-shelf-autonomous-robot">Smart Shelf Robot</a> &nbsp;·&nbsp;
-  <a href="https://github.com/shamiulriyad/Techathon_TheLastDance">Smart Office Monitor</a> &nbsp;·&nbsp;
-  <a href="https://github.com/shamiulriyad/DatabaseHub">E-Learning API</a>
+  <a href="https://github.com/shamiulriyad/leetcode">LeetCode</a> &nbsp;·&nbsp;
+  <a href="https://github.com/shamiulriyad/codeforces">Codeforces</a> &nbsp;·&nbsp;
+  <a href="https://github.com/shamiulriyad/codechef">CodeChef</a> &nbsp;·&nbsp;
+  <a href="https://github.com/shamiulriyad/UVa">UVa</a> &nbsp;·&nbsp;
+  <a href="https://github.com/shamiulriyad/geeksforgeeks-challenge-365-Days">GeeksforGeeks 365</a> &nbsp;·&nbsp;
+  <a href="https://github.com/shamiulriyad/dsa-interviewbit">InterviewBit</a> &nbsp;·&nbsp;
+  <a href="https://github.com/shamiulriyad/Hackerrank-challenge">HackerRank</a> &nbsp;·&nbsp;
+  <a href="https://github.com/shamiulriyad/HackerEarthBattleGround-">HackerEarth</a> &nbsp;·&nbsp;
+  <a href="https://github.com/shamiulriyad/CodeWarsOfRiyad">CodeWars</a> &nbsp;·&nbsp;
+  <a href="https://github.com/shamiulriyad/data-structures-and-algorithms">DSA</a> &nbsp;·&nbsp;
+  <a href="https://github.com/shamiulriyad/Algomaster-Master-DSA-Patterns">DSA Patterns</a> &nbsp;·&nbsp;
+  <a href="https://github.com/shamiulriyad/sql-exercises-and-solutions">SQL</a> &nbsp;·&nbsp;
+  <a href="https://github.com/shamiulriyad/Java">Java OOP</a> &nbsp;·&nbsp;
+  <a href="https://github.com/shamiulriyad/Recursion-and-Function">Recursion</a> &nbsp;·&nbsp;
+  <a href="https://github.com/shamiulriyad/string_basic_and_problem_solve">Strings</a> &nbsp;·&nbsp;
+  <a href="https://github.com/shamiulriyad/C_Programming">C Programming</a> &nbsp;·&nbsp;
+  <a href="https://github.com/shamiulriyad/basic-c-learn-full">C Basics</a> &nbsp;·&nbsp;
+  <a href="https://github.com/shamiulriyad/pattern-problem-in-c">Patterns</a> &nbsp;·&nbsp;
+  <a href="https://github.com/shamiulriyad/array-in-c">Arrays</a> &nbsp;·&nbsp;
+  <a href="https://github.com/shamiulriyad/nested-loop-in-c">Nested Loops</a> &nbsp;·&nbsp;
+  <a href="https://github.com/shamiulriyad/beecrowd-problem-solve-series">beecrowd</a> &nbsp;·&nbsp;
+  <a href="https://github.com/shamiulriyad/problem-solve-2">Problem Solving</a> &nbsp;·&nbsp;
+  <a href="https://github.com/shamiulriyad/React_start">React + Zustand</a>
 </sub></p>
 
 <br />
@@ -98,6 +146,10 @@
   <tr>
     <td width="50%"><a href="https://github.com/shamiulriyad/Techathon_TheLastDance"><img src="./assets/trophy-techathon.svg" width="100%" alt="2026 — IUT Techathon Nationals and Rover Summit. Smart Office Monitor." /></a></td>
     <td width="50%"><a href="https://github.com/shamiulriyad/Ml-bangladesh-hackthon"><img src="./assets/trophy-mlbd.svg" width="100%" alt="2026 — ML Bangladesh Hackathon. Chokh, deployed live." /></a></td>
+  </tr>
+  <tr>
+    <td width="50%"><a href="https://github.com/shamiulriyad/sust_preli"><img src="./assets/trophy-sust.svg" width="100%" alt="2026 — bKash SUST CSE Carnival, Codex Community Hackathon. QueueStorm Investigator." /></a></td>
+    <td width="50%"><a href="https://github.com/shamiulriyad/lsh26-t035-p12"><img src="./assets/trophy-lsh26.svg" width="100%" alt="2026 — LSH26 build event, team T035. TakaRunway and LoadShed Planner." /></a></td>
   </tr>
 </table>
 

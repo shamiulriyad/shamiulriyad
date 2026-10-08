@@ -175,6 +175,16 @@ def band(out, slug, num, title, note):
     save(doc, f"s-{slug}.svg", out)
 
 
+def subband(out, slug, label, note):
+    H = 76
+    doc = Doc(W, H, f"{label.title()} — {note.lower()}")
+    panel(doc, H, 14)
+    doc.add(f'<circle cx="{PAD + 4}" cy="38" r="3.5" fill="{GOLD}"/>')
+    doc.text(MONO, label, PAD + 20, 43, 13, OFF, tracking=4)
+    doc.text(MONO, note, W - PAD, 43, 10.5, DIM, anchor="end", tracking=2.4)
+    save(doc, f"sub-{slug}.svg", out)
+
+
 # ─────────────────────────────── 01 identity ───────────────────────────────
 
 def identity(out):
@@ -210,7 +220,7 @@ FORM = [
     ("AI/ML", "Models that see, classify and decide under real constraints.", "Mango Fraud · Smart Shelf"),
     ("NLP", "Bangla-first generation with voice in and voice out.", "Chokh · Study Assistant"),
     ("RAG", "Chunking, embeddings, vector search and cited answers.", "rag-kit · rag-learning"),
-    ("Full-Stack", "React over ASP.NET Core gateways, Python for the ML.", "ShilpoHubBD · E-Learning API"),
+    ("Full-Stack", "React and Next.js over ASP.NET Core or Node, Python for the ML.", "TakaRunway · ShilpoHubBD"),
     ("Research", "Agents that reason over conflicting real-world signals.", "NogorSathi AI"),
 ]
 
@@ -244,9 +254,15 @@ PROJECTS = [
     ("chokh", "Chokh", "VISION · ACCESSIBILITY",
      "AI eyes for the visually impaired. It narrates surroundings and reads printed text aloud in Bengali, hazards first.",
      "React · ASP.NET Core · Gemini Vision · Web Speech API", True),
+    ("takarunway", "TakaRunway", "FINTECH · FULL-STACK",
+     "Personal ledger and cashflow-runway manager for salaried professionals in Dhaka: burn rate, surplus and goals, live.",
+     "Next.js 15 · React 19 · TypeScript · Supabase · Tailwind CSS", True),
     ("mango", "Mango Fraud Detection", "COMPUTER VISION",
      "Identifies a mango's true variety from a photo and scores fraud against the seller's claimed variety and price.",
      "PyTorch · FastAPI · ASP.NET Core 8 · React · PostgreSQL", False),
+    ("queuestorm", "QueueStorm Investigator", "AI SUPPORT COPILOT",
+     "Checks each support complaint against the customer's transactions, routes it and drafts a safety-checked reply.",
+     "ASP.NET Core 8 · Minimal API · Claude API · Docker", False),
     ("english-rag", "English Learning RAG", "RAG · NLP",
      "Ask a grammar book anything and get grounded answers with page-level citations, from PDF pipeline to chat UI.",
      "FastAPI · Qdrant · Gemini · ASP.NET Core · React · Supabase", False),
@@ -281,8 +297,8 @@ def project_card(out, idx, slug, name, kind, desc, tech, live):
 
 TOOLKIT = [
     ("INTELLIGENCE", ["Python", "PyTorch", "OpenCV", "Gemini · Gemma", "Qdrant", "FastAPI"]),
-    ("SYSTEMS", ["C# · ASP.NET Core", "Node.js", "PostgreSQL", "Supabase", "SignalR", "Docker"]),
-    ("INTERFACE", ["React", "TypeScript", "JavaScript", "Vite"]),
+    ("SYSTEMS", ["C# · ASP.NET Core", "Node.js · Express", "Spring Boot", "PostgreSQL · MySQL", "Supabase", "Docker"]),
+    ("INTERFACE", ["React", "Next.js", "TypeScript", "JavaScript", "Tailwind CSS", "Vite"]),
     ("FOUNDATIONS", ["C++", "C", "Java", "Algorithms & DS", "Git"]),
 ]
 
@@ -311,6 +327,8 @@ TROPHIES = [
     ("ictfest", "2026", "IUT 12th ICT Fest", "Bdapps Agentic AI Hackathon", "Preliminary round entry", "COWORK BOOKING API"),
     ("techathon", "2026", "IUT Techathon", "Nationals & Rover Summit", "Team build · IoT + Discord", "SMART OFFICE MONITOR"),
     ("mlbd", "2026", "ML Bangladesh Hackathon", "Accessibility · Computer vision", "Deployed live", "CHOKH"),
+    ("sust", "2026", "bKash SUST CSE Carnival", "Codex Community Hackathon", "Online preliminary", "QUEUESTORM INVESTIGATOR"),
+    ("lsh26", "2026", "LSH26 Build Event", "Team T035 · two problem tracks", "Problems P01 + P12", "TAKARUNWAY · LOADSHED"),
 ]
 
 
@@ -414,6 +432,8 @@ def main():
         ("connect", "07", "CONNECT", "OPEN CHANNEL"),
     ]:
         band(args.out, slug, num, title, note)
+    subband(args.out, "squad", "THE FULL SQUAD", "EVERY OTHER PROJECT")
+    subband(args.out, "practice", "TRAINING GROUND", "PROBLEM-SOLVING ARCHIVES")
     identity(args.out)
     form(args.out)
     for i, p in enumerate(PROJECTS, 1):
