@@ -226,6 +226,14 @@ def fmt_date(d):
     return d.strftime("%b %-d, %Y") if d else "—"
 
 
+def fmt_span(a, b):
+    return fmt_date(a) if a == b else f"{fmt_date(a)} — {fmt_date(b)}"
+
+
+def days_word(n):
+    return "day" if n == 1 else "days"
+
+
 def render(data):
     today = data["today"]
     days = data["days"]
@@ -238,7 +246,7 @@ def render(data):
     active = total > 0
     W, X = 1200, 80
     H = 820 if active else 340
-    label = (f"{total} {unit}, current streak {current} days, longest streak {longest} days" if active
+    label = (f"{total} {unit}, current streak {current} {days_word(current)}, longest streak {longest} {days_word(longest)}" if active
              else f"{data['repos']} public repositories, {data['stars']} stars")
     doc = Doc(W, H, f"GitHub performance for {USER}: {label}")
     panel(doc, H)
@@ -249,9 +257,9 @@ def render(data):
             (f"TOTAL {unit.upper()}", f"{total:,}", f"{fmt_date(dt.date.fromisoformat(first))} — present"
              + (f" · {data['scope']}" if data.get("scope") else "")),
             ("CURRENT STREAK", str(current),
-             f"{fmt_date(current_start)} — {fmt_date(today)}" if current else "Next commit starts it"),
+             fmt_span(current_start, today) if current else "Next commit starts it"),
             ("LONGEST STREAK", str(longest),
-             f"{fmt_date(longest_range[0])} — {fmt_date(longest_range[1])}" if longest_range else "—"),
+             fmt_span(*longest_range) if longest_range else "—"),
         ]
         colw = (W - 2 * X) / 3
         for i, (k, v, sub) in enumerate(stats):
@@ -263,7 +271,7 @@ def render(data):
             doc.text(MONO, k, x + (16 if i == 1 else 0), 90, 10.5, EMERALD_SOFT if i == 1 else DIM, tracking=2.4)
             w = doc.text(DISPLAY, v, x - 3, 168, 76, OFF)
             if i:
-                doc.text(SERIF_IT, "days", x + w + 8, 168, 26, MUTED)
+                doc.text(SERIF_IT, days_word(int(v)), x + w + 8, 168, 26, MUTED)
             doc.text(SANS, sub, x, 204, 14, MUTED)
         hairline(doc, X, 252, W - X)
         top = 252
@@ -326,6 +334,14 @@ def render(data):
             level = 0 if n == 0 else 1 + sum(n >= c for c in cuts)
             doc.add(f'<rect x="{gx + (i // 7) * (cell + gap):.1f}" y="{hy + 70 + (i % 7) * (cell + gap)}" '
                     f'width="{cell}" height="{cell}" rx="3" fill="{HEAT[level]}"/>')
+        # month labels over the week in which each month starts
+        last_col = -9
+        for col in range(53):
+            for k in range(7):
+                d = start + dt.timedelta(col * 7 + k)
+                if d.day == 1 and d <= today and col - last_col >= 3:
+                    doc.text(MONO, d.strftime("%b").upper(), gx + col * (cell + gap), hy + 60, 9, DIM, tracking=1.2)
+                    last_col = col
         for i, c in enumerate(HEAT):
             doc.add(f'<rect x="{X + i * 16}" y="{hy + 70 + 6 * (cell + gap)}" width="11" height="11" rx="2.5" fill="{c}"/>')
         doc.text(MONO, "LESS → MORE", X, hy + 70 + 5 * (cell + gap), 9, DIM, tracking=1.6)
