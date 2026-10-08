@@ -138,26 +138,45 @@
 <a name="achievements"></a>
 <img src="./assets/s-achievements.svg" width="100%" alt="05 — Achievements" />
 
+<img src="./assets/ach-scoreboard.svg" width="100%" alt="Highlights as of October 2026: 55+ programming contests, 575+ problems solved, 7 hackathons, 5 certifications" />
+
+<img src="./assets/ach-honours.svg" width="100%" alt="Honours: 2nd runner-up, UIU CSE Project Show (Mar 2026); featured in Google Developer Experts AI Community Highlights, Build with Gemma @ Bangladesh (Jul 2026); top 70 of 700+ teams, Infinity AI BuildFest (Jun 2026); 4th place, UIU Team Contest (Jul 2026); 15th place, Beatcode UIU Intra Junior Programming Contest (Mar 2024)" />
+
+<img src="./assets/ach-cp.svg" width="100%" alt="Competitive programming: Codeforces rating 1035 with 252 solved; CodeChef rating 1448 with 192 solved; LeetCode rating 1562 with 131 solved (65 easy, 50 medium, 16 hard)" />
+
+<p align="center"><sub>
+  <a href="https://codeforces.com/profile/Riyad_shamiul">Codeforces ↗</a> &nbsp;·&nbsp;
+  <a href="https://www.codechef.com/users/riyad_1418">CodeChef ↗</a> &nbsp;·&nbsp;
+  <a href="https://leetcode.com/u/shamiulislamriyad/">LeetCode ↗</a>
+</sub></p>
+
+<img src="./assets/sub-cabinet.svg" width="100%" alt="Hackathon cabinet — seven builds in 2026" />
+
 <table>
   <tr>
-    <td width="50%"><a href="https://github.com/shamiulriyad/NogorSathi_UIU_GemmaHackathon"><img src="./assets/trophy-gemma.svg" width="100%" alt="2026 — Gemma Hackathon, United International University. Autonomous Agent Track. NogorSathi AI." /></a></td>
-    <td width="50%"><a href="https://github.com/shamiulriyad/ICT_Fest_Hackathon_Preliminary"><img src="./assets/trophy-ictfest.svg" width="100%" alt="2026 — IUT 12th ICT Fest, Bdapps Agentic AI Hackathon. CoWork booking API." /></a></td>
+    <td width="50%"><a href="https://github.com/shamiulriyad/NogorSathi_UIU_GemmaHackathon"><img src="./assets/trophy-gemma.svg" width="100%" alt="Jul 2026 — Build with Gemma @ Bangladesh, Machine Learning Bangladesh. Featured in GDE AI Community Highlights. NogorSathi AI." /></a></td>
+    <td width="50%"><a href="https://github.com/shamiulriyad/Nurture-Glow"><img src="./assets/trophy-buildfest.svg" width="100%" alt="Jun 2026 — Infinity AI BuildFest by CloudCamp. Top 70 of 700+ teams. Nurture-Glow." /></a></td>
   </tr>
   <tr>
-    <td width="50%"><a href="https://github.com/shamiulriyad/Techathon_TheLastDance"><img src="./assets/trophy-techathon.svg" width="100%" alt="2026 — IUT Techathon Nationals and Rover Summit. Smart Office Monitor." /></a></td>
+    <td width="50%"><a href="https://github.com/shamiulriyad/lsh26-t035-p12"><img src="./assets/trophy-lofistack.svg" width="100%" alt="Aug 2026 — LofiStack Hackathon, team T035. TakaRunway and LoadShed Planner." /></a></td>
     <td width="50%"><a href="https://github.com/shamiulriyad/Ml-bangladesh-hackthon"><img src="./assets/trophy-mlbd.svg" width="100%" alt="2026 — ML Bangladesh Hackathon. Chokh, deployed live." /></a></td>
   </tr>
   <tr>
     <td width="50%"><a href="https://github.com/shamiulriyad/sust_preli"><img src="./assets/trophy-sust.svg" width="100%" alt="2026 — bKash SUST CSE Carnival, Codex Community Hackathon. QueueStorm Investigator." /></a></td>
-    <td width="50%"><a href="https://github.com/shamiulriyad/lsh26-t035-p12"><img src="./assets/trophy-lsh26.svg" width="100%" alt="2026 — LSH26 build event, team T035. TakaRunway and LoadShed Planner." /></a></td>
+    <td width="50%"><a href="https://github.com/shamiulriyad/ICT_Fest_Hackathon_Preliminary"><img src="./assets/trophy-ictfest.svg" width="100%" alt="2026 — IUT 12th ICT Fest, Bdapps Agentic AI Hackathon. CoWork booking API." /></a></td>
+  </tr>
+  <tr>
+    <td width="50%"><a href="https://github.com/shamiulriyad/Techathon_TheLastDance"><img src="./assets/trophy-techathon.svg" width="100%" alt="2026 — IUT Techathon Nationals and Rover Summit. Smart Office Monitor." /></a></td>
+    <td width="50%"><img src="./assets/trophy-summary.svg" width="100%" alt="7 hackathons in 2026" /></td>
   </tr>
 </table>
 
+<img src="./assets/ach-certs.svg" width="100%" alt="Certifications: LofiStack Hackathon 2026 (Aug 2026); The Infinity AI BuildFest 2026, CloudCamp Bangladesh (Jun 2026); ICPC Preparation Bootcamp Batch 5, Shohoj Coding (Dec 2025); Problem Solving (Basic), HackerRank (Nov 2025); Introduction to the Fundamentals of Databases, Simplilearn (Nov 2025)" />
+
 <p align="center"><sub>
-  CERTIFIED &nbsp;—&nbsp;
+  VERIFY &nbsp;—&nbsp;
   <a href="https://www.hackerrank.com/certificates/e03379cd4242">HackerRank ↗</a> &nbsp;·&nbsp;
-  <a href="https://simpli-web.app.link/e/mYkOfC4lnYb">Database ↗</a> &nbsp;·&nbsp;
-  <a href="https://github.com/shamiulriyad/geeksforgeeks-challenge-365-Days">GeeksforGeeks 365-day challenge ↗</a>
+  <a href="https://simpli-web.app.link/e/mYkOfC4lnYb">Simplilearn ↗</a>
 </sub></p>
 
 <br />
