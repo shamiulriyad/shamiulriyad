@@ -1,11 +1,12 @@
 """Generate the profile's visual assets (assets/*.svg).
 
     pip install fonttools
-    python scripts/brand.py                      # everything except the hero photo
-    python scripts/brand.py --photo neymar.jpg   # also the hero, with the photo embedded
+    python scripts/brand.py                                # hero without a photo
+    python scripts/brand.py --photo assets/hero-photo.jpg  # hero with the photo embedded
 
 The hero photo is embedded as a data URI because GitHub blocks external
-images inside SVGs. The brand workflow downloads it and runs this script.
+images inside SVGs. The brand workflow does this whenever
+assets/hero-photo.jpg (or .png) is added or changed.
 """
 
 import argparse
@@ -62,9 +63,6 @@ def hero(out, photo):
     H = 660
     doc = Doc(W, H, "Md Shamiul Islam Riyad — AI/ML Engineer · Software Engineer · CSE Student. "
                     "Building intelligent systems. Solving real-world problems.")
-    with open(photo, "rb") as f:
-        data = base64.b64encode(f.read()).decode()
-    mime = "image/png" if photo.lower().endswith(".png") else "image/jpeg"
 
     px = 620  # photo column starts here
     doc.define(f'<clipPath id="card"><rect width="{W}" height="{H}" rx="20"/></clipPath>')
@@ -83,10 +81,18 @@ def hero(out, photo):
 
     doc.add('<g clip-path="url(#card)">')
     doc.add(f'<rect width="{W}" height="{H}" fill="{BG}"/>')
-    doc.add(f'<g mask="url(#mY)"><g mask="url(#mX)">'
-            f'<image x="{px}" y="0" width="{W - px}" height="{H}" preserveAspectRatio="xMidYMin slice" '
-            f'xlink:href="data:{mime};base64,{data}"/>'
-            f'<rect x="{px}" width="{W - px}" height="{H}" fill="url(#grade)"/></g></g>')
+    if photo:
+        with open(photo, "rb") as f:
+            data = base64.b64encode(f.read()).decode()
+        mime = "image/png" if photo.lower().endswith(".png") else "image/jpeg"
+        doc.add(f'<g mask="url(#mY)"><g mask="url(#mX)">'
+                f'<image x="{px}" y="0" width="{W - px}" height="{H}" preserveAspectRatio="xMidYMin slice" '
+                f'xlink:href="data:{mime};base64,{data}"/>'
+                f'<rect x="{px}" width="{W - px}" height="{H}" fill="url(#grade)"/></g></g>')
+    else:
+        # No photo yet: an outlined numeral holds the right side of the frame.
+        doc.add(f'<g mask="url(#mY)"><g mask="url(#mX)"><rect x="{px}" width="{W - px}" height="{H}" fill="url(#grade)"/></g></g>')
+        doc.text(SERIF, "10", W - 40, H - 70, 560, "none", anchor="end", stroke=EMERALD, stroke_width=1.2, opacity=0.55)
     doc.add(f'<rect width="{W}" height="{H}" fill="url(#topshade)"/>')
     doc.add(f'<rect width="{W}" height="{H}" fill="url(#glow)"/>')
     doc.add("</g>")
@@ -132,7 +138,8 @@ def hero(out, photo):
         doc.text(SANS, v, x, sy + 62, 15.5, OFF)
 
     # photo caption
-    doc.text(SERIF_IT, "Nº 10", W - PAD + 20, H - 74, 26, GOLD, anchor="end")
+    if photo:
+        doc.text(SERIF_IT, "Nº 10", W - PAD + 20, H - 74, 26, GOLD, anchor="end")
     doc.text(MONO, "FLAIR IN THE IDEA · DISCIPLINE IN THE BUILD", W - PAD + 20, H - 48, 9.5, OFF,
              anchor="end", tracking=2, opacity=0.7)
     save(doc, "hero.svg", out)
@@ -347,13 +354,12 @@ def footer(out):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--photo", help="hero photo to embed; the hero is skipped without it")
+    ap.add_argument("--photo", help="hero photo to embed (JPEG or PNG)")
     ap.add_argument("--out", default=os.path.join(ROOT, "assets"))
     args = ap.parse_args()
     os.makedirs(args.out, exist_ok=True)
 
-    if args.photo:
-        hero(args.out, args.photo)
+    hero(args.out, args.photo)
     for slug, num, title, note in [
         ("identity", "01", "IDENTITY", "WHO · WHAT · HOW"),
         ("form", "02", "CURRENT FORM", "WHERE THE WORK IS"),

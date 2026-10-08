@@ -1,7 +1,7 @@
 name: Profile brand assets
 
-# Builds assets/*.svg, including the hero with the photo embedded (GitHub blocks
-# external images inside SVGs). Output is deterministic, so a run on main after
+# Builds assets/*.svg. The hero embeds assets/hero-photo.jpg (or .png) when present,
+# since GitHub blocks external images inside SVGs. Output is deterministic, so a run on main after
 # merging a branch that already built it produces no new commit.
 on:
   workflow_dispatch:
@@ -10,6 +10,7 @@ on:
       - scripts/brand.py
       - scripts/typeset.py
       - scripts/fonts/**
+      - assets/hero-photo.*
       - .github/workflows/brand.yml
 
 permissions:
@@ -28,13 +29,10 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install fonttools==4.66.1
-      - name: Download hero photo
-        run: |
-          curl -fsSL -A "Mozilla/5.0" -o "$RUNNER_TEMP/hero.jpg" \
-            "https://i.pinimg.com/736x/c8/eb/93/c8eb9378273e52fc21a5aaca9ea7dc64.jpg"
-          file "$RUNNER_TEMP/hero.jpg" | grep -q "JPEG image data"
       - name: Build assets
-        run: python scripts/brand.py --photo "$RUNNER_TEMP/hero.jpg"
+        run: |
+          photo=$(ls assets/hero-photo.jpg assets/hero-photo.jpeg assets/hero-photo.png 2>/dev/null | head -1)
+          python scripts/brand.py ${photo:+--photo "$photo"}
       - name: Commit if changed
         run: |
           git config user.name "github-actions[bot]"

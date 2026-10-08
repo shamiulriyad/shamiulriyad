@@ -94,7 +94,7 @@ class Doc:
     def define(self, svg):
         self.extra_defs.append(svg)
 
-    def text(self, font, s, x, y, size, fill, anchor="start", tracking=0, opacity=1.0):
+    def text(self, font, s, x, y, size, fill, anchor="start", tracking=0, opacity=1.0, stroke=None, stroke_width=1):
         """Place a single line. y is the baseline. tracking is in px."""
         scale = size / font.upm
         glyphs, adv = font.layout(s, tracking / scale)
@@ -112,6 +112,8 @@ class Doc:
                 self.defs[gid] = font.path(g)
             uses.append(f'<use xlink:href="#{gid}" x="{gx:.0f}"/>')
         op = f' opacity="{opacity}"' if opacity != 1 else ""
+        if stroke:  # stroke width is given in px, the group is scaled to font units
+            op += f' stroke="{stroke}" stroke-width="{stroke_width / scale:.1f}"'
         self.add(f'<g fill="{fill}"{op} transform="translate({x:.2f} {y:.2f}) scale({scale:.5f} {-scale:.5f})">{"".join(uses)}</g>')
         return width
 
