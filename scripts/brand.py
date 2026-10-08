@@ -99,6 +99,10 @@ def hero(out, photo):
                 f'height="{H * PHOTO_ZOOM:.0f}" preserveAspectRatio="xMaxYMin slice" '
                 f'xlink:href="data:{mime};base64,{data}"/>'
                 f'<rect x="{px}" width="{W - px}" height="{H}" fill="url(#grade)"/></g></g>')
+        # The photo has a quote printed on it; one closing mark survives the fade.
+        doc.define(f'<radialGradient id="hush"><stop offset="0.35" stop-color="{BG}" stop-opacity="0.95"/>'
+                   f'<stop offset="1" stop-color="{BG}" stop-opacity="0"/></radialGradient>')
+        doc.add('<ellipse cx="655" cy="548" rx="70" ry="55" fill="url(#hush)"/>')
     else:
         # No photo yet: an outlined numeral holds the right side of the frame.
         doc.add(f'<g mask="url(#mY)"><g mask="url(#mX)"><rect x="{px}" width="{W - px}" height="{H}" fill="url(#grade)"/></g></g>')
@@ -149,9 +153,11 @@ def hero(out, photo):
 
     # photo caption
     if photo:
-        doc.text(SERIF_IT, "Nº 10", W - PAD + 20, H - 74, 26, GOLD, anchor="end")
-    doc.text(MONO, "FLAIR IN THE IDEA · DISCIPLINE IN THE BUILD", W - PAD + 20, H - 48, 9.5, OFF,
-             anchor="end", tracking=2, opacity=0.7)
+        doc.text(SERIF_IT, "“1% chance, 99% faith.”", W - PAD + 20, H - 74, 26, GOLD, anchor="end")
+        doc.text(MONO, "—  NEYMAR JR", W - PAD + 20, H - 48, 9.5, OFF, anchor="end", tracking=2.4, opacity=0.7)
+    else:
+        doc.text(MONO, "FLAIR IN THE IDEA · DISCIPLINE IN THE BUILD", W - PAD + 20, H - 48, 9.5, OFF,
+                 anchor="end", tracking=2, opacity=0.7)
     save(doc, "hero.svg", out)
 
 
