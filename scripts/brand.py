@@ -11,7 +11,9 @@ assets/hero-photo.jpg (or .png) is added or changed.
 
 import argparse
 import base64
+import hashlib
 import os
+import re
 
 from typeset import Doc, Font
 
@@ -360,6 +362,22 @@ def footer(out):
     save(doc, "footer.svg", out)
 
 
+def stamp_readme(name):
+    """Point the README at ./assets/<name>?v=<content hash>.
+
+    GitHub and browsers cache README images by URL, so a changed hero kept
+    showing the old version; a new query string forces a fresh fetch.
+    """
+    with open(os.path.join(ROOT, "assets", name), "rb") as f:
+        version = hashlib.sha256(f.read()).hexdigest()[:10]
+    path = os.path.join(ROOT, "README.md")
+    with open(path, encoding="utf-8") as f:
+        text = f.read()
+    text = re.sub(rf"\./assets/{re.escape(name)}(\?v=[0-9a-f]+)?\"", f'./assets/{name}?v={version}"', text)
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(text)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--photo", help="hero photo to embed (JPEG or PNG)")
@@ -368,6 +386,8 @@ def main():
     os.makedirs(args.out, exist_ok=True)
 
     hero(args.out, args.photo)
+    if os.path.abspath(args.out) == os.path.abspath(os.path.join(ROOT, "assets")):
+        stamp_readme("hero.svg")
     for slug, num, title, note in [
         ("identity", "01", "IDENTITY", "WHO · WHAT · HOW"),
         ("form", "02", "CURRENT FORM", "WHERE THE WORK IS"),
