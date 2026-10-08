@@ -59,6 +59,13 @@ def save(doc, name, out):
 
 # ─────────────────────────────── hero ───────────────────────────────
 
+# Framing for the current hero photo (a square shot with a quote on its left):
+# scale the photo up, anchor it top-right and fade further so the quote sinks
+# into the black and the player fills the column.
+PHOTO_ZOOM = 1.75
+PHOTO_FADE = 0.5
+
+
 def hero(out, photo):
     H = 660
     doc = Doc(W, H, "Md Shamiul Islam Riyad — AI/ML Engineer · Software Engineer · CSE Student. "
@@ -66,8 +73,8 @@ def hero(out, photo):
 
     px = 620  # photo column starts here
     doc.define(f'<clipPath id="card"><rect width="{W}" height="{H}" rx="20"/></clipPath>')
-    doc.define('<linearGradient id="fadeX" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/>'
-               '<stop offset="0.38" stop-color="#fff" stop-opacity="1"/></linearGradient>')
+    doc.define(f'<linearGradient id="fadeX" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/>'
+               f'<stop offset="{PHOTO_FADE if photo else 0.38}" stop-color="#fff" stop-opacity="1"/></linearGradient>')
     doc.define('<linearGradient id="fadeY" x1="0" y1="0" x2="0" y2="1"><stop offset="0.62" stop-color="#fff" stop-opacity="1"/>'
                '<stop offset="1" stop-color="#fff" stop-opacity="0.05"/></linearGradient>')
     doc.define(f'<mask id="mX"><rect x="{px}" width="{W - px}" height="{H}" fill="url(#fadeX)"/></mask>')
@@ -86,7 +93,8 @@ def hero(out, photo):
             data = base64.b64encode(f.read()).decode()
         mime = "image/png" if photo.lower().endswith(".png") else "image/jpeg"
         doc.add(f'<g mask="url(#mY)"><g mask="url(#mX)">'
-                f'<image x="{px}" y="0" width="{W - px}" height="{H}" preserveAspectRatio="xMidYMin slice" '
+                f'<image x="{W - (W - px) * PHOTO_ZOOM:.0f}" y="0" width="{(W - px) * PHOTO_ZOOM:.0f}" '
+                f'height="{H * PHOTO_ZOOM:.0f}" preserveAspectRatio="xMaxYMin slice" '
                 f'xlink:href="data:{mime};base64,{data}"/>'
                 f'<rect x="{px}" width="{W - px}" height="{H}" fill="url(#grade)"/></g></g>')
     else:
