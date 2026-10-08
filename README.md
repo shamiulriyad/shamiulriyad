@@ -191,14 +191,25 @@
 <a name="connect"></a>
 <img src="./assets/s-connect.svg" width="100%" alt="07 — Connect" />
 
+<img src="./assets/sub-social.svg" width="100%" alt="Social" />
+
+<p align="center">
+  <a href="https://www.linkedin.com/in/md-shamiul-islam-riyad-31b8352b4/"><img src="./assets/connect-linkedin.svg" width="19%" alt="LinkedIn" /></a>
+  <a href="https://www.facebook.com/shamiul.islam.riyad.2024"><img src="./assets/connect-facebook.svg" width="19%" alt="Facebook" /></a>
+  <a href="https://x.com/sami46982396523"><img src="./assets/connect-x.svg" width="19%" alt="X (Twitter)" /></a>
+  <a href="https://www.youtube.com/@ZeroTo420perfect"><img src="./assets/connect-youtube.svg" width="19%" alt="YouTube" /></a>
+  <a href="https://riyadsn.vercel.app/"><img src="./assets/connect-portfolio.svg" width="19%" alt="Portfolio" /></a>
+</p>
+
+<img src="./assets/sub-code.svg" width="100%" alt="Code" />
+
 <p align="center">
   <a href="https://github.com/shamiulriyad"><img src="./assets/connect-github.svg" width="19%" alt="GitHub" /></a>
-  <a href="https://www.linkedin.com/in/md-shamiul-islam-riyad-31b8352b4/"><img src="./assets/connect-linkedin.svg" width="19%" alt="LinkedIn" /></a>
   <a href="https://codeforces.com/profile/Riyad_shamiul"><img src="./assets/connect-codeforces.svg" width="19%" alt="Codeforces" /></a>
+  <a href="https://www.codechef.com/users/riyad_1418"><img src="./assets/connect-codechef.svg" width="19%" alt="CodeChef" /></a>
   <a href="https://leetcode.com/u/shamiulislamriyad/"><img src="./assets/connect-leetcode.svg" width="19%" alt="LeetCode" /></a>
-  <a href="https://www.youtube.com/@ZeroTo420perfect"><img src="./assets/connect-youtube.svg" width="19%" alt="YouTube" /></a>
+  <a href="https://www.hackerrank.com/profile/shamiulriyad96"><img src="./assets/connect-hackerrank.svg" width="19%" alt="HackerRank" /></a>
 </p>
 
 <img src="./assets/footer.svg" width="100%" alt="MSIR — AI/ML · Software Engineering · Bangladesh" />
 
-<p align="center"><sub><a href="https://riyadsn.vercel.app/">riyadsn.vercel.app</a></sub></p>
