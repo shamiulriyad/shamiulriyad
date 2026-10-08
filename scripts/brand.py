@@ -368,18 +368,28 @@ def footer(out):
     save(doc, "footer.svg", out)
 
 
-def stamp_readme(name):
-    """Point the README at ./assets/<name>?v=<content hash>.
+def publish_versioned(name):
+    """Rename assets/<stem>.svg to <stem>-<content hash>.svg and point the README at it.
 
-    GitHub and browsers cache README images by URL, so a changed hero kept
-    showing the old version; a new query string forces a fresh fetch.
+    GitHub redirects README images to raw.githubusercontent.com and drops any
+    query string, so browsers kept showing a cached old hero. A new file name
+    per version is the only reliable cache buster.
     """
-    with open(os.path.join(ROOT, "assets", name), "rb") as f:
+    stem = name[:-len(".svg")]
+    assets = os.path.join(ROOT, "assets")
+    src = os.path.join(assets, name)
+    with open(src, "rb") as f:
         version = hashlib.sha256(f.read()).hexdigest()[:10]
+    versioned = f"{stem}-{version}.svg"
+    for old in os.listdir(assets):
+        if re.fullmatch(rf"{re.escape(stem)}-[0-9a-f]{{10}}\.svg", old) and old != versioned:
+            os.remove(os.path.join(assets, old))
+    os.replace(src, os.path.join(assets, versioned))
+
     path = os.path.join(ROOT, "README.md")
     with open(path, encoding="utf-8") as f:
         text = f.read()
-    text = re.sub(rf"\./assets/{re.escape(name)}(\?v=[0-9a-f]+)?\"", f'./assets/{name}?v={version}"', text)
+    text = re.sub(rf"\./assets/{re.escape(stem)}(-[0-9a-f]{{10}})?\.svg(\?v=[0-9a-f]+)?\"", f'./assets/{versioned}"', text)
     with open(path, "w", encoding="utf-8") as f:
         f.write(text)
 
@@ -393,7 +403,7 @@ def main():
 
     hero(args.out, args.photo)
     if os.path.abspath(args.out) == os.path.abspath(os.path.join(ROOT, "assets")):
-        stamp_readme("hero.svg")
+        publish_versioned("hero.svg")
     for slug, num, title, note in [
         ("identity", "01", "IDENTITY", "WHO · WHAT · HOW"),
         ("form", "02", "CURRENT FORM", "WHERE THE WORK IS"),
