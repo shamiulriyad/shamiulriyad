@@ -187,6 +187,9 @@ def fetch():
     return {
         "today": today,
         "source": source,
+        # Without TELEMETRY_TOKEN only public repos can be read, so say so on the card.
+        "scope": None if source == "contributions" else
+                 ("all repos" if os.environ.get("TELEMETRY_TOKEN") else "public repos"),
         "days": days,
         "langs": langs,
         "year_total": sum(year),
@@ -243,7 +246,8 @@ def render(data):
     top = 0
     if active:
         stats = [
-            (f"TOTAL {unit.upper()}", f"{total:,}", f"{fmt_date(dt.date.fromisoformat(first))} — present"),
+            (f"TOTAL {unit.upper()}", f"{total:,}", f"{fmt_date(dt.date.fromisoformat(first))} — present"
+             + (f" · {data['scope']}" if data.get("scope") else "")),
             ("CURRENT STREAK", str(current),
              f"{fmt_date(current_start)} — {fmt_date(today)}" if current else "Next commit starts it"),
             ("LONGEST STREAK", str(longest),
@@ -266,8 +270,10 @@ def render(data):
 
     # season counters
     y0 = top + 70
-    doc.text(MONO, f"SEASON {today.year}" if active else "PUBLIC REPOSITORIES", X, y0, 10.5, DIM, tracking=2.4)
-    rows = [(unit.capitalize(), data["year_total"]), ("Active days", data["active_days"]),
+    scope = data.get("scope")
+    season = f"SEASON {today.year}" + (f"  ·  {scope.upper()}" if scope else "")
+    doc.text(MONO, season if active else "PUBLIC REPOSITORIES", X, y0, 10.5, DIM, tracking=2.4)
+    rows = [(unit.capitalize(), data["year_total"]), ("Days with commits", data["active_days"]),
             ("Best day", data["best_day"])] if active else []
     rows += [("Public repos", data["repos"]), ("Stars earned", data["stars"])]
     if data["followers"]:
