@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <img src="./assets/hero.svg?v=57617fd940" width="100%" alt="Md Shamiul Islam Riyad — AI/ML Engineer · Software Engineer · CSE Student. Building intelligent systems. Solving real-world problems." />
+  <img src="./assets/hero.svg?v=2c29f1c674" width="100%" alt="Md Shamiul Islam Riyad — AI/ML Engineer · Software Engineer · CSE Student. Building intelligent systems. Solving real-world problems." />
 </p>
 
 <p align="center">
