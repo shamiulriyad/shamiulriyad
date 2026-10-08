@@ -10,6 +10,7 @@ import os
 import re
 import sys
 import urllib.error
+import urllib.parse
 import urllib.request
 
 USER = os.environ.get("GH_USER", "shamiulriyad")
@@ -33,8 +34,8 @@ def request(url, token=True, data=None, accept="application/vnd.github+json"):
         return resp.read().decode()
 
 
-def rest(path):
-    return json.loads(request(f"https://api.github.com/{path}"))
+def rest(path, token=True):
+    return json.loads(request(f"https://api.github.com/{path}", token=token))
 
 
 def gql(query, variables=None, token=True):
@@ -93,27 +94,50 @@ def calendar_year(year):
     return days
 
 
-def commit_days(repo_names):
-    """Commits authored by USER per local day across public repos (default branches)."""
-    days = {}
-    for name in repo_names:
-        page = 1
-        while True:
-            try:
-                commits = rest(f"repos/{USER}/{name}/commits?author={USER}&per_page=100&page={page}")
-            except urllib.error.HTTPError as e:
-                if e.code == 409:  # empty repository
-                    break
-                raise
-            for c in commits:
+def paged(path, token=True):
+    sep = "&" if "?" in path else "?"
+    page = 1
+    while True:
+        try:
+            items = rest(f"{path}{sep}per_page=100&page={page}", token)
+        except urllib.error.HTTPError as e:
+            if e.code in (404, 409):  # gone, or an empty repository
+                return
+            raise
+        yield from items
+        if len(items) < 100:
+            return
+        page += 1
+
+
+def commit_days(repos, token=True):
+    """All-time commits authored by USER per local day.
+
+    Walks every branch of every repo (forks included) and counts each commit
+    once by SHA, so merges between branches and forks are not double counted.
+    """
+    seen, days = set(), {}
+    for full_name in repos:
+        for branch in paged(f"repos/{full_name}/branches", token):
+            for c in paged(f"repos/{full_name}/commits?author={USER}&sha={urllib.parse.quote(branch['name'], safe='')}", token):
+                if c["sha"] in seen:
+                    continue
+                seen.add(c["sha"])
                 when = dt.datetime.fromisoformat(c["commit"]["author"]["date"].replace("Z", "+00:00"))
                 key = when.astimezone(TZ).date().isoformat()
                 days[key] = days.get(key, 0) + 1
-            if len(commits) < 100:
-                break
-            page += 1
-    print(f"commit fallback: {sum(days.values())} commits on {len(days)} days", file=sys.stderr)
+    print(f"commit count: {len(seen)} commits on {len(days)} days across {len(repos)} repos", file=sys.stderr)
     return days
+
+
+def commit_repos(public_names):
+    """Public repos owned by USER, plus every repo the TELEMETRY_TOKEN can see (private too)."""
+    repos = {f"{USER}/{n}" for n in public_names}
+    token = os.environ.get("TELEMETRY_TOKEN")
+    if token:
+        for r in paged("user/repos?affiliation=owner,collaborator,organization_member", token):
+            repos.add(r["full_name"])
+    return sorted(repos), token or True
 
 
 def fetch():
@@ -125,17 +149,21 @@ def fetch():
             repositories(first: 100, ownerAffiliations: OWNER, isFork: false, privacy: PUBLIC) {
               totalCount
               nodes {
-                name
                 stargazerCount
                 languages(first: 10, orderBy: {field: SIZE, direction: DESC}) {
                   edges { size node { name color } }
                 }
               }
             }
+            all: repositories(first: 100, ownerAffiliations: OWNER, privacy: PUBLIC) {
+              nodes { name }
+            }
           }
         }""",
         {"login": USER},
-    )["user"]["repositories"]
+    )["user"]
+    all_public = [r["name"] for r in repos["all"]["nodes"]]
+    repos = repos["repositories"]
 
     days = {}
     for year in range(int(profile["created_at"][:4]), now.year + 1):
@@ -144,8 +172,8 @@ def fetch():
         raise RuntimeError("could not parse the contribution calendar; refusing to render zeros")
     source = "contributions"
     if not any(days.values()):
-        # Private profile: the calendar is hidden, so count commits in public repos instead.
-        days, source = commit_days([r["name"] for r in repos["nodes"]]), "commits"
+        # Private profile: the calendar is hidden, so count commits directly.
+        days, source = commit_days(*commit_repos(all_public)), "commits"
 
     langs = {}
     for repo in repos["nodes"]:
