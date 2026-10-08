@@ -495,11 +495,16 @@ def plaque(out, slug, year, event, sub, detail, project):
 # ─────────────────────────────── 07 connect ───────────────────────────────
 
 CONTACTS = [
-    ("github", "GITHUB", "shamiulriyad"),
     ("linkedin", "LINKEDIN", "Md Shamiul Islam Riyad"),
-    ("codeforces", "CODEFORCES", "Riyad_shamiul"),
-    ("leetcode", "LEETCODE", "shamiulislamriyad"),
+    ("facebook", "FACEBOOK", "shamiul.islam.riyad.2024"),
+    ("x", "X / TWITTER", "@sami46982396523"),
     ("youtube", "YOUTUBE", "@ZeroTo420perfect"),
+    ("portfolio", "PORTFOLIO", "riyadsn.vercel.app"),
+    ("github", "GITHUB", "shamiulriyad"),
+    ("codeforces", "CODEFORCES", "Riyad_shamiul"),
+    ("codechef", "CODECHEF", "riyad_1418"),
+    ("leetcode", "LEETCODE", "shamiulislamriyad"),
+    ("hackerrank", "HACKERRANK", "shamiulriyad96"),
 ]
 
 
@@ -571,6 +576,8 @@ def main():
     subband(args.out, "squad", "THE FULL SQUAD", "EVERY OTHER PROJECT")
     subband(args.out, "practice", "TRAINING GROUND", "PROBLEM-SOLVING ARCHIVES")
     subband(args.out, "cabinet", "HACKATHON CABINET", "SEVEN BUILDS · 2026")
+    subband(args.out, "social", "SOCIAL", "FOLLOW · MESSAGE · WATCH")
+    subband(args.out, "code", "CODE", "REPOSITORIES · CONTEST PROFILES")
     identity(args.out)
     form(args.out)
     for i, p in enumerate(PROJECTS, 1):
