@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Md Shamiul Islam Riyad — Backend Engineer Intern CV</title>
+<meta name="author" content="Md Shamiul Islam Riyad">
+<meta name="description" content="CV — Backend Engineer Intern (CRM), Credosis">
+<style>
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #fff; }
+  body {
+    font-family: "Calibri", "Carlito", Arial, sans-serif;
+    font-size: 10pt;
+    line-height: 1.33;
+    color: #1f2328;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    font-feature-settings: "kern", "liga";
+  }
+  .page { width: 210mm; min-height: 297mm; padding: 10mm 13mm 8mm; }
+  a { color: inherit; text-decoration: none; }
+
+  header { border-bottom: 1.4pt solid #0f3d5e; padding-bottom: 5pt; margin-bottom: 6pt; }
+  h1 { font-size: 22pt; font-weight: 700; letter-spacing: -0.2pt; color: #0f3d5e; line-height: 1.1; }
+  .headline { font-size: 11pt; font-weight: 600; color: #334155; margin-top: 2pt; }
+  .contact { font-size: 9.6pt; color: #334155; margin-top: 4pt; }
+  .contact .sep { color: #94a3b8; padding: 0 4pt; }
+
+  section { margin-top: 8pt; }
+  h2 {
+    font-size: 10.4pt; font-weight: 700; letter-spacing: 0.9pt; text-transform: uppercase;
+    color: #0f3d5e; border-bottom: 0.6pt solid #cbd5e1; padding-bottom: 1.5pt; margin-bottom: 3.5pt;
+  }
+
+  .summary { text-align: left; }
+
+  .skills p { padding: 0.6pt 0; }
+  .skills .k { font-weight: 700; color: #0f172a; }
+
+  .project { margin-bottom: 5pt; }
+  .project:last-child { margin-bottom: 0; }
+  .p-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8pt; }
+  .p-title { font-weight: 700; font-size: 10.8pt; color: #0f172a; }
+  .p-title .role { font-weight: 500; color: #475569; }
+  .p-link { font-size: 9.4pt; color: #0f3d5e; white-space: nowrap; }
+  .p-stack { font-size: 9.5pt; color: #475569; font-style: italic; margin: 0 0 1pt; }
+
+  ul { padding-left: 11pt; }
+  li { margin: 0.8pt 0; padding-left: 1pt; }
+  li::marker { color: #0f3d5e; }
+
+  .edu-head { display: flex; justify-content: space-between; align-items: baseline; }
+  .edu-title { font-weight: 700; color: #0f172a; }
+  .muted { color: #475569; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <h1>Md Shamiul Islam Riyad</h1>
+    <div class="headline">Backend Engineer Intern Candidate &nbsp;|&nbsp; C# · ASP.NET Core · PostgreSQL · REST APIs</div>
+    <div class="contact">
+      Bangladesh<span class="sep">|</span><a href="https://github.com/shamiulriyad">github.com/shamiulriyad</a><span class="sep">|</span><a href="https://www.linkedin.com/in/md-shamiul-islam-riyad-31b8352b4/">linkedin.com/in/md-shamiul-islam-riyad-31b8352b4</a><span class="sep">|</span><a href="https://riyadsn.vercel.app/">riyadsn.vercel.app</a>
+    </div>
+  </header>
+
+  <section>
+    <h2>Professional Summary</h2>
+    <p class="summary">CSE undergraduate at United International University focused on backend engineering. Builds RESTful APIs with C#, ASP.NET Core 8, EF Core and PostgreSQL, covering JWT authentication, role- and ownership-based authorization, transactional multi-vendor workflows and React integration. Seeking a Backend Engineer Intern role to help build reliable CRM services.</p>
+  </section>
+
+  <section>
+    <h2>Technical Skills</h2>
+    <div class="skills">
+      <p><span class="k">Languages:</span> C#, SQL, JavaScript, Java, C++</p>
+      <p><span class="k">Backend:</span> ASP.NET Core 8 Web API, Entity Framework Core, RESTful API design, SignalR, FluentValidation, Swagger</p>
+      <p><span class="k">Databases:</span> PostgreSQL, relational schema design, EF Core code-first migrations, indexes and constraints, full-text search</p>
+      <p><span class="k">Security:</span> JWT access/refresh tokens, role-based and ownership authorization, BCrypt hashing, rate limiting, CORS</p>
+      <p><span class="k">Engineering:</span> OOP, Clean Architecture, repository and service layers, dependency injection, DTOs, centralized error handling</p>
+      <p><span class="k">Tools:</span> Git, GitHub, Swagger UI, Docker (basic), React.js integration via Axios and the SignalR client</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Backend Projects</h2>
+
+    <div class="project">
+      <div class="p-head">
+        <div class="p-title">ShilpoHubBD <span class="role">— Multi-Vendor Artisan Marketplace API</span></div>
+        <a class="p-link" href="https://github.com/shamiulriyad/ShilpoHubBD">github.com/shamiulriyad/ShilpoHubBD</a>
+      </div>
+      <div class="p-stack">ASP.NET Core 8, C#, EF Core, PostgreSQL (Supabase), JWT, SignalR, FluentValidation, React 19</div>
+      <ul>
+        <li>Structured the API as five Clean Architecture projects with repository interfaces, a service layer, FluentValidation and a global exception handler that maps domain errors to consistent 400/401/404/409 responses.</li>
+        <li>Implemented JWT authentication with BCrypt hashing and hashed refresh tokens rotated on refresh and revoked on logout; enforced nine roles plus ownership checks so producers manage only their own products and orders.</li>
+        <li>Built producer order fulfillment, ranked PostgreSQL full-text search, a notification inbox, a payment callback endpoint and third-party API integrations with fallbacks; covered service logic with 17 regression suites.</li>
+      </ul>
+    </div>
+
+    <div class="project">
+      <div class="p-head">
+        <div class="p-title">Avenzaq <span class="role">— Multi-Vendor E-Commerce Backend</span></div>
+        <a class="p-link" href="https://github.com/shamiulriyad/Avenzaq">github.com/shamiulriyad/Avenzaq</a>
+      </div>
+      <div class="p-stack">ASP.NET Core, C#, EF Core, PostgreSQL, JWT, SignalR, React</div>
+      <ul>
+        <li>Implemented checkout that splits a cart into per-seller sub-orders in one database transaction, decrements variant- or product-level stock, and rolls back the whole order when inventory is insufficient.</li>
+        <li>Secured Admin, Seller and Customer endpoints with JWT and role-based authorization, including admin approval of sellers and ownership checks on seller order-status updates.</li>
+        <li>Created in-app notifications for order events (placed, confirmed, shipped, delivered) stored in PostgreSQL with paginated unread counts, served via REST and a per-user SignalR hub.</li>
+      </ul>
+    </div>
+
+    <div class="project">
+      <div class="p-head">
+        <div class="p-title">E-Learning Platform API <span class="role">— Academic Team Project (DBMS)</span></div>
+        <a class="p-link" href="https://github.com/shamiulriyad/DatabaseHub">github.com/shamiulriyad/DatabaseHub</a>
+      </div>
+      <div class="p-stack">ASP.NET Core 8, C#, EF Core, PostgreSQL, JWT, SignalR, React</div>
+      <ul>
+        <li>Modeled a 48-table PostgreSQL schema (universities, courses, enrollments, assessments, competitions) with keys, unique indexes and delete rules, evolved through EF Core migrations.</li>
+        <li>Secured 25 REST controllers with JWT authentication, Student/Teacher/Admin role policies and BCrypt password hashing.</li>
+        <li>Automated competition lifecycle transitions with a hosted background service and pushed enrollment and community updates through SignalR.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <h2>Education</h2>
+    <div class="edu-head">
+      <div class="edu-title">BSc in Computer Science and Engineering</div>
+      <div class="muted">2023 – 2027 (Expected)</div>
+    </div>
+    <div class="muted">United International University (UIU), Dhaka, Bangladesh</div>
+  </section>
+
+  <section>
+    <h2>Achievements</h2>
+    <ul>
+      <li><strong>2nd Runner-Up, UIU CSE Project Show</strong> (Mar 2026) — full-stack application judged by an industry panel.</li>
+      <li>Competed in 7 hackathons in 2026, including bKash SUST CSE Carnival; top 70 of 700+ teams at Infinity AI BuildFest.</li>
+      <li>Solved 575+ problems on Codeforces, CodeChef and LeetCode; certified in HackerRank Problem Solving (Basic).</li>
+    </ul>
+  </section>
+
+</div>
+</body>
+</html>
