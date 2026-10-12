@@ -1,4 +1,4 @@
-"""Render assets/views.svg from the komarev.com profile views counter.
+"""Render assets/views-<hash>.svg from the komarev.com profile views counter.
 
 komarev.com still counts the views: the README loads its badge as a hidden 1px
 image. But it is sometimes too slow for GitHub's image proxy, which then shows
@@ -16,13 +16,13 @@ import sys
 import time
 import urllib.request
 
-from brand import EMERALD, SANS
+from brand import EMERALD, SANS, publish_versioned
 from typeset import Doc
 
 USER = os.environ.get("GH_USER", "shamiulriyad")
 ROOT = os.path.join(os.path.dirname(__file__), "..")
 STATE = os.path.join(ROOT, "assets", "views.json")
-OUT = os.path.join(ROOT, "assets", "views.svg")
+OUT = os.path.join(ROOT, "assets", "views.svg")  # published as views-<hash>.svg
 URL = f"https://komarev.com/ghpvc/?username={USER}&label=PROFILE%20VIEWS&color=10b981&style=flat-square"
 
 LABEL = "PROFILE VIEWS"
@@ -81,7 +81,9 @@ def main():
 
     with open(OUT, "w", encoding="utf-8") as f:
         f.write(render(state["views"]))
-    print(f"wrote {OUT} ({state['views']} views)", file=sys.stderr)
+    # a new name per count, or GitHub and browsers keep showing a cached badge
+    publish_versioned("views.svg")
+    print(f"views badge: {state['views']} views", file=sys.stderr)
 
 
 if __name__ == "__main__":
