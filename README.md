@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./assets/views.svg" alt="Profile views" /><img src="https://komarev.com/ghpvc/?username=shamiulriyad&label=PROFILE%20VIEWS&color=10b981&style=flat-square" width="1" height="1" alt="" />
+  <img src="./assets/views-f485e5f96a.svg" alt="Profile views" /><img src="https://komarev.com/ghpvc/?username=shamiulriyad&label=PROFILE%20VIEWS&color=10b981&style=flat-square" width="1" height="1" alt="" />
 </p>
 
 <p align="center">
