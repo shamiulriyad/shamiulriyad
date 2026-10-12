@@ -3,10 +3,13 @@
 komarev.com still counts the views: the README loads its badge as a hidden 1px
 image. But it is sometimes too slow for GitHub's image proxy, which then shows
 a broken image. So the visible badge is this file, served from the repo, and
-it always loads. Runs in GitHub Actions (see .github/workflows/telemetry.yml).
+it always loads. Runs every 15 minutes in GitHub Actions (.github/workflows/views.yml).
 
-Every fetch here is itself counted as a view, so assets/views.json keeps how
-many times this script has hit the counter and subtracts that.
+Every fetch here is itself counted as a view and is subtracted. Each run of
+the views workflow fetches once, so its run number is how many hits it has
+made; assets/views.json adds the hits made before that workflow existed.
+That way the state file only changes, and the workflow only commits, when
+real views came in.
 """
 
 import json
@@ -65,12 +68,14 @@ def main():
         with open(STATE, encoding="utf-8") as f:
             state = json.load(f)
     except FileNotFoundError:
-        state = {"views": None, "own_hits": 0}
+        state = {"views": None, "earlier_hits": 0}
+    if "own_hits" in state:  # hits from when the telemetry workflow did this
+        state["earlier_hits"] = state.pop("own_hits")
 
     total = fetch_count()
     if total is not None:
-        state["own_hits"] += 1  # the fetch above was counted too
-        views = total - state["own_hits"]
+        own_hits = state["earlier_hits"] + int(os.environ.get("GITHUB_RUN_NUMBER", "0"))
+        views = total - own_hits
         # never go backwards on a bad read
         state["views"] = views if state["views"] is None else max(views, state["views"])
         with open(STATE, "w", encoding="utf-8") as f:
