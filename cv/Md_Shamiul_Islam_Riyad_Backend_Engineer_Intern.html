@@ -69,7 +69,7 @@
     <h2>Technical Skills</h2>
     <table class="skills">
       <tr><td class="k">Languages</td><td>C#, SQL, JavaScript, C++, Java</td></tr>
-      <tr><td class="k">Backend</td><td>ASP.NET Core Web API (.NET 8 and 10), Entity Framework Core, REST APIs, JWT authentication, role-based authorization, SignalR, background services, HttpClient for third-party APIs</td></tr>
+      <tr><td class="k">Backend</td><td>ASP.NET Core Web API (.NET 8 and 10), Entity Framework Core, REST APIs, FluentValidation, JWT authentication, role-based authorization, SignalR, background services</td></tr>
       <tr><td class="k">Databases</td><td>PostgreSQL, relational schema design, EF Core code-first migrations, SQL queries</td></tr>
       <tr><td class="k">Testing and tools</td><td>xUnit with EF Core InMemory, Swagger and .http request files for manual API testing, Git and GitHub</td></tr>
       <tr><td class="k">Frontend</td><td>React, Axios (used to connect my APIs to a UI)</td></tr>
@@ -78,6 +78,19 @@
 
   <section>
     <h2>Projects</h2>
+
+    <div class="project">
+      <div class="row">
+        <div class="title">ShilpoHubBD <span class="what">&ndash; marketplace and business platform for Bangladeshi artisans</span></div>
+        <a class="link" href="https://github.com/shamiulriyad/ShilpoHubBD">github.com/shamiulriyad/ShilpoHubBD</a>
+      </div>
+      <div class="stack">ASP.NET Core 8, EF Core, PostgreSQL, JWT, FluentValidation, SignalR, React. Team of 5; I wrote most of the backend.</div>
+      <ul>
+        <li>Wrote entities and 100+ EF Core migrations for a 312-table PostgreSQL schema, with the code split into Domain, Application, Data, Infrastructure and Api projects.</li>
+        <li>Implemented JWT login with refresh tokens that are stored as hashes, replaced on every refresh and revoked on logout. Added 9 user roles, with ownership checks so producers can only manage their own products, orders and stock.</li>
+        <li>Added an inventory log that records every stock change, rejects adjustments that would make stock negative, and lists low-stock products per producer. A global exception handler maps validation, not-found and conflict errors to 400, 404 and 409 responses.</li>
+      </ul>
+    </div>
 
     <div class="project">
       <div class="row">
@@ -102,18 +115,6 @@
         <li>Designed a 48-table PostgreSQL schema (universities, departments, courses, enrollments, assignments, competitions) with EF Core code-first, using foreign keys, unique indexes and delete rules, and changed it through migrations.</li>
         <li>Built 24 REST controllers with JWT authentication, Student, Teacher and Admin role checks, and BCrypt password hashing.</li>
         <li>Wrote a background service that moves competitions from Upcoming to Ongoing to Completed on schedule, and used SignalR to push course and community updates.</li>
-      </ul>
-    </div>
-    <div class="project">
-      <div class="row">
-        <div class="title">BRUHCODE <span class="what">&ndash; contest calendar and live practice rooms</span></div>
-        <a class="link" href="https://github.com/shamiulriyad/bruhcode-platform">github.com/shamiulriyad/bruhcode-platform</a>
-      </div>
-      <div class="stack">ASP.NET Core (.NET 10), EF Core, PostgreSQL, SignalR, JWT, xUnit, React</div>
-      <ul>
-        <li>Wrote a service that calls the Codeforces, LeetCode, CodeChef, AtCoder and GeeksforGeeks APIs through HttpClient and saves upcoming contests to PostgreSQL without duplicates, matching on external ID or on platform, name and start time.</li>
-        <li>Built practice rooms with unique invite codes and a member limit. A background service checks rooms every second, moves them from Scheduled to Live to Ended, and sends status and timer updates to members over SignalR.</li>
-        <li>Wrote 18 xUnit tests with EF Core InMemory for room joins, leaderboard order (problems solved, then time) and the rule that keeps a problem's discussion locked until the user has attempted it.</li>
       </ul>
     </div>
   </section>
