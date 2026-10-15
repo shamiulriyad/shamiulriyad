@@ -1,26 +1,28 @@
 # CV: Backend Engineer Intern (CRM), Credosis
 
-- **PDF:** [`Md_Shamiul_Islam_Riyad_Backend_Engineer_Intern_Credosis.pdf`](Md_Shamiul_Islam_Riyad_Backend_Engineer_Intern_Credosis.pdf) (one A4 page, selectable TrueType text, clickable links)
-- **Source:** [`Md_Shamiul_Islam_Riyad_Backend_Engineer_Intern_Credosis.html`](Md_Shamiul_Islam_Riyad_Backend_Engineer_Intern_Credosis.html)
+- **PDF:** [`Md_Shamiul_Islam_Riyad_Backend_Engineer_Intern.pdf`](Md_Shamiul_Islam_Riyad_Backend_Engineer_Intern.pdf) (one A4 page, selectable text, clickable links)
+- **Source:** [`Md_Shamiul_Islam_Riyad_Backend_Engineer_Intern.html`](Md_Shamiul_Islam_Riyad_Backend_Engineer_Intern.html)
 - **Rebuild:** `node cv/build.cjs` (needs `playwright` and Chromium)
 
 ## Where each claim comes from
 
-Every project bullet was checked against the repository source, not only the README.
+Every bullet was checked against the repository source. The tests were not run here because the .NET SDK was unavailable.
 
 | Claim | Evidence |
 |---|---|
-| ShilpoHubBD: five-project Clean Architecture | `backend/src/ShilpoHubBD.{Domain,Application,Data,Infrastructure,Api}` |
-| ShilpoHubBD: hashed refresh tokens, rotated and revoked | `Application/Services/Auth/AuthService.cs` (`ReplacedByTokenHash`, `RevokedAt`) |
-| ShilpoHubBD: nine roles, ownership checks | `Domain/Constants/RoleNames`, `ProducerOrderService.cs` |
-| ShilpoHubBD: rate limiting, global exception handler | `Api/Program.cs` (`AddRateLimiter`), `Api/Middlewares/GlobalExceptionHandler.cs` |
-| ShilpoHubBD: ranked full-text search | `Data/Search/PostgresProductSearchProvider.cs` (`PlainToTsQuery`, `Rank`) |
-| ShilpoHubBD: payment callback, third-party APIs | `PaymentsController` `/{id}/callback`; Nominatim/OSRM/Gemini options in Infrastructure |
-| ShilpoHubBD: 17 regression suites | `backend/tests/*Regression` (console harnesses with fake repositories) |
-| Avenzaq: transactional per-seller checkout | `Backend/Services/OrderService.cs` (`BeginTransactionAsync`, `GroupBy(SellerId)`, stock checks) |
-| Avenzaq: seller approval, ownership on status updates | `AdminService.ApproveSellerAsync`, `OrderService.UpdateSellerOrderStatusAsync` |
-| Avenzaq: notifications plus SignalR hub | `NotificationService.cs`, `Hubs/NotificationHub.cs`, `frontend/src/hooks/useNotificationHub.js` |
-| E-Learning: 48 tables, 25 controllers | `ApplicationDbContext.cs` (48 `DbSet`s), `Controllers/` |
-| E-Learning: background service, SignalR pushes | `CompetitionLifecycleScheduler.cs`, `IHubContext` in `EnrollmentService`/`CommunityService` |
+| rag-kit: Owner/Admin/Member roles, 404 for non-members | `backend/Models/Enums.cs` (`MemberRole`), `backend/Authorization/ResourceAuthorizationService.cs` |
+| rag-kit: refresh-token rotation, reuse ends all sessions | `backend.Tests` (`RefreshRotatesAndReusingTheOldTokenIsRejected`, `ReplayingARevokedTokenLaterEndsEverySession`) |
+| rag-kit: single-use reset/verify tokens stored as hashes | `backend.Tests` (`OnlyTheTokenHashIsStored`, `ResetFlowChangesPasswordAndTokenIsSingleUse`) |
+| rag-kit: plan limits, support tickets, activity logs | `Services/PlanLimitService.cs`, `SupportService.cs`, `ActivityLogService.cs` |
+| rag-kit: 40 xUnit tests | `[Fact]`/`[Theory]` count in `backend.Tests/*.cs` (xUnit + EF Core InMemory) |
+| Avenzaq: transactional checkout, per-seller sub-orders, commission, stock rollback | `Backend/Services/OrderService.cs` `CheckoutAsync` |
+| Avenzaq: role checks, seller approval, own sub-orders only | `[Authorize(Roles=...)]` in `Controllers/`, `OrderService.UpdateSellerOrderStatusAsync` |
+| Avenzaq: paged notifications, unread count, per-user SignalR group | `Services/NotificationService.cs`, `Hubs/NotificationHub.cs` |
+| E-Learning: 48 tables, keys/indexes/delete rules, migrations | `ApplicationDbContext` (48 `DbSet`s), `Migrations/` |
+| E-Learning: 24 controllers, Student/Teacher/Admin roles, BCrypt | `Controllers/`, `Helpers/PasswordHasher.cs` |
+| E-Learning: competition scheduler, SignalR | `Services/CompetitionLifecycleScheduler.cs`, `MapHub` in `Program.cs` |
 
-Deliberately left out because the code does not support them: payment processing in the E-Learning API (its payment and webhook methods return "Not implemented"), and a seller-must-be-approved-to-list rule in Avenzaq (most of those checks are commented out).
+Left out on purpose:
+- **ShilpoHubBD.** It is a five-person team project with about 133k lines of C# and 170 controllers, so it is hard to defend in an interview as your own work.
+- **E-Learning error handling.** Its `ExceptionMiddleware` returns `exception.Message` with a 500 for every error, so error handling is not claimed for that project.
+- **The "17 regression suites" from the old CV.** They are console PASS/FAIL programs, not a test framework.
