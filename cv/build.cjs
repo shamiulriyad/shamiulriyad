@@ -4,7 +4,7 @@ const { chromium } = require('playwright');
 const path = require('node:path');
 const { pathToFileURL } = require('node:url');
 
-const name = 'Md_Shamiul_Islam_Riyad_Backend_Engineer_Intern_Credosis';
+const name = 'Md_Shamiul_Islam_Riyad_Backend_Engineer_Intern';
 
 (async () => {
   const browser = await chromium.launch();
