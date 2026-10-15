@@ -10,19 +10,21 @@ Every bullet was checked against the repository source. The tests were not run h
 
 | Claim | Evidence |
 |---|---|
+| ShilpoHubBD: team of 5, most of the backend | `git log -- backend`: 792 of 964 commits are yours |
+| ShilpoHubBD: 312 tables, 100+ migrations, 5 projects | `Data/Migrations/ShilpoHubDbContextModelSnapshot.cs` (312 `ToTable`; 313 in the database with `__EFMigrationsHistory`), `backend/src/ShilpoHubBD.*` |
+| ShilpoHubBD: hashed refresh tokens, rotation, logout revoke | `Application/Services/Auth/AuthService.cs` (`ReplacedByTokenHash`, `LogoutAsync`) |
+| ShilpoHubBD: 9 roles, producer ownership checks | `Domain/Constants/RoleNames.cs`, `ProducerOrderService.cs`, `InventoryService.cs` |
+| ShilpoHubBD: inventory log, no negative stock, low-stock list | `Application/Services/Inventory/InventoryService.cs` |
+| ShilpoHubBD: exception handler to 400/404/409 | `Api/Middlewares/GlobalExceptionHandler.cs` |
 | Avenzaq: transactional checkout, per-seller sub-orders, commission, stock rollback | `Backend/Services/OrderService.cs` `CheckoutAsync` |
 | Avenzaq: role checks, seller approval, own sub-orders only | `[Authorize(Roles=...)]` in `Controllers/`, `OrderService.UpdateSellerOrderStatusAsync` |
 | Avenzaq: paged notifications, unread count, per-user SignalR group | `Services/NotificationService.cs`, `Hubs/NotificationHub.cs` |
 | E-Learning: 48 tables, keys/indexes/delete rules, migrations | `ApplicationDbContext` (48 `DbSet`s), `Migrations/` |
 | E-Learning: 24 controllers, Student/Teacher/Admin roles, BCrypt | `Controllers/`, `Helpers/PasswordHasher.cs` |
 | E-Learning: competition scheduler, SignalR | `Services/CompetitionLifecycleScheduler.cs`, `MapHub` in `Program.cs` |
-| BRUHCODE: contest fetch from 5 platform APIs, no duplicates | `Backend/Services/ExternalContestFetcher.cs` (`AddHttpClient`), `Services/ContestSeeder.cs` (`ExternalId` or platform+name+start) |
-| BRUHCODE: invite codes, member limit, Scheduled/Live/Ended timer over SignalR | `Controllers/RoomsController.cs`, `Services/RoomTimerService.cs` (`BackgroundService`, 1 s tick) |
-| BRUHCODE: 18 xUnit tests (rooms, leaderboard, thread locks) | `Backend.Tests/*.cs` (xUnit + EF Core InMemory) |
 
 Left out on purpose:
 - **rag-kit.** Removed at your request, together with the skills that only it supported (Docker, Python).
-- **BRUHCODE login.** Passwords are hashed with unsalted SHA-256 (`AuthController.HashPassword`), so authentication is not claimed for this project.
-- **ShilpoHubBD.** It is a five-person team project with about 133k lines of C# and 170 controllers, so it is hard to defend in an interview as your own work.
+- **BRUHCODE.** Replaced by ShilpoHubBD to keep three projects. Its passwords are hashed with unsalted SHA-256 (`AuthController.HashPassword`), which should be fixed before an interviewer sees it.
 - **E-Learning error handling.** Its `ExceptionMiddleware` returns `exception.Message` with a 500 for every error, so error handling is not claimed for that project.
 - **The "17 regression suites" from the old CV.** They are console PASS/FAIL programs, not a test framework.
