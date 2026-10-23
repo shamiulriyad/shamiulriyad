@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Md Shamiul Islam Riyad - CV</title>
+<meta name="author" content="Md Shamiul Islam Riyad">
+<meta name="description" content="CV for the Backend Engineer Intern (CRM) role at Credosis">
+<style>
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #fff; }
+  body {
+    font-family: "Calibri", "Carlito", Arial, sans-serif;
+    font-size: 10.2pt;
+    line-height: 1.3;
+    color: #111;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .page { width: 210mm; height: 297mm; overflow: hidden; padding: 12mm 15mm 9mm; }
+  a { color: inherit; text-decoration: none; }
+
+  header { text-align: center; margin-bottom: 8pt; }
+  h1 { font-size: 20pt; font-weight: 700; letter-spacing: 0.2pt; }
+  .contact { margin-top: 3pt; font-size: 9.3pt; color: #222; }
+  .contact .sep { color: #888; padding: 0 3.5pt; }
+  .contact a { color: #1a4f8b; white-space: nowrap; }
+
+  section { margin-top: 8pt; }
+  h2 {
+    font-size: 10.6pt; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8pt;
+    border-bottom: 0.7pt solid #444; padding-bottom: 1.5pt; margin-bottom: 4pt;
+  }
+
+  .skills { border-collapse: collapse; }
+  .skills td { vertical-align: top; padding: 0.8pt 0; }
+  .skills td.k { font-weight: 700; white-space: nowrap; padding-right: 8pt; width: 1%; }
+
+  .project { margin-bottom: 7pt; }
+  .project:last-child { margin-bottom: 0; }
+  .row { display: flex; justify-content: space-between; align-items: baseline; gap: 10pt; }
+  .title { font-weight: 700; font-size: 10.8pt; }
+  .title .what { font-weight: 400; }
+  .link { font-size: 9.6pt; color: #1a4f8b; white-space: nowrap; }
+  .stack { font-size: 9.7pt; color: #444; font-style: italic; margin-bottom: 1pt; }
+
+  ul { padding-left: 12pt; }
+  li { margin: 1.4pt 0; padding-left: 1pt; }
+
+  .muted { color: #444; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <h1>Md Shamiul Islam Riyad</h1>
+    <div class="contact">
+      <a href="mailto:shamiulriyad1418@gmail.com">shamiulriyad1418@gmail.com</a><span class="sep">|</span><a href="https://github.com/shamiulriyad">github.com/shamiulriyad</a><span class="sep">|</span><a href="https://www.linkedin.com/in/md-shamiul-islam-riyad-31b8352b4/">linkedin.com/in/md-shamiul-islam-riyad-31b8352b4</a><span class="sep">|</span><a href="https://riyadsn.vercel.app/">riyadsn.vercel.app</a>
+    </div>
+  </header>
+
+  <section>
+    <h2>Summary</h2>
+    <p>CSE undergraduate at United International University (graduating 2027). Most of my project work is backend development in C# and ASP.NET Core with PostgreSQL: REST APIs, JWT login with role checks, EF Core data models, and order and account logic. I have also built the React frontends that call these APIs.</p>
+  </section>
+
+  <section>
+    <h2>Technical Skills</h2>
+    <table class="skills">
+      <tr><td class="k">Languages</td><td>C#, SQL, JavaScript, C++, Java</td></tr>
+      <tr><td class="k">Backend</td><td>ASP.NET Core Web API (.NET 8 and 10), Entity Framework Core, REST APIs, FluentValidation, JWT authentication, role-based authorization, SignalR, background services</td></tr>
+      <tr><td class="k">Databases</td><td>PostgreSQL, relational schema design, EF Core code-first migrations, SQL queries</td></tr>
+      <tr><td class="k">Testing and tools</td><td>xUnit with EF Core InMemory, Swagger and .http request files for manual API testing, Git and GitHub</td></tr>
+      <tr><td class="k">Frontend</td><td>React, Axios (used to connect my APIs to a UI)</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>Projects</h2>
+
+    <div class="project">
+      <div class="row">
+        <div class="title">ShilpoHubBD <span class="what">&ndash; marketplace and business platform for Bangladeshi artisans</span></div>
+        <a class="link" href="https://github.com/shamiulriyad/ShilpoHubBD">github.com/shamiulriyad/ShilpoHubBD</a>
+      </div>
+      <div class="stack">ASP.NET Core 8, EF Core, PostgreSQL, JWT, FluentValidation, SignalR, React. Team of 5; I wrote most of the backend.</div>
+      <ul>
+        <li>Wrote entities and 100+ EF Core migrations for a 312-table PostgreSQL schema, with the code split into Domain, Application, Data, Infrastructure and Api projects.</li>
+        <li>Implemented JWT login with refresh tokens that are stored as hashes, replaced on every refresh and revoked on logout. Added 9 user roles, with ownership checks so producers can only manage their own products, orders and stock.</li>
+        <li>Added an inventory log that records every stock change, rejects adjustments that would make stock negative, and lists low-stock products per producer. A global exception handler maps validation, not-found and conflict errors to 400, 404 and 409 responses.</li>
+      </ul>
+    </div>
+
+    <div class="project">
+      <div class="row">
+        <div class="title">Avenzaq <span class="what">&ndash; multi-vendor e-commerce backend</span></div>
+        <a class="link" href="https://github.com/shamiulriyad/Avenzaq">github.com/shamiulriyad/Avenzaq</a>
+      </div>
+      <div class="stack">ASP.NET Core (.NET 10), EF Core, PostgreSQL, JWT, SignalR, React</div>
+      <ul>
+        <li>Wrote checkout as one database transaction: the cart is split into a sub-order per seller with that seller's commission and net amount, stock is reduced per product or variant, and the whole order rolls back if any item is out of stock.</li>
+        <li>Protected Customer, Seller and Admin endpoints with JWT role checks. A seller needs admin approval before managing orders and can only change the status of their own sub-orders.</li>
+        <li>Saved order notifications (placed, confirmed, shipped, delivered) in PostgreSQL with paging and unread counts, and pushed them to each user through a SignalR hub.</li>
+      </ul>
+    </div>
+
+    <div class="project">
+      <div class="row">
+        <div class="title">E-Learning Platform API <span class="what">&ndash; university course and competition platform</span></div>
+        <a class="link" href="https://github.com/shamiulriyad/DatabaseHub">github.com/shamiulriyad/DatabaseHub</a>
+      </div>
+      <div class="stack">ASP.NET Core 8, EF Core, PostgreSQL, JWT, SignalR, React. Team project; I built the backend.</div>
+      <ul>
+        <li>Designed a 48-table PostgreSQL schema (universities, departments, courses, enrollments, assignments, competitions) with EF Core code-first, using foreign keys, unique indexes and delete rules, and changed it through migrations.</li>
+        <li>Built 24 REST controllers with JWT authentication, Student, Teacher and Admin role checks, and BCrypt password hashing.</li>
+        <li>Wrote a background service that moves competitions from Upcoming to Ongoing to Completed on schedule, and used SignalR to push course and community updates.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <h2>Education</h2>
+    <div class="row">
+      <div><strong>BSc in Computer Science and Engineering</strong>, United International University (UIU), Dhaka</div>
+      <div class="muted">2023 &ndash; 2027 (expected)</div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Achievements</h2>
+    <ul>
+      <li>2nd runner-up, UIU CSE Project Show (March 2026), with the E-Learning platform above.</li>
+      <li>Took part in 7 hackathons in 2026. Our team placed in the top 70 of 700+ teams at Infinity AI BuildFest.</li>
+      <li>Solved 575+ problems on Codeforces, CodeChef and LeetCode.</li>
+    </ul>
+  </section>
+
+</div>
+</body>
+</html>
