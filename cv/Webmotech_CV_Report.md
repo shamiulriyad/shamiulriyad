@@ -97,3 +97,7 @@ Verified on 2026-10-23 against fresh clones of the repos (default branch).
 2. **Missing information you could add** (I did not guess any of it): CGPA, a phone number, and relevant coursework (for example Data Structures, Algorithms, DBMS, OOP). Bangladeshi internship screens often expect a CGPA and a phone number.
 3. **Python was left out on purpose**, because your earlier instructions removed it. For a general SWE internship, your `AI-ML` repo (A* search, constraint satisfaction from scratch) would support adding it to Languages if you want.
 4. Send the PDF, not the DOCX.
+
+## Update: skills section replaced with your wording
+
+You replaced the Technical Skills section with your own wording (Languages, Backend, Databases, Engineering, Frontend). Every item has evidence in the table above. Some skills are no longer listed: Java, JavaScript as a language, xUnit, SignalR, FluentValidation and the testing tools. The xUnit and BRUHCODE password-hashing point in section 6 no longer applies to this CV.
