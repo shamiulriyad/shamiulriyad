@@ -1,0 +1,506 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DIU BBA Cover Page</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Spectral:ital,wght@0,400;0,500;0,600;1,400;1,500&family=IBM+Plex+Sans+Condensed:wght@500;600&family=Noto+Serif+Bengali:wght@500&display=swap">
+<style>
+/* Layout: one A4 sheet on a grey desk. Double frame, seal on top, the work in the middle,
+   a two-column "Submitted To / Submitted By" ledger, and a date line closed with an
+   accountant's double rule. Everything on the sheet is click-to-edit. */
+:root {
+  --ink: #0f4c3a;          /* main colour (changes with the swatches) */
+  --brass: #a8843a;        /* second colour for rules and corners */
+  --paper: #ffffff;
+  --text: #1c2421;
+  --muted: #5d6a64;
+  --hint: #a3aea9;
+  --desk: #e4e7e5;
+  --bar: #18201d;
+  --bar-fg: #f3f5f4;
+  --display: "Marcellus", "Trajan Pro", Georgia, serif;
+  --serif: "Spectral", Georgia, "Times New Roman", serif;
+  --label: "IBM Plex Sans Condensed", "Arial Narrow", Arial, sans-serif;
+  --bangla: "Noto Serif Bengali", "SolaimanLipi", "Nirmala UI", serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--desk);
+  color: var(--text);
+  font-family: var(--serif);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- toolbar (screen only) ---------- */
+.bar {
+  position: sticky; top: 0; z-index: 20;
+  background: var(--bar); color: var(--bar-fg);
+  padding: 10px max(16px, env(safe-area-inset-right, 0px)) 10px max(16px, env(safe-area-inset-left, 0px));
+  display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px;
+  font: 500 13px/1.3 var(--label);
+}
+.bar h1 { font: 400 16px/1 var(--display); letter-spacing: .04em; margin: 0; margin-right: auto; }
+.bar .group { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.bar .lbl { opacity: .7; text-transform: uppercase; letter-spacing: .08em; font-size: 11px; }
+.swatch {
+  width: 22px; height: 22px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; padding: 0;
+  background: linear-gradient(135deg, var(--a) 0 60%, var(--b) 60% 100%);
+  outline-offset: 2px;
+}
+.swatch[aria-pressed="true"] { border-color: var(--bar-fg); }
+.btn {
+  font: 600 13px/1 var(--label); letter-spacing: .03em;
+  background: transparent; color: var(--bar-fg);
+  border: 1px solid rgba(255,255,255,.35); border-radius: 4px; padding: 8px 12px; cursor: pointer;
+}
+.btn:hover { background: rgba(255,255,255,.1); }
+.btn.primary { background: var(--bar-fg); color: var(--bar); border-color: var(--bar-fg); }
+.btn.primary:hover { background: #fff; }
+.btn:focus-visible, .swatch:focus-visible { outline: 2px solid #8fd3b6; }
+.confirm { display: flex; gap: 8px; align-items: center; }
+.tip {
+  max-width: 210mm; margin: 14px auto 0; color: var(--muted);
+  font: 500 13px/1.5 var(--label);
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.tip b { color: var(--text); }
+
+/* ---------- stage that scales the sheet down on small screens ---------- */
+.stage { padding: 14px max(16px, env(safe-area-inset-right, 0px)) 48px max(16px, env(safe-area-inset-left, 0px)); }
+.holder { margin: 0 auto; position: relative; overflow: hidden; }
+
+/* ---------- the A4 sheet ---------- */
+.sheet {
+  width: 210mm; height: 297mm;
+  background: var(--paper);
+  position: absolute; top: 0; left: 0; transform-origin: top left;
+  box-shadow: 0 1px 2px rgba(0,0,0,.08), 0 12px 40px rgba(0,0,0,.12);
+  overflow: hidden;
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+.frame {
+  position: absolute; inset: 9mm;
+  border: 0.7mm solid var(--ink);
+}
+.frame::after {
+  content: ""; position: absolute; inset: 1.4mm;
+  border: 0.25mm solid var(--brass);
+}
+.corner { position: absolute; width: 9mm; height: 9mm; border-color: var(--brass); border-style: solid; border-width: 0; }
+.corner.tl { top: 4.6mm; left: 4.6mm; border-top-width: .5mm; border-left-width: .5mm; }
+.corner.tr { top: 4.6mm; right: 4.6mm; border-top-width: .5mm; border-right-width: .5mm; }
+.corner.bl { bottom: 4.6mm; left: 4.6mm; border-bottom-width: .5mm; border-left-width: .5mm; }
+.corner.br { bottom: 4.6mm; right: 4.6mm; border-bottom-width: .5mm; border-right-width: .5mm; }
+
+.watermark {
+  position: absolute; left: 50%; top: 50%; width: 120mm; height: 120mm;
+  transform: translate(-50%, -46%); opacity: .045; pointer-events: none; color: var(--ink);
+}
+.watermark svg { width: 100%; height: 100%; }
+
+.content {
+  position: absolute; inset: 15mm 19mm 14mm;
+  display: flex; flex-direction: column; align-items: stretch;
+}
+
+/* header */
+.head { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 2.2mm; }
+.logo {
+  width: 30mm; height: 30mm; border-radius: 50%; color: var(--ink); cursor: pointer; position: relative;
+  display: grid; place-items: center; background: none; border: 0; padding: 0;
+}
+.logo svg, .logo img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.logo .hover-hint {
+  position: absolute; inset: auto -12mm -5mm; font: 600 9px/1 var(--label); letter-spacing: .08em; text-transform: uppercase;
+  color: var(--muted); opacity: 0; transition: opacity .15s;
+}
+.logo:hover .hover-hint, .logo:focus-visible .hover-hint { opacity: 1; }
+.uni {
+  font: 400 23pt/1.05 var(--display); letter-spacing: .035em; text-transform: uppercase; color: var(--ink);
+  margin-top: 1.5mm;
+}
+.uni-bn { font: 500 12.5pt/1.3 var(--bangla); color: var(--muted); }
+.dept-line {
+  display: flex; align-items: center; gap: 4mm; width: 100%; margin-top: 1mm;
+  font: 600 9.5pt/1.2 var(--label); letter-spacing: .14em; text-transform: uppercase; color: var(--text);
+}
+.dept-line::before, .dept-line::after { content: ""; flex: 1; height: .25mm; background: var(--brass); }
+.faculty { font: italic 400 11pt/1.2 var(--serif); color: var(--muted); }
+
+/* the work */
+.work { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5mm; text-align: center; padding: 6mm 0; }
+.doctype {
+  font: 400 15pt/1 var(--display); letter-spacing: .32em; text-transform: uppercase;
+  color: var(--paper); background: var(--ink);
+  padding: 3.2mm 6mm 3.2mm calc(6mm + .32em);
+  position: relative;
+}
+.doctype::before, .doctype::after {
+  content: ""; position: absolute; top: 50%; width: 14mm; height: .25mm; background: var(--brass);
+}
+.doctype::before { right: calc(100% + 3mm); }
+.doctype::after { left: calc(100% + 3mm); }
+.on { font: italic 400 11pt/1 var(--serif); color: var(--muted); }
+.topic {
+  font: italic 500 21pt/1.22 var(--serif); color: var(--text); max-width: 150mm; text-wrap: balance;
+}
+.course {
+  width: 128mm; margin-top: 2mm;
+  border-top: .25mm solid var(--text);
+  border-bottom: .9mm double var(--text);   /* accountant's double rule */
+  padding: 2.4mm 0;
+  display: grid; grid-template-columns: auto 1fr; gap: 1.6mm 5mm; text-align: left;
+}
+.course .k { font: 600 8.5pt/1.6 var(--label); letter-spacing: .12em; text-transform: uppercase; color: var(--ink); white-space: nowrap; }
+.course .v { font: 500 12pt/1.35 var(--serif); }
+
+/* ledger */
+.ledger { display: grid; grid-template-columns: 1fr 1fr; border-top: .25mm solid var(--brass); }
+.col { padding: 4.5mm 0 3mm; display: flex; flex-direction: column; gap: 2.4mm; min-width: 0; }
+.col + .col { border-left: .25mm solid var(--brass); padding-left: 6mm; }
+.col:first-child { padding-right: 6mm; }
+.col-title {
+  font: 400 13pt/1 var(--display); letter-spacing: .14em; text-transform: uppercase; color: var(--ink);
+  display: flex; align-items: center; gap: 2.5mm; margin-bottom: 1mm;
+}
+.col-title::before { content: ""; width: 2.2mm; height: 2.2mm; background: var(--brass); transform: rotate(45deg); flex: none; }
+.rows { display: flex; flex-direction: column; gap: 2.2mm; }
+.row { display: grid; grid-template-columns: 27mm 1fr; align-items: baseline; gap: 2mm; position: relative; }
+.row .k { font: 600 7.8pt/1.5 var(--label); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.row .v {
+  font: 500 11pt/1.35 var(--serif); color: var(--text);
+  border-bottom: .2mm dotted #9aa5a0; min-height: 5.6mm; padding-bottom: .4mm; min-width: 0; overflow-wrap: anywhere;
+}
+.row .v.big { font-weight: 600; font-size: 12pt; }
+.del {
+  position: absolute; right: -5.5mm; bottom: .6mm; width: 4.4mm; height: 4.4mm; border-radius: 50%;
+  border: 0; background: #e9ecea; color: #6b7570; font: 600 10px/1 var(--label); cursor: pointer; opacity: 0; padding: 0;
+}
+.row:hover .del, .del:focus-visible { opacity: 1; }
+.add {
+  align-self: flex-start; margin-top: .5mm; background: none; border: .2mm dashed var(--hint); color: var(--muted);
+  font: 600 7.5pt/1 var(--label); letter-spacing: .08em; text-transform: uppercase; padding: 1.4mm 2.4mm; border-radius: 1mm; cursor: pointer;
+}
+.add:hover { color: var(--ink); border-color: var(--ink); }
+
+/* date + footer */
+.date {
+  margin-top: 2mm; padding: 2.6mm 0 2.2mm;
+  border-top: .25mm solid var(--text); border-bottom: .9mm double var(--text);
+  display: flex; justify-content: center; align-items: baseline; gap: 4mm;
+}
+.date .k { font: 600 8.5pt/1 var(--label); letter-spacing: .14em; text-transform: uppercase; color: var(--ink); }
+.date .v { font: 500 12pt/1 var(--serif); min-width: 45mm; text-align: center; border-bottom: .2mm dotted #9aa5a0; padding-bottom: .6mm; }
+.foot { text-align: center; margin-top: 2.6mm; font: 500 7.8pt/1.4 var(--label); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+
+/* editing */
+.ed { outline: none; border-radius: .6mm; transition: background .12s; cursor: text; }
+.ed:hover { background: rgba(15, 76, 58, .06); }
+.ed:focus { background: rgba(168, 132, 58, .14); }
+.ed:empty::before { content: attr(data-ph); color: var(--hint); font-style: italic; font-weight: 400; }
+.doctype.ed:empty::before { color: rgba(255,255,255,.6); }
+
+.hide { display: none !important; }
+
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+/* ---------- print: just the sheet, A4, no margins ---------- */
+@page { size: A4; margin: 0; }
+@media print {
+  html, body { background: #fff; width: 210mm; height: 297mm; }
+  .bar, .tip, .del, .add, .logo .hover-hint, #logoFile { display: none !important; }
+  .stage { padding: 0; }
+  .holder { width: 210mm !important; height: 297mm !important; margin: 0; }
+  .sheet { transform: none !important; box-shadow: none; }
+  .ed:hover, .ed:focus { background: none; }
+  .ed:empty::before { content: "\00a0"; }
+  .doctype.ed:empty { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="bar" role="toolbar" aria-label="Cover page tools">
+  <h1>DIU Cover Page</h1>
+  <div class="group" aria-label="Colour">
+    <span class="lbl">Colour</span>
+    <button class="swatch" type="button" style="--a:#0f4c3a;--b:#a8843a" data-ink="#0f4c3a" data-brass="#a8843a" aria-label="Bottle green and brass"></button>
+    <button class="swatch" type="button" style="--a:#1b2f5b;--b:#b8913f" data-ink="#1b2f5b" data-brass="#b8913f" aria-label="Navy and gold"></button>
+    <button class="swatch" type="button" style="--a:#6e1b2b;--b:#b48a4a" data-ink="#6e1b2b" data-brass="#b48a4a" aria-label="Maroon and gold"></button>
+    <button class="swatch" type="button" style="--a:#14555f;--b:#c26a3d" data-ink="#14555f" data-brass="#c26a3d" aria-label="Teal and copper"></button>
+    <button class="swatch" type="button" style="--a:#222222;--b:#8a8a8a" data-ink="#222222" data-brass="#8a8a8a" aria-label="Black and grey (best for black-and-white printing)"></button>
+  </div>
+  <div class="group">
+    <button class="btn" type="button" id="logoBtn">Change logo</button>
+    <span id="resetWrap"><button class="btn" type="button" id="resetBtn">Reset</button></span>
+    <span id="confirmWrap" class="confirm hide">
+      <span>Clear everything?</span>
+      <button class="btn" type="button" id="resetYes">Yes, clear</button>
+      <button class="btn" type="button" id="resetNo">Keep</button>
+    </span>
+    <button class="btn primary" type="button" id="printBtn">Print / Save PDF</button>
+  </div>
+</div>
+
+<p class="tip"><b>Click any text on the page to change it</b>, including the labels. Use <b>+ Add row</b> for more fields and hover a row to remove it. Your changes are saved in this browser automatically. Empty fields print as blank lines you can fill in by hand.</p>
+
+<input type="file" id="logoFile" accept="image/*" hidden>
+
+<div class="stage">
+  <div class="holder" id="holder">
+    <div class="sheet" id="sheet">
+      <div class="frame"></div>
+      <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+      <div class="watermark" aria-hidden="true"></div>
+
+      <div class="content">
+        <header class="head">
+          <button class="logo" type="button" id="logo" aria-label="Change logo">
+            <span id="logoSlot"></span>
+            <span class="hover-hint">Click to change logo</span>
+          </button>
+          <div class="uni ed" contenteditable="true" spellcheck="false" data-ph="University name">Dhaka International University</div>
+          <div class="uni-bn ed" contenteditable="true" spellcheck="false" data-ph="বাংলা নাম (optional)">ঢাকা ইন্টারন্যাশনাল ইউনিভার্সিটি</div>
+          <div class="dept-line"><span class="ed" contenteditable="true" spellcheck="false" data-ph="Department">Department of Business Administration</span></div>
+          <div class="faculty ed" contenteditable="true" spellcheck="false" data-ph="Faculty (optional)">Faculty of Business Studies</div>
+        </header>
+
+        <section class="work">
+          <div class="doctype ed" contenteditable="true" spellcheck="false" data-ph="ASSIGNMENT">Assignment</div>
+          <div class="on ed" contenteditable="true" spellcheck="false" data-ph="on">on</div>
+          <div class="topic ed" contenteditable="true" data-ph="Write your assignment topic here"></div>
+          <div class="course">
+            <span class="k ed" contenteditable="true" spellcheck="false">Course Title</span>
+            <span class="v ed" contenteditable="true" data-ph="e.g. Principles of Management"></span>
+            <span class="k ed" contenteditable="true" spellcheck="false">Course Code</span>
+            <span class="v ed" contenteditable="true" spellcheck="false" data-ph="e.g. MGT-101"></span>
+          </div>
+        </section>
+
+        <section class="ledger">
+          <div class="col">
+            <div class="col-title ed" contenteditable="true" spellcheck="false">Submitted To</div>
+            <div class="rows">
+              <div class="row"><span class="k ed" contenteditable="true" spellcheck="false">Name</span><span class="v big ed" contenteditable="true" data-ph="Teacher's name"></span></div>
+              <div class="row"><span class="k ed" contenteditable="true" spellcheck="false">Designation</span><span class="v ed" contenteditable="true" data-ph="Lecturer / Assistant Professor"></span></div>
+              <div class="row"><span class="k ed" contenteditable="true" spellcheck="false">Department</span><span class="v ed" contenteditable="true" data-ph="Department">Business Administration</span></div>
+              <div class="row"><span class="k ed" contenteditable="true" spellcheck="false">Institution</span><span class="v ed" contenteditable="true" data-ph="University">Dhaka International University</span></div>
+            </div>
+            <button class="add" type="button">+ Add row</button>
+          </div>
+          <div class="col">
+            <div class="col-title ed" contenteditable="true" spellcheck="false">Submitted By</div>
+            <div class="rows">
+              <div class="row"><span class="k ed" contenteditable="true" spellcheck="false">Name</span><span class="v big ed" contenteditable="true" data-ph="Your full name"></span></div>
+              <div class="row"><span class="k ed" contenteditable="true" spellcheck="false">Roll / ID</span><span class="v ed" contenteditable="true" spellcheck="false" data-ph="Your roll or student ID"></span></div>
+              <div class="row"><span class="k ed" contenteditable="true" spellcheck="false">Reg. No.</span><span class="v ed" contenteditable="true" spellcheck="false" data-ph="Registration number"></span></div>
+              <div class="row"><span class="k ed" contenteditable="true" spellcheck="false">Batch</span><span class="v ed" contenteditable="true" spellcheck="false" data-ph="e.g. 72nd"></span></div>
+              <div class="row"><span class="k ed" contenteditable="true" spellcheck="false">Section</span><span class="v ed" contenteditable="true" spellcheck="false" data-ph="e.g. A"></span></div>
+              <div class="row"><span class="k ed" contenteditable="true" spellcheck="false">Semester</span><span class="v ed" contenteditable="true" spellcheck="false" data-ph="e.g. Fall 2026"></span></div>
+              <div class="row"><span class="k ed" contenteditable="true" spellcheck="false">Program</span><span class="v ed" contenteditable="true" data-ph="Program">BBA</span></div>
+            </div>
+            <button class="add" type="button">+ Add row</button>
+          </div>
+        </section>
+
+        <div class="date">
+          <span class="k ed" contenteditable="true" spellcheck="false">Date of Submission</span>
+          <span class="v ed" contenteditable="true" spellcheck="false" data-ph="DD / MM / YYYY"></span>
+        </div>
+        <div class="foot ed" contenteditable="true" spellcheck="false" data-ph="Address (optional)">Satarkul, Badda, Dhaka-1212, Bangladesh</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<template id="rowTpl">
+  <div class="row"><span class="k ed" contenteditable="true" spellcheck="false">New field</span><span class="v ed" contenteditable="true" data-ph="Type here"></span></div>
+</template>
+
+<script>
+(function () {
+  var KEY = "diu-cover-v1";
+  var sheet = document.getElementById("sheet");
+  var holder = document.getElementById("holder");
+  var root = document.documentElement;
+
+  // A simple monogram seal. Click it to replace it with the official logo image.
+  var SEAL =
+    '<svg viewBox="0 0 120 120" aria-hidden="true">' +
+    '<defs><path id="ring" d="M60,60 m-44,0 a44,44 0 1,1 88,0 a44,44 0 1,1 -88,0"/></defs>' +
+    '<circle cx="60" cy="60" r="57" fill="none" stroke="currentColor" stroke-width="2.4"/>' +
+    '<circle cx="60" cy="60" r="52.5" fill="none" stroke="var(--brass)" stroke-width=".8"/>' +
+    '<circle cx="60" cy="60" r="35.5" fill="none" stroke="currentColor" stroke-width="1.2"/>' +
+    '<text font-family="IBM Plex Sans Condensed, Arial Narrow, sans-serif" font-weight="600" font-size="8.4" letter-spacing="2.1" fill="currentColor">' +
+    '<textPath href="#ring" startOffset="2%">DHAKA INTERNATIONAL UNIVERSITY • EST. 1995 •</textPath></text>' +
+    '<text x="60" y="66.5" text-anchor="middle" font-family="Marcellus, Georgia, serif" font-size="25" letter-spacing="1.5" fill="currentColor">DIU</text>' +
+    '<path d="M44 74 h32" stroke="var(--brass)" stroke-width="1"/>' +
+    '<text x="60" y="83" text-anchor="middle" font-family="IBM Plex Sans Condensed, Arial Narrow, sans-serif" font-weight="600" font-size="6.2" letter-spacing="1.8" fill="currentColor">BBA</text>' +
+    '</svg>';
+
+  function store(get, val) {
+    try {
+      if (get) return JSON.parse(localStorage.getItem(KEY) || "null");
+      if (val === null) localStorage.removeItem(KEY); else localStorage.setItem(KEY, JSON.stringify(val));
+    } catch (e) { return null; }
+  }
+
+  var state = store(true) || {};
+
+  // ----- restore saved content -----
+  if (state.html) {
+    var content = sheet.querySelector(".content");
+    content.innerHTML = state.html;
+  }
+  function renderLogo() {
+    var slot = document.getElementById("logoSlot");
+    slot.innerHTML = state.logo ? '<img alt="University logo" src="' + state.logo + '">' : SEAL;
+    sheet.querySelector(".watermark").innerHTML = state.logo ? '<img alt="" style="width:100%;height:100%;object-fit:contain" src="' + state.logo + '">' : SEAL;
+  }
+  function applyColour(ink, brass) {
+    root.style.setProperty("--ink", ink);
+    root.style.setProperty("--brass", brass);
+    document.querySelectorAll(".swatch").forEach(function (s) {
+      s.setAttribute("aria-pressed", String(s.dataset.ink === ink));
+    });
+  }
+  applyColour(state.ink || "#0f4c3a", state.brass || "#a8843a");
+  renderLogo();
+
+  // ----- saving -----
+  var timer;
+  function save() {
+    clearTimeout(timer);
+    timer = setTimeout(function () {
+      var content = sheet.querySelector(".content").cloneNode(true);
+      var slot = content.querySelector("#logoSlot");
+      if (slot) slot.innerHTML = "";
+      state.html = content.innerHTML;
+      store(false, state);
+    }, 250);
+  }
+
+  // Treat a field that only holds a stray <br> as empty, so its hint shows again.
+  sheet.addEventListener("input", function (e) {
+    var el = e.target.closest && e.target.closest(".ed");
+    if (el && el.textContent.trim() === "") el.innerHTML = "";
+    save();
+    fit();
+  });
+  // Paste as plain text so fonts on the page stay consistent.
+  sheet.addEventListener("paste", function (e) {
+    if (!e.target.closest || !e.target.closest(".ed")) return;
+    e.preventDefault();
+    var text = (e.clipboardData || window.clipboardData).getData("text/plain");
+    document.execCommand("insertText", false, text.replace(/\s*\n\s*/g, " "));
+  });
+  // Enter moves to the next field instead of adding a line break (except in the topic).
+  sheet.addEventListener("keydown", function (e) {
+    var el = e.target.closest && e.target.closest(".ed");
+    if (!el || e.key !== "Enter" || el.classList.contains("topic")) return;
+    e.preventDefault();
+    var all = Array.prototype.slice.call(sheet.querySelectorAll(".ed"));
+    var next = all[all.indexOf(el) + 1];
+    if (next) next.focus();
+  });
+
+  // ----- rows -----
+  function decorateRows() {
+    sheet.querySelectorAll(".row").forEach(function (row) {
+      if (row.querySelector(".del")) return;
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "del"; b.textContent = "×"; b.setAttribute("aria-label", "Remove this row");
+      row.appendChild(b);
+    });
+  }
+  decorateRows();
+  sheet.addEventListener("click", function (e) {
+    var del = e.target.closest(".del");
+    if (del) { del.closest(".row").remove(); save(); return; }
+    var add = e.target.closest(".add");
+    if (add) {
+      var rows = add.parentElement.querySelector(".rows");
+      rows.appendChild(document.getElementById("rowTpl").content.firstElementChild.cloneNode(true));
+      decorateRows();
+      var k = rows.lastElementChild.querySelector(".k");
+      k.focus();
+      document.getSelection().selectAllChildren(k);
+      save();
+    }
+  });
+
+  // ----- colours -----
+  document.querySelectorAll(".swatch").forEach(function (s) {
+    s.addEventListener("click", function () {
+      state.ink = s.dataset.ink; state.brass = s.dataset.brass;
+      applyColour(state.ink, state.brass);
+      store(false, state);
+    });
+  });
+
+  // ----- logo -----
+  var file = document.getElementById("logoFile");
+  function pickLogo() { file.click(); }
+  document.getElementById("logoBtn").addEventListener("click", pickLogo);
+  document.getElementById("logo").addEventListener("click", pickLogo);
+  file.addEventListener("change", function () {
+    var f = file.files && file.files[0];
+    if (!f) return;
+    var reader = new FileReader();
+    reader.onload = function () {
+      var img = new Image();
+      img.onload = function () {
+        // Shrink large logos so they fit in browser storage.
+        var max = 600, s = Math.min(1, max / Math.max(img.width, img.height));
+        var c = document.createElement("canvas");
+        c.width = Math.round(img.width * s); c.height = Math.round(img.height * s);
+        c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+        state.logo = c.toDataURL("image/png");
+        renderLogo();
+        store(false, state);
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(f);
+    file.value = "";
+  });
+
+  // ----- reset -----
+  var resetWrap = document.getElementById("resetWrap"), confirmWrap = document.getElementById("confirmWrap");
+  document.getElementById("resetBtn").addEventListener("click", function () {
+    resetWrap.classList.add("hide"); confirmWrap.classList.remove("hide");
+  });
+  document.getElementById("resetNo").addEventListener("click", function () {
+    confirmWrap.classList.add("hide"); resetWrap.classList.remove("hide");
+  });
+  document.getElementById("resetYes").addEventListener("click", function () {
+    store(false, null); location.reload();
+  });
+
+  // ----- print -----
+  document.getElementById("printBtn").addEventListener("click", function () {
+    if (document.activeElement) document.activeElement.blur();
+    window.print();
+  });
+
+  // ----- fit the A4 sheet to the screen width -----
+  function fit() {
+    var st = getComputedStyle(holder.parentElement);
+    var avail = holder.parentElement.clientWidth - parseFloat(st.paddingLeft) - parseFloat(st.paddingRight);
+    var w = sheet.offsetWidth, h = sheet.offsetHeight;
+    var s = Math.min(1, avail / w);
+    sheet.style.transform = "scale(" + s + ")";
+    holder.style.width = w * s + "px";
+    holder.style.height = h * s + "px";
+  }
+  window.addEventListener("resize", fit);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+  fit();
+})();
+</script>
+</body>
+</html>
