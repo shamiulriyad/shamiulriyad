@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Decisions and Open Questions</title>
+<!-- One-page summary. Rebuilt with the main document by: python3 research-docs/build.py -->
+<style>
+  :root { --ink:#1c2430; --muted:#5b6573; --accent:#1f3a5f; --tint:#f1f5f9; --rule:#c9d1db; --unc:#b7791f; --unc-bg:#fbf3e4; }
+  @page { size: A4 portrait; margin: 0; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: #fff; }
+  body { color: var(--ink); font-family: "Liberation Serif", "Times New Roman", serif; font-size: 9.2pt; line-height: 1.3;
+         -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .page { width: 210mm; height: 297mm; padding: 10mm 12mm 9mm; overflow: hidden; display: flex; flex-direction: column; }
+  .sans, h1, h2, table { font-family: "Liberation Sans", Arial, sans-serif; }
+  .kicker { font-family: "Liberation Sans", Arial, sans-serif; font-size: 7.4pt; letter-spacing: .07em; text-transform: uppercase;
+            color: var(--muted); margin: 0 0 1mm; display: flex; justify-content: space-between; }
+  h1 { font-size: 14.5pt; color: var(--accent); margin: 0 0 1mm; }
+  .sub { font-family: "Liberation Sans", Arial, sans-serif; font-size: 8.2pt; color: var(--muted); margin: 0 0 3mm;
+         padding-bottom: 2mm; border-bottom: 1.1pt solid var(--accent); }
+  h2 { font-size: 9.6pt; color: var(--accent); margin: 2.6mm 0 1.2mm; }
+  table { width: 100%; border-collapse: collapse; font-size: 7.6pt; line-height: 1.28; }
+  th { text-align: left; color: var(--accent); background: var(--tint); border-top: .9pt solid var(--accent);
+       border-bottom: .5pt solid var(--accent); padding: .9mm 1.4mm; }
+  td { vertical-align: top; padding: .75mm 1.4mm; border-bottom: .4pt solid #e3e8ee; }
+  tr:last-child td { border-bottom: .9pt solid var(--accent); }
+  td:first-child { font-weight: 700; white-space: nowrap; }
+  ol { margin: 0; padding-left: 5mm; }
+  li { margin-bottom: .7mm; }
+  .grid { display: grid; grid-template-columns: 1.1fr 1fr; column-gap: 6mm; }
+  .box { background: var(--unc-bg); border-left: 2pt solid var(--unc); padding: 1.6mm 2.6mm; margin-top: 2.4mm; }
+  .box b { color: var(--unc); font-family: "Liberation Sans", Arial, sans-serif; }
+  .foot { margin-top: auto; font-family: "Liberation Sans", Arial, sans-serif; font-size: 7pt; color: var(--muted);
+          border-top: .5pt solid var(--rule); padding-top: 1.2mm; }
+</style>
+</head>
+<body>
+<div class="page">
+  <p class="kicker"><span>One-page summary · companion to the technical document</span><span>October 2026 · planning stage, no results</span></p>
+  <h1>Technical decisions and unresolved questions</h1>
+  <p class="sub">Defect-Aware Multi-Die Image Fusion for Semiconductor Reference Reconstruction · Md Shamiul Islam Riyad · Section letters and [n] refer to the technical document.</p>
+
+  <h2>Decisions taken (recommendations; each can be revisited)</h2>
+  <table>
+    <thead><tr><th style="width:17%">Topic</th><th style="width:38%">Decision</th><th>Reason</th></tr></thead>
+    <tbody>
+      <tr><td>Scenario</td><td>Same-design dies with complementary defects (S1) only</td><td>Repeated views of one die cannot remove its defects; wafer maps contain no surface images (B.1)</td></tr>
+      <tr><td>Output</td><td>Candidate reference R̂ plus masks, support S, uncertainty U, abstention A, provenance</td><td>Users need to see where the reference is trustworthy; no claim of physical repair or electrical function</td></tr>
+      <tr><td>Strategy</td><td>Stage 1 classical → Stage 2 learned evidence → Stage 3 optional fill</td><td>A transparent baseline first; learned parts must beat it on held-out designs (F.4)</td></tr>
+      <tr><td>Registration</td><td>Phase correlation, then ECC (Euclidean/affine), defect-masked second pass</td><td>Sub-pixel, gain-invariant, low risk of absorbing defects; SIFT/ORB only with distinctive features (F.1)</td></tr>
+      <tr><td>Defect evidence</td><td>Cross-die MAD z-score baseline; U-Net, PatchCore or PaDiM added in Stage 2, calibrated</td><td>Pixel-level evidence is required; image-level classifiers give no masks (F.2)</td></tr>
+      <tr><td>Fusion</td><td>Weighted median over reliable dies; structure-aware single-source fallback</td><td>Robust and traceable; a plain median blurs edges, mixes structures, breaks down at ≥ 50% (G.4)</td></tr>
+      <tr><td>Missing evidence</td><td>Abstain (NaN + mask) when S &lt; s_min (initially 2) or SE is too large; learned fill off by default</td><td>Avoids hallucinated circuitry [44]; systematic defects are unrecoverable from images alone</td></tr>
+      <tr><td>Diffusion</td><td>Pretrained only, experiment only, outputs flagged; no training from scratch</td><td>Data far too small; generative fills optimise plausibility, not truth (F.3)</td></tr>
+      <tr><td>Data</td><td>Public data for evidence; synthetic benchmark for main metrics; real same-design groups for validity</td><td>No public dataset has same-design groups with a clean reference of the same die (D.1)</td></tr>
+      <tr><td>Splits</td><td>By design / layout family / acquisition group, with hashed manifests</td><td>Prevents near-duplicate leakage between train and test (D.6)</td></tr>
+      <tr><td>Primary metrics</td><td>Defect leakage DLR, silent pass-through SPR, edge F-score, PSNR on common pixels, with coverage</td><td>Fidelity alone rewards blur; abstention must not inflate accuracy (J.4)</td></tr>
+      <tr><td>Hardware</td><td>CPU for Stage 1; 8–12 GB GPU for training; 16–24 GB+ only for large or diffusion work</td><td>Estimates; confirm with a profiling run before buying or booking (H)</td></tr>
+    </tbody>
+  </table>
+
+  <div class="grid">
+    <div>
+      <h2>Unresolved questions</h2>
+      <ol>
+        <li><b>Novelty.</b> Do published or patented methods already combine per-die reliability, weighted fusion and explicit abstention? Industrial multi-die median and computed references exist [15–17].</li>
+        <li><b>Real data.</b> Can a lab or industry partner provide 4–5-die same-design SEM groups with verified clean or design-rendered references, under what licence or NDA?</li>
+        <li><b>Registration on real SEM.</b> Is sub-pixel accuracy reachable under charging, drift and scan distortion? How often do periodic layouts cause one-pitch errors?</li>
+        <li><b>Process variation.</b> Will normal die-to-die variation be flagged as defects, cutting support and coverage?</li>
+        <li><b>Detector transfer (H5).</b> How far do U-Net, PatchCore and PaDiM trained on Carinthia-S, MVTec or synthetic data transfer to the target layer?</li>
+        <li><b>Repeated defects.</b> Without design data, how can defects shared by all dies be detected at all?</li>
+        <li><b>Thresholds.</b> Best s_min, τ_r, κ and leakage tolerance τ_ℓ; to be set on validation designs.</li>
+        <li><b>Synthetic realism.</b> Which defect and imaging models make synthetic rankings predictive of real ones?</li>
+      </ol>
+    </div>
+    <div>
+      <h2>Facts still to confirm</h2>
+      <ol>
+        <li>Licences of Carinthia (not found), Carinthia-S (third-party: CC BY 4.0), VisA (conflicting), WM-811K and MixedWM38.</li>
+        <li>Carinthia record identity (concept vs. version DOI); Carinthia-S resolution and class semantics.</li>
+        <li>Missing DOIs or volumes: PaDiM, DRAEM, LaMa proceedings; Farsiu et al.; year of [10]; MixedWM38 paper.</li>
+        <li>Every link opened once by hand (the build environment could not reach publisher sites).</li>
+      </ol>
+      <div class="box"><b>Cannot be validated without real data.</b> Without verified clean references, PSNR, SSIM, leakage and edge metrics cannot be computed on real images. Without real same-design groups, every result stays synthetic. Without design data, defects shared by all dies cannot be told apart from intended structure. Electrical function is never validated.</div>
+    </div>
+  </div>
+
+  <p class="foot">Planning document: no experiments have been run and no results, scores or hardware benchmarks are reported. Thresholds are initial values to be tuned on validation designs.</p>
+</div>
+</body>
+</html>

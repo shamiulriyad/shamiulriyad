@@ -1,0 +1,92 @@
+/* Print stylesheet for the technical document (rendered by headless Chromium). */
+:root {
+  --ink: #1c2430; --muted: #5b6573; --accent: #1f3a5f; --rule: #c9d1db;
+  --tint: #f1f5f9; --defect: #c0392b; --uncertain: #b7791f;
+}
+@page { size: A4; margin: 15mm 15mm 15mm 15mm; }
+html, body { background: #ffffff; }
+body {
+  color: var(--ink);
+  font-family: "Liberation Serif", "Times New Roman", serif;
+  font-size: 10pt; line-height: 1.32;
+  max-width: none; margin: 0; padding: 0;
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  hyphens: auto;
+}
+a { color: var(--accent); text-decoration: none; overflow-wrap: anywhere; }
+p { margin: 0 0 1.8mm; text-align: justify; }
+ul, ol { margin: 0 0 2.4mm; padding-left: 6mm; }
+li { margin-bottom: 0.8mm; }
+
+/* Title page */
+#title-block-header {
+  break-after: page; padding-top: 70mm; border-top: 3pt solid var(--accent);
+}
+#title-block-header .title {
+  font-family: "Liberation Serif", serif; font-size: 25pt; line-height: 1.15;
+  color: var(--accent); margin: 8mm 0 4mm; font-weight: 700;
+}
+#title-block-header .subtitle {
+  font-family: "Liberation Sans", Arial, sans-serif; font-size: 14pt; color: var(--ink); margin: 0 0 16mm;
+}
+#title-block-header .author, #title-block-header .date {
+  font-family: "Liberation Sans", Arial, sans-serif; font-size: 11pt; color: var(--muted); margin: 0 0 2mm; text-align: left;
+}
+
+/* Contents */
+nav#TOC { break-after: page; font-family: "Liberation Sans", Arial, sans-serif; font-size: 10pt; }
+nav#TOC::before { content: "Contents"; display: block; font-size: 16pt; font-weight: 700; color: var(--accent); margin-bottom: 4mm; }
+nav#TOC > ul { column-count: 2; column-gap: 8mm; }
+  nav#TOC > ul > li { break-inside: avoid; }
+  nav#TOC ul { list-style: none; padding-left: 0; margin: 0; }
+nav#TOC > ul > li { margin: 1.6mm 0 0.6mm; font-weight: 700; }
+nav#TOC ul ul { padding-left: 6mm; }
+nav#TOC ul ul li { font-weight: 400; margin: 0.3mm 0; color: var(--muted); }
+nav#TOC a { color: var(--ink); }
+
+/* Headings */
+h1, h2, h3 { font-family: "Liberation Sans", Arial, sans-serif; color: var(--accent); break-after: avoid; }
+h1 { font-size: 15.5pt; margin: 7mm 0 3mm; padding-bottom: 1.2mm; border-bottom: 1pt solid var(--accent); }
+h1.break { break-before: page; }
+h1.unnumbered:first-of-type { break-before: auto; }
+h2 { font-size: 12pt; margin: 4mm 0 1.6mm; }
+h3 { font-size: 11pt; margin: 4mm 0 1.5mm; color: var(--ink); }
+#references, h2#references { break-before: auto; }
+
+/* Tables */
+table {
+  width: 100%; border-collapse: collapse; margin: 2mm 0 4mm;
+  font-family: "Liberation Sans", Arial, sans-serif; font-size: 7.9pt; line-height: 1.26;
+  break-inside: auto;
+}
+thead th {
+  text-align: left; vertical-align: bottom; color: var(--accent); font-weight: 700;
+  border-top: 1pt solid var(--accent); border-bottom: 0.6pt solid var(--accent); padding: 1.3mm 1.6mm;
+  background: var(--tint);
+}
+tbody td { vertical-align: top; padding: 0.8mm 1.4mm; border-bottom: 0.4pt solid #dfe5ec; }
+tbody tr:last-child td { border-bottom: 1pt solid var(--accent); }
+tr { break-inside: avoid; }
+table col { width: auto !important; }
+
+/* Figures */
+figure { margin: 2mm 0 4mm; break-inside: avoid; text-align: center; }
+figure img { max-width: 100%; height: auto; }
+figcaption {
+  font-family: "Liberation Sans", Arial, sans-serif; font-size: 8.6pt; color: var(--muted);
+  text-align: left; margin-top: 2mm; line-height: 1.35;
+}
+
+/* Code and maths */
+pre, code { font-family: "Liberation Mono", "DejaVu Sans Mono", monospace; }
+pre {
+  font-size: 7.9pt; line-height: 1.32; background: #f6f8fa; border: 0.5pt solid #dfe5ec;
+  border-left: 2pt solid var(--accent); padding: 2.4mm 3mm; white-space: pre-wrap; break-inside: avoid;
+}
+p code, li code, td code { font-size: 8.8pt; background: #f2f4f7; padding: 0 0.6mm; }
+mjx-container[display="true"] { margin: 2.5mm 0 !important; overflow-x: visible; }
+mjx-container { font-size: 96% !important; }
+
+/* Reference list */
+#references ~ p { text-align: left; padding-left: 9mm; text-indent: -9mm; font-size: 9.2pt; margin-bottom: 1.4mm; }
+strong { color: #111820; }
