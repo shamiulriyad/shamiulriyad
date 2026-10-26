@@ -14,13 +14,13 @@ const name = 'Defect_Aware_MultiDie_Fusion_Proposal';
   await page.emulateMedia({ media: 'print' });
   await page.evaluate(() => document.fonts.ready);
 
-  // Text that does not fit flows into a third column (horizontal overflow) or pushes
-  // the references past the bottom margin.
+  // The .page box is exactly one A4 sheet with hidden overflow, so content that does not
+  // fit shows up as scroll overflow or pushes the references past the bottom margin.
+  await page.waitForFunction(() => [...document.images].every((i) => i.complete && i.naturalWidth > 0));
   const issues = await page.evaluate(() => {
     const out = [];
     const pg = document.querySelector('.page');
-    const cols = document.querySelector('.cols');
-    if (cols.scrollWidth > cols.clientWidth + 1) out.push('body text overflows the two columns');
+    if (pg.scrollHeight > pg.clientHeight + 1) out.push(`content is ${pg.scrollHeight - pg.clientHeight}px too tall`);
     const limit = pg.getBoundingClientRect().bottom - parseFloat(getComputedStyle(pg).paddingBottom);
     if (document.querySelector('footer.refs').getBoundingClientRect().bottom > limit + 1) out.push('references run past the bottom margin');
     return out;

@@ -6,342 +6,178 @@
 <title>Multi-Die Reference Reconstruction</title>
 <!--
   Editable source for the one-page research proposal.
-  Edit the text below, then rebuild the PDF with:
-      python3 research-proposal/build_pdf.py
-  The build script fails if the content no longer fits on one A4 page.
+  Text: edit below.  Figure: edit make_figure.py, then run  python3 research-proposal/make_figure.py
+  PDF:  node research-proposal/build.cjs   (fails if the page no longer fits on one A4 sheet)
 -->
 <style>
   :root {
     --ink: #1c2430;
     --muted: #5b6573;
     --accent: #1f3a5f;
-    --accent-soft: #eef2f7;
+    --tint: #f1f5f9;
     --rule: #c9d1db;
-    --defect: #b03a2e;
+    --defect: #c0392b;
+    --uncertain: #b7791f;
   }
   @page { size: A4 portrait; margin: 0; }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; background: #ffffff; }
   body {
     color: var(--ink);
-    font-family: "Liberation Serif", "Times New Roman", "Times", serif;
-    font-size: 9.3pt;
-    line-height: 1.26;
+    font-family: "Liberation Serif", "Times New Roman", serif;
+    font-size: 9.4pt;
+    line-height: 1.24;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
   .page {
-    width: 210mm;
-    height: 297mm;
-    padding: 9.5mm 11.5mm 8mm 11.5mm;
+    width: 210mm; height: 297mm;
+    padding: 8.5mm 10.5mm 7.5mm;
     overflow: hidden;
-    display: flex;
-    flex-direction: column;
+    display: flex; flex-direction: column;
   }
   a { color: var(--accent); text-decoration: none; border-bottom: 0.4pt solid #9fb0c6; }
+  .sans { font-family: "Liberation Sans", Arial, sans-serif; }
 
   /* Header */
-  header { border-bottom: 1.1pt solid var(--accent); padding-bottom: 2.2mm; margin-bottom: 2.4mm; }
+  header { border-bottom: 1.1pt solid var(--accent); padding-bottom: 1.8mm; margin-bottom: 2mm; }
   .kicker {
-    font-family: "Inter", "Liberation Sans", sans-serif;
-    font-size: 7.2pt; letter-spacing: 0.08em; text-transform: uppercase;
-    color: var(--muted); margin: 0 0 1mm;
-    display: flex; justify-content: space-between; gap: 4mm;
+    font-family: "Liberation Sans", Arial, sans-serif; font-size: 7.4pt; letter-spacing: 0.07em;
+    text-transform: uppercase; color: var(--muted); margin: 0 0 1mm;
+    display: flex; justify-content: space-between;
   }
-  .kicker span { white-space: nowrap; }
-  .kicker .status { color: var(--defect); letter-spacing: 0.04em; }
-  h1 {
-    font-size: 14.2pt; line-height: 1.15; white-space: nowrap; margin: 0 0 1.2mm; font-weight: 700; color: var(--accent);
-  }
+  .byline .status { color: var(--defect); font-weight: 500; }
+  h1 { font-size: 14.3pt; white-space: nowrap; line-height: 1.15; margin: 0 0 1.2mm; color: var(--accent); font-weight: 700; }
   .byline {
-    font-family: "Inter", "Liberation Sans", sans-serif;
-    font-size: 7.6pt; color: var(--muted); margin: 0;
-    display: flex; justify-content: space-between; gap: 4mm;
+    font-family: "Liberation Sans", Arial, sans-serif; font-size: 8pt; color: var(--muted); margin: 0;
+    display: flex; justify-content: space-between;
   }
   .byline strong { color: var(--ink); font-weight: 600; }
 
-  /* Figures */
-  figure { margin: 0; }
-  figcaption {
-    font-family: "Inter", "Liberation Sans", sans-serif;
-    font-size: 6.9pt; line-height: 1.3; color: var(--muted); margin-top: 0.8mm;
+  /* Research question */
+  .rq {
+    background: var(--tint); border-left: 2.2pt solid var(--accent);
+    padding: 1.3mm 3mm 1.4mm; margin: 0 0 1.8mm;
   }
-  figcaption b { color: var(--ink); font-weight: 600; }
-  .fig-pipeline { margin-bottom: 2.6mm; }
-  .fig-pipeline svg { width: 100%; height: auto; display: block; }
-  .fig-example { margin: 1.2mm 0 1.6mm; break-inside: avoid; }
-  .fig-example svg { width: 100%; height: auto; display: block; }
+  .rq .lbl { margin-right: 1.5mm; font-style: normal; font-family: "Liberation Sans", Arial, sans-serif; font-size: 7.4pt; font-weight: 600;
+             letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); }
+  .rq .hyp { font-style: normal; font-size: 8.4pt; color: var(--muted); }
+  .rq p { margin: 0; font-size: 9.6pt; line-height: 1.28; font-style: italic; }
 
-  /* Body columns */
-  .cols { column-count: 2; column-gap: 6mm; column-rule: 0.4pt solid #e3e8ee; flex: 1 1 auto; min-height: 0; column-fill: auto; }
   h2 {
-    font-family: "Inter", "Liberation Sans", sans-serif;
-    font-size: 8.4pt; font-weight: 600; color: var(--accent);
-    letter-spacing: 0.02em; margin: 1.9mm 0 0.6mm; break-after: avoid;
+    font-family: "Liberation Sans", Arial, sans-serif; font-size: 8.8pt; font-weight: 600;
+    color: var(--accent); margin: 0 0 0.8mm;
   }
-  h2:first-child { margin-top: 0; }
-  h2 .n { display: inline-block; min-width: 4.2mm; color: var(--muted); font-weight: 500; }
-  p { margin: 0 0 1.1mm; text-align: justify; hyphens: auto; }
-  ul.obj, ul.eval { margin: 0 0 1mm; padding: 0; list-style: none; }
-  ul.obj li, ul.eval li { margin: 0 0 0.6mm; padding-left: 5.6mm; text-indent: -5.6mm; text-align: justify; hyphens: auto; }
-  .tag {
-    font-family: "Inter", "Liberation Sans", sans-serif; font-size: 7pt; font-weight: 600;
-    color: var(--accent); display: inline-block; width: 5.6mm; text-indent: 0;
-  }
-  ul.eval li .tag { width: auto; margin-right: 1mm; }
-  ul.eval li { padding-left: 2.6mm; text-indent: -2.6mm; text-align: left; }
-  ul.eval li::before { content: "▪"; color: var(--accent); display: inline-block; width: 2.6mm; text-indent: 0; font-size: 6.5pt; }
+  h2 .n { color: var(--muted); font-weight: 500; margin-right: 1.4mm; }
+  p { margin: 0 0 1.2mm; }
+  .lead p { margin-bottom: 0.8mm; }
 
+  /* Figure */
+  figure { margin: 1mm 0 1.6mm; }
+  figure img { width: 100%; height: auto; display: block; }
+  figcaption {
+    font-size: 8.5pt; line-height: 1.3; color: var(--ink); margin-top: 1.2mm;
+    padding-top: 1mm; border-top: 0.4pt solid var(--rule);
+  }
+  figcaption b { font-family: "Liberation Sans", Arial, sans-serif; font-size: 8pt; color: var(--accent); }
+
+  /* Two short columns */
+  .grid { display: grid; grid-template-columns: 1fr 1fr; column-gap: 7mm; margin-bottom: 1mm; }
+  ol.obj { margin: 0 0 1.3mm; padding: 0; list-style: none; counter-reset: o; }
+  ol.obj.two { display: grid; grid-template-columns: 1fr 1fr; column-gap: 5mm; grid-auto-flow: row; }
+  ol.obj li { counter-increment: o; position: relative; padding-left: 6mm; margin-bottom: 0.7mm; }
+  ol.obj li::before {
+    content: "O" counter(o); position: absolute; left: 0; top: 0.55mm;
+    font-family: "Liberation Sans", Arial, sans-serif; font-size: 7.6pt; font-weight: 600; color: var(--accent);
+  }
+  ul.ev { margin: 0 0 1mm; padding: 0; list-style: none; }
+  ul.ev li { position: relative; padding-left: 3mm; margin-bottom: 0.5mm; }
+  ul.ev li::before { content: ""; position: absolute; left: 0.4mm; top: 1.7mm; width: 1.2mm; height: 1.2mm; background: var(--accent); }
+  .k { font-family: "Liberation Sans", Arial, sans-serif; font-size: 8pt; font-weight: 600; }
+  .limit { border-left: 2pt solid var(--uncertain); padding-left: 2.4mm; }
+
+  /* Dataset table */
   table.data {
-    width: 100%; border-collapse: collapse; margin: 0.6mm 0 1.2mm;
-    font-family: "Inter", "Liberation Sans", sans-serif; font-size: 6.75pt; line-height: 1.25;
-    break-inside: avoid;
+    width: 100%; border-collapse: collapse; margin: 0.4mm 0 1.2mm;
+    font-family: "Liberation Sans", Arial, sans-serif; font-size: 7.4pt; line-height: 1.25;
   }
   table.data th {
-    text-align: left; font-weight: 600; color: var(--accent);
-    border-top: 0.8pt solid var(--accent); border-bottom: 0.5pt solid var(--rule); padding: 0.6mm 1mm 0.6mm 0;
+    text-align: left; font-weight: 600; color: var(--accent); vertical-align: bottom;
+    border-top: 0.9pt solid var(--accent); border-bottom: 0.5pt solid var(--rule); padding: 0.7mm 1.6mm 0.7mm 0;
   }
-  table.data td { vertical-align: top; border-bottom: 0.4pt solid #e3e8ee; padding: 0.7mm 1mm 0.7mm 0; }
-  table.data tr:last-child td { border-bottom: 0.8pt solid var(--accent); }
-  table.data td.no { color: var(--defect); font-weight: 600; white-space: nowrap; }
-  .note { font-size: 8.3pt; color: var(--ink); }
+  table.data td { vertical-align: top; border-bottom: 0.4pt solid #e3e8ee; padding: 0.6mm 1.6mm 0.6mm 0; }
+  table.data tr:last-child td { border-bottom: 0.9pt solid var(--accent); }
+  table.data td.no { color: var(--defect); font-weight: 600; }
+  table.data td.c { white-space: nowrap; }
 
   /* References */
-  footer.refs {
-    border-top: 0.8pt solid var(--accent); padding-top: 1.4mm; margin-top: 1.6mm;
-    font-size: 7.3pt; line-height: 1.3;
-  }
-  footer.refs h2 { margin: 0 0 0.6mm; }
-  footer.refs ol { margin: 0; padding: 0; list-style: none; column-count: 2; column-gap: 6mm; }
-  footer.refs li { padding-left: 4.4mm; text-indent: -4.4mm; margin-bottom: 0.5mm; break-inside: avoid; }
-  footer.refs li .rn { display: inline-block; width: 4.4mm; text-indent: 0; color: var(--accent); font-weight: 700; }
-  .disclaimer {
-    font-family: "Inter", "Liberation Sans", sans-serif; font-size: 6.6pt; color: var(--muted);
-    margin-top: 1mm; text-align: left;
-  }
+  footer.refs { border-top: 0.8pt solid var(--accent); padding-top: 1.3mm; margin-top: auto; font-size: 7.8pt; line-height: 1.25; }
+  footer.refs ol { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: 1fr 1fr; column-gap: 7mm; row-gap: 0.6mm; }
+  footer.refs li { padding-left: 5mm; text-indent: -5mm; }
+  footer.refs .rn { display: inline-block; width: 5mm; text-indent: 0; color: var(--accent); font-weight: 700; }
 </style>
 </head>
 <body>
 <div class="page">
 
   <header>
-    <p class="kicker"><span>Research proposal · Computer vision for inspection</span><span class="status">Proposed direction · not yet built or validated</span></p>
     <h1>Defect-Aware Multi-Die Image Fusion for Semiconductor Reference Reconstruction</h1>
-    <p class="byline">
-      <span><strong>Md Shamiul Islam Riyad</strong> · B.Sc. in CSE, United International University</span>
-      <span>October 2026</span>
-    </p>
+    <p class="byline"><span><strong>Md Shamiul Islam Riyad</strong> · B.Sc. CSE, United International University · October 2026</span><span class="status">Proposed direction · not yet built or validated</span></p>
   </header>
 
-  <!-- Fig. 1: process diagram (vector) -->
-  <figure class="fig-pipeline">
-    <svg viewBox="0 0 930 88" role="img" aria-label="Pipeline: input image group, preprocessing and registration, defect and reliability masks, confidence-weighted fusion, candidate reference, uncertainty map and evaluation">
-      <defs>
-        <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
-          <path d="M0,0 L10,5 L0,10 z" fill="#5b6573"/>
-        </marker>
-      </defs>
-      <g font-family="Inter, 'Liberation Sans', sans-serif" text-anchor="middle">
-        <!-- box width 138, gap 20 -->
-        <g>
-          <rect x="1" y="2" width="137" height="84" rx="6" fill="#ffffff" stroke="#9fb0c6" stroke-width="1.4"/>
-          <text x="69.5" y="17" font-size="10" letter-spacing="1.2" fill="#5b6573">STEP 1</text>
-          <text x="69.5" y="34" font-size="14.5" font-weight="600" fill="#1c2430">Input group</text>
-          <text x="69.5" y="62" font-size="12" fill="#5b6573">4–5 same-design</text>
-          <text x="69.5" y="77" font-size="12" fill="#5b6573">die images</text>
-        </g>
-        <g transform="translate(158,0)">
-          <rect x="1" y="2" width="137" height="84" rx="6" fill="#ffffff" stroke="#9fb0c6" stroke-width="1.4"/>
-          <text x="69.5" y="17" font-size="10" letter-spacing="1.2" fill="#5b6573">STEP 2</text>
-          <text x="69.5" y="34" font-size="14.5" font-weight="600" fill="#1c2430">Preprocess</text>
-          <text x="69.5" y="50" font-size="14.5" font-weight="600" fill="#1c2430">&amp; register</text>
-          <text x="69.5" y="66" font-size="12" fill="#5b6573">normalise, align,</text>
-          <text x="69.5" y="80" font-size="12" fill="#5b6573">check residuals</text>
-        </g>
-        <g transform="translate(316,0)">
-          <rect x="1" y="2" width="137" height="84" rx="6" fill="#ffffff" stroke="#9fb0c6" stroke-width="1.4"/>
-          <text x="69.5" y="17" font-size="10" letter-spacing="1.2" fill="#5b6573">STEP 3</text>
-          <text x="69.5" y="34" font-size="14.5" font-weight="600" fill="#1c2430">Defect &amp;</text>
-          <text x="69.5" y="50" font-size="14.5" font-weight="600" fill="#1c2430">reliability masks</text>
-          <text x="69.5" y="66" font-size="12" fill="#5b6573">anomaly score +</text>
-          <text x="69.5" y="80" font-size="12" fill="#5b6573">cross-die agreement</text>
-        </g>
-        <g transform="translate(474,0)">
-          <rect x="1" y="2" width="137" height="84" rx="6" fill="#ffffff" stroke="#9fb0c6" stroke-width="1.4"/>
-          <text x="69.5" y="17" font-size="10" letter-spacing="1.2" fill="#5b6573">STEP 4</text>
-          <text x="69.5" y="34" font-size="14.5" font-weight="600" fill="#1c2430">Confidence-</text>
-          <text x="69.5" y="50" font-size="14.5" font-weight="600" fill="#1c2430">weighted fusion</text>
-          <text x="69.5" y="66" font-size="12" fill="#5b6573">robust per-pixel</text>
-          <text x="69.5" y="80" font-size="12" fill="#5b6573">estimate</text>
-        </g>
-        <g transform="translate(632,0)">
-          <rect x="1" y="2" width="137" height="84" rx="6" fill="#eef2f7" stroke="#1f3a5f" stroke-width="1.4"/>
-          <text x="69.5" y="17" font-size="10" letter-spacing="1.2" fill="#1f3a5f">STEP 5 · OUTPUT</text>
-          <text x="69.5" y="34" font-size="14.5" font-weight="600" fill="#1c2430">Candidate</text>
-          <text x="69.5" y="50" font-size="14.5" font-weight="600" fill="#1c2430">reference image</text>
-          <text x="69.5" y="66" font-size="12" fill="#5b6573">digital estimate of</text>
-          <text x="69.5" y="80" font-size="12" fill="#5b6573">defect-free pattern</text>
-        </g>
-        <g transform="translate(790,0)">
-          <rect x="1" y="2" width="137" height="84" rx="6" fill="#eef2f7" stroke="#1f3a5f" stroke-width="1.4"/>
-          <text x="69.5" y="17" font-size="10" letter-spacing="1.2" fill="#1f3a5f">STEP 6 · OUTPUT</text>
-          <text x="69.5" y="34" font-size="14.5" font-weight="600" fill="#1c2430">Uncertainty map</text>
-          <text x="69.5" y="50" font-size="14.5" font-weight="600" fill="#1c2430">&amp; evaluation</text>
-          <text x="69.5" y="66" font-size="12" fill="#5b6573">low-support pixels</text>
-          <text x="69.5" y="80" font-size="12" fill="#5b6573">flagged; metrics</text>
-        </g>
-      </g>
-      <g stroke="#5b6573" stroke-width="1.5" marker-end="url(#ah)">
-        <line x1="140" y1="44" x2="157" y2="44"/>
-        <line x1="298" y1="44" x2="315" y2="44"/>
-        <line x1="456" y1="44" x2="473" y2="44"/>
-        <line x1="614" y1="44" x2="631" y2="44"/>
-        <line x1="772" y1="44" x2="789" y2="44"/>
-      </g>
-    </svg>
-    <figcaption><b>Fig. 1.</b> Proposed workflow (conceptual design; each stage is to be developed and tested in this project).</figcaption>
-  </figure>
-
-  <div class="cols">
-
-    <h2><span class="n">1</span>Problem statement and motivation</h2>
-    <p>Wafer inspection usually judges a die by comparing it with a reference, such as a neighbouring die (die-to-die) or a design rendering. If the reference is a single inspection image, its own defects, noise or imaging artefacts enter the comparison and can cause missed or false detections; a verified defect-free “golden” image is not always available for every layer and imaging condition. Dies of the same design share one intended pattern, while random defects usually occur at different positions on different dies, so a small aligned group holds complementary evidence: at most locations, most dies are clean. This project asks whether that evidence can be fused into a <em>candidate reference image</em> (a digital estimate of the defect-free pattern for inspection, not a physically fabricated or repaired die) while marking regions that cannot be inferred reliably.</p>
-
-    <h2><span class="n">2</span>Research gap</h2>
-    <p>Each building block is well studied: supervised defect classification [4], unsupervised anomaly detection and segmentation learned from defect-free samples [1, 2], image registration, and multi-image fusion. The open question is their combination when <em>every</em> available image may be defective: per-pixel reliability estimated jointly across 4–5 same-design dies, fusion of only trustworthy evidence, and an explicit uncertainty output. No novelty is claimed until a systematic literature and patent review, the first work package, is complete.</p>
-
-    <h2><span class="n">3</span>Research objectives</h2>
-    <ul class="obj">
-      <li><span class="tag">O1</span>Register groups of 4–5 images and estimate reliability masks; report alignment error (pixels) on known synthetic transforms.</li>
-      <li><span class="tag">O2</span>Build confidence-weighted fusion that outputs a candidate reference and a per-pixel uncertainty map; compare with single-image, mean, median and anomaly-masked-mean baselines.</li>
-      <li><span class="tag">O3</span>Quantify fidelity and defect leakage while varying defect count, size, inter-die overlap, noise and misalignment.</li>
-      <li><span class="tag">O4</span>Test whether uncertainty tracks reconstruction error, and release a reproducible evaluation pipeline.</li>
-    </ul>
-
-    <h2><span class="n">4</span>Proposed methodology (Fig. 1)</h2>
-    <p><b>Registration:</b> intensity normalisation, global alignment (e.g. phase correlation), then local refinement; alignment residuals lower a pixel’s weight. <b>Reliability:</b> per-pixel weights from an anomaly detector trained on defect-free data, deviation from a robust cross-die median, and registration confidence. <b>Fusion:</b> a weighted robust estimator (e.g. weighted median); a learned fusion network is an optional extension. <b>Uncertainty:</b> from the number of reliable observations and their weighted spread; pixels below a support threshold are flagged, not inpainted, to avoid invented structure. Systematic defects repeated on every die cannot be removed this way and are treated as a known failure mode.</p>
-
-    <!-- Fig. 2: illustrative example (hand-drawn schematic, not data) -->
-    <figure class="fig-example">
-      <svg viewBox="0 0 440 116" role="img" aria-label="Illustrative example: four aligned die images with defects in different places are fused into a candidate reference and an uncertainty map">
-        <defs>
-          <symbol id="die" viewBox="0 0 60 60">
-            <rect width="60" height="60" fill="#e8edf3"/>
-            <rect y="6" width="60" height="6" fill="#8a9bb0"/>
-            <rect y="20" width="60" height="6" fill="#8a9bb0"/>
-            <rect y="34" width="60" height="6" fill="#8a9bb0"/>
-            <rect y="48" width="60" height="6" fill="#8a9bb0"/>
-            <rect x="26" y="12" width="6" height="8" fill="#8a9bb0"/>
-            <rect x="12" y="40" width="6" height="8" fill="#8a9bb0"/>
-            <rect x="42" y="26" width="6" height="8" fill="#8a9bb0"/>
-          </symbol>
-          <clipPath id="cB"><circle cx="44" cy="45" r="9"/></clipPath>
-          <clipPath id="cC"><circle cx="49" cy="46" r="9"/></clipPath>
-          <pattern id="hatch" width="3" height="3" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-            <rect width="3" height="3" fill="#ffffff"/>
-            <line x1="0" y1="0" x2="0" y2="3" stroke="#1f3a5f" stroke-width="1.2"/>
-          </pattern>
-          <marker id="ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-            <path d="M0,0 L10,5 L0,10 z" fill="#5b6573"/>
-          </marker>
-        </defs>
-        <g font-family="Inter, 'Liberation Sans', sans-serif" font-size="9.5" fill="#5b6573" text-anchor="middle">
-          <text x="129" y="11">Aligned inputs (defects at different places)</text>
-          <text x="305" y="11">Candidate reference</text>
-          <text x="391" y="11">Uncertainty</text>
-        </g>
-        <!-- Die A: particle top-left -->
-        <g transform="translate(0,18)">
-          <use href="#die" width="60" height="60"/>
-          <circle cx="15" cy="15" r="5" fill="#2e2a2a"/>
-          <circle cx="15" cy="15" r="8.5" fill="none" stroke="#b03a2e" stroke-width="1.1" stroke-dasharray="2 1.5"/>
-        </g>
-        <!-- Die B -->
-        <g transform="translate(66,18)">
-          <use href="#die" width="60" height="60"/>
-          <circle cx="44" cy="45" r="9" fill="#2e2a2a"/>
-          <circle cx="44" cy="45" r="12" fill="none" stroke="#b03a2e" stroke-width="1.1" stroke-dasharray="2 1.5"/>
-        </g>
-        <!-- Die C -->
-        <g transform="translate(132,18)">
-          <use href="#die" width="60" height="60"/>
-          <circle cx="49" cy="46" r="9" fill="#f4f1ea"/>
-          <circle cx="49" cy="46" r="12" fill="none" stroke="#b03a2e" stroke-width="1.1" stroke-dasharray="2 1.5"/>
-        </g>
-        <!-- Die D -->
-        <g transform="translate(198,18)">
-          <use href="#die" width="60" height="60"/>
-          <circle cx="46" cy="50" r="8" fill="#2e2a2a"/>
-          <circle cx="46" cy="50" r="11" fill="none" stroke="#b03a2e" stroke-width="1.1" stroke-dasharray="2 1.5"/>
-        </g>
-        <g font-family="Inter, 'Liberation Sans', sans-serif" font-size="9.5" fill="#1c2430" text-anchor="middle">
-          <text x="30" y="90">Die A</text><text x="96" y="90">Die B</text>
-          <text x="162" y="90">Die C</text><text x="228" y="90">Die D</text>
-        </g>
-        <line x1="263" y1="48" x2="272" y2="48" stroke="#5b6573" stroke-width="1.5" marker-end="url(#ah2)"/>
-        <!-- Candidate reference: pattern recovered, triple-overlap region hatched -->
-        <g transform="translate(275,18)">
-          <use href="#die" width="60" height="60"/>
-          <g clip-path="url(#cB)"><g clip-path="url(#cC)"><circle cx="46" cy="50" r="8" fill="url(#hatch)"/></g></g>
-          <rect x="0" y="0" width="60" height="60" fill="none" stroke="#1f3a5f" stroke-width="1.2"/>
-        </g>
-        <!-- Uncertainty map: dark = low, grey = reduced support, white = only one reliable die -->
-        <g transform="translate(361,18)">
-          <rect width="60" height="60" fill="#1d2430"/>
-          <circle cx="15" cy="15" r="5" fill="#7a8494"/>
-          <circle cx="44" cy="45" r="9" fill="#7a8494"/>
-          <circle cx="49" cy="46" r="9" fill="#7a8494"/>
-          <circle cx="46" cy="50" r="8" fill="#7a8494"/>
-          <g clip-path="url(#cB)"><g clip-path="url(#cC)"><circle cx="46" cy="50" r="8" fill="#ffffff"/></g></g>
-        </g>
-        <g font-family="Inter, 'Liberation Sans', sans-serif" font-size="8.6" fill="#5b6573">
-          <circle cx="5" cy="108" r="4" fill="none" stroke="#b03a2e" stroke-width="1.1" stroke-dasharray="2 1.5"/>
-          <text x="13" y="111">defect (drawn)</text>
-          <rect x="82" y="104" width="8" height="8" fill="url(#hatch)" stroke="#1f3a5f" stroke-width="0.6"/>
-          <text x="94" y="111">not inferable → flagged</text>
-          <rect x="203" y="104" width="8" height="8" fill="#7a8494"/>
-          <text x="215" y="111">reduced support</text>
-          <rect x="290" y="104" width="8" height="8" fill="#ffffff" stroke="#1d2430" stroke-width="0.8"/>
-          <text x="302" y="111">only one reliable die</text>
-        </g>
-      </svg>
-      <figcaption><b>Fig. 2.</b> <i>Illustrative schematic drawn by hand, not experimental data.</i> Where the defects in B, C and D overlap, only die A is reliable, so the region is flagged rather than guessed.</figcaption>
-    </figure>
-
-    <h2><span class="n">5</span>Expected contributions</h2>
-    <p>(a) A prototype of defect-aware multi-die fusion with an uncertainty output; (b) a reproducible evaluation pipeline (synthetic-group generator, fixed splits, configurations, scripts); (c) quantitative comparison with the O2 baselines and documented failure modes. No performance outcome is assumed in advance.</p>
-
-    <h2><span class="n">6</span>Dataset feasibility</h2>
-    <table class="data">
-      <thead>
-        <tr><th style="width:17%">Dataset</th><th>Content (per provider documentation)</th><th style="width:17%">Groups? / Clean ref.?</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>Carinthia; Carinthia-S [3]</td><td>4,591 grayscale SEM defect images, one production layer of unstructured wafers, 6 classes; Carinthia-S adds binary masks</td><td class="no">No / No</td></tr>
-        <tr><td>MVTec AD [1]</td><td>5,354 images, 15 object and texture categories; defect-free training set; pixel-precise anomaly masks</td><td class="no">No / No</td></tr>
-        <tr><td>MVTec AD 2 [2]</td><td>&gt;8,000 images, 8 scenarios incl. lighting changes; private-test ground truth withheld</td><td class="no">No / No</td></tr>
-      </tbody>
-    </table>
-    <p>None provides same-design image groups with complementary defects and a clean ground-truth reference (MVTec defect-free images are not paired with defective ones). The project will therefore (1) build <b>controlled synthetic groups</b>: replicate a clean pattern image <i>N</i> times with small shifts, noise and intensity drift, then paste real defect appearances (cut out via Carinthia-S or MVTec masks) at known positions, giving exact ground truth; and (2) seek <b>industry collaboration</b> for real multi-die SEM or optical sets with golden or design-rendered references. Without (2), conclusions are limited to synthetic data. MVTec data are CC BY-NC-SA 4.0 (non-commercial).</p>
-
-    <h2><span class="n">7</span>Evaluation</h2>
-    <ul class="eval">
-      <li><span class="tag">Image similarity:</span>PSNR, SSIM against the clean reference.</li>
-      <li><span class="tag">Structure:</span>edge F-score; line-width and edge-placement error.</li>
-      <li><span class="tag">Defect leakage:</span>inserted-defect pixels still above an error threshold; downstream detection effect (AUROC, AU-PRO).</li>
-      <li><span class="tag">Registration:</span>mean/max displacement error (px) vs. known transforms.</li>
-      <li><span class="tag">Uncertainty:</span>rank correlation with error, sparsification error, recall of unrecoverable regions.</li>
-    </ul>
-    <p>Ablations: number of dies (2–5), inter-die defect overlap, noise level.</p>
+  <div class="rq">
+    <p><span class="lbl">Research question (hypothesis)</span> Can defect-aware fusion of aligned, same-design die images produce a more faithful candidate reference than single-image and conventional fusion baselines, while reliably identifying regions that lack sufficient evidence?</p>
   </div>
 
+  <div class="lead">
+    <h2><span class="n">1</span>Problem and idea</h2>
+    <p>Inspection often compares a die image with a reference; if that reference is itself a real image, its own defects and noise enter the comparison. Same-design dies should show the same pattern while random defects fall in different places, so 4–5 images hold <b>complementary evidence</b> (Fig. 1A). Because they are captured at slightly different positions and angles, they must first be <b>registered</b> into one frame (B). The project estimates which regions are reliable (C), rebuilds the reference from reliable evidence only (D) and flags regions without such evidence (E). The output is a <b>digital reference image</b>, not a fabricated or repaired die; looking clean does not imply electrical function.</p>
+  </div>
+
+  <figure>
+    <img src="figure.svg" alt="Conceptual example: five misaligned images of one die layout, each with a different defect and one shared defect f, are registered, given estimated defect maps, fused region by region using only reliable dies, and produce a candidate reference with region f marked uncertain.">
+    <figcaption><b>Fig. 1 · Conceptual example, not experimental data.</b> One synthetic layout in every panel; the maps in C are estimates, not ground-truth labels.</figcaption>
+  </figure>
+
+  <h2><span class="n">2</span>Objectives</h2>
+  <ol class="obj two">
+    <li>Register 4–5 same-design images; measure alignment error.</li>
+    <li>Compare with single, mean, median, anomaly-masked fusion.</li>
+    <li>Estimate defective, reliable and uncertain regions per image.</li>
+    <li>Evaluate on synthetic groups and, if obtainable, real pairs.</li>
+  </ol>
+
+  <div class="grid">
+    <div>
+      <h2><span class="n">3</span>Research gap</h2>
+      <p>Defect classification [4], anomaly segmentation [1, 2], registration and image fusion are established, not new. Segmentation labels <i>what is wrong</i> in one image; this project estimates <i>what the pattern should be</i>, and where that estimate is unsupported. What is tested is the combination of multi-die registration, region-level reliability estimation, evidence-weighted reconstruction and explicit uncertainty for under-observed regions; its novelty must be confirmed by a systematic literature and patent review.</p>
+    </div>
+    <div>
+      <h2><span class="n">4</span>Evaluation</h2>
+      <p>Metrics: <span class="k">fidelity</span> (PSNR, SSIM against the true clean reference), <span class="k">structure</span> (edge, line-width error), <span class="k">defect leakage</span>, <span class="k">registration</span> error and <span class="k">uncertainty</span> quality. The approach is useful only if, on held-out groups, it leaks fewer defects than mean or median fusion at similar fidelity, beats a single-image reference, and concentrates its uncertainty flags on truly unrecoverable regions; negative results will be reported.</p>
+    </div>
+  </div>
+
+  <h2><span class="n">5</span>Data feasibility</h2>
+  <table class="data">
+    <thead>
+      <tr><th style="width:12%">Dataset</th><th>Content (provider description)</th><th style="width:25%">Annotation</th><th style="width:17%">Groups / clean ref.?</th><th style="width:15%">Licence</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Carinthia [3]</td><td>4,591 SEM images; one layer, unstructured wafers</td><td>Image-level class (6 classes)</td><td class="no">No / No</td><td class="c">not verified</td></tr>
+      <tr><td>Carinthia-S [3]</td><td>Same images, enhanced release</td><td>Binary defect masks + class</td><td class="no">No / No</td><td class="c">CC BY 4.0 (unverified)</td></tr>
+      <tr><td>MVTec AD [1]</td><td>5,354 images, 15 object/texture categories</td><td>Pixel masks; defect-free train set</td><td class="no">No / No (unpaired)</td><td class="c">CC BY-NC-SA 4.0</td></tr>
+      <tr><td>MVTec AD 2 [2]</td><td>&gt;8,000 images, 8 scenarios, varied lighting</td><td>Pixel masks (private test withheld)</td><td class="no">No / No (unpaired)</td><td class="c">CC BY-NC-SA 4.0</td></tr>
+    </tbody>
+  </table>
+  <p>“Groups” means same-design image groups with complementary defects; “clean ref.” means a defect-free reference of the same die. None provides multi-die reconstruction ground truth, so the project needs a <b>controlled synthetic benchmark</b> (known shifts, noise and inserted real defects give an exact reference) and <b>real same-design groups</b> via industry collaboration to test transfer.</p>
+
   <footer class="refs">
-    <h2><span class="n">8</span>Selected references</h2>
     <ol>
       <li><span class="rn">[1]</span>P. Bergmann, M. Fauser, D. Sattlegger, C. Steger, “MVTec AD — A comprehensive real-world dataset for unsupervised anomaly detection,” <i>CVPR</i>, 2019, pp. 9584–9592. <a href="https://doi.org/10.1109/CVPR.2019.00982">doi:10.1109/CVPR.2019.00982</a> · <a href="https://www.mvtec.com/research-teaching/datasets/mvtec-ad">dataset</a></li>
-      <li><span class="rn">[2]</span>L. Heckler-Kram, J.-H. Neudeck, U. Scheler, R. König, C. Steger, “The MVTec AD 2 dataset: Advanced scenarios for unsupervised anomaly detection,” <a href="https://arxiv.org/abs/2503.21622">arXiv:2503.21622</a>, 2025. · <a href="https://www.mvtec.com/research-teaching/datasets/mvtec-ad-2">dataset</a></li>
-      <li><span class="rn">[3]</span>C. Kofler <i>et al.</i>, Carinthia SEM defect dataset, Zenodo, 2024, <a href="https://zenodo.org/records/10715190">doi:10.5281/zenodo.10715190</a>; C. Kofler, V. Hasić, Carinthia-S (with segmentation masks), Zenodo, 2025, <a href="https://zenodo.org/records/16895427">doi:10.5281/zenodo.16895427</a>.</li>
-      <li><span class="rn">[4]</span>K. Taha, “Observational and experimental insights into machine learning-based defect classification in wafers,” <i>Journal of Intelligent Manufacturing</i>, Springer. <a href="https://link.springer.com/article/10.1007/s10845-024-02521-0">doi:10.1007/s10845-024-02521-0</a></li>
+      <li><span class="rn">[2]</span>L. Heckler-Kram, J.-H. Neudeck, U. Scheler, R. König, C. Steger, “The MVTec AD 2 dataset: Advanced scenarios for unsupervised anomaly detection,” <i>IJCV</i>, 2026. <a href="https://doi.org/10.1007/s11263-026-02743-0">doi:10.1007/s11263-026-02743-0</a> · <a href="https://arxiv.org/abs/2503.21622">arXiv</a> · <a href="https://www.mvtec.com/research-teaching/datasets/mvtec-ad-2">dataset</a></li>
+      <li><span class="rn">[3]</span>C. Kofler, S. Strauß, A. Zernig <i>et al.</i>, “Carinthia dataset,” v2, Zenodo, 2024, <a href="https://zenodo.org/records/10715190">doi:10.5281/zenodo.10715190</a>; C. Kofler, V. Hasić, “Carinthia-S,” Zenodo, 2025, <a href="https://zenodo.org/records/16895427">doi:10.5281/zenodo.16895427</a>.</li>
+      <li><span class="rn">[4]</span>K. Taha, “Observational and experimental insights into machine learning-based defect classification in wafers,” <i>J. Intell. Manuf.</i>, Springer. <a href="https://doi.org/10.1007/s10845-024-02521-0">doi:10.1007/s10845-024-02521-0</a></li>
     </ol>
   </footer>
 
