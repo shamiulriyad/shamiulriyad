@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wafer Die Defect Research Proposal</title>
+<!--
+  Editable source for the one-page A4 research proposal.
+  - Edit text directly in this file; placeholders are in [square brackets].
+  - Rebuild the PDF:  node research-proposal/build_pdf.cjs
+    (the build warns if content no longer fits on one page).
+  - Figure 1's die grid and failure patterns are drawn by the script at the bottom.
+-->
+<style>
+  @font-face { font-family: "Proposal Charter"; src: url("fonts/Charter-Regular.ttf"); font-weight: 400; font-style: normal; }
+  @font-face { font-family: "Proposal Charter"; src: url("fonts/Charter-Italic.ttf");  font-weight: 400; font-style: italic; }
+  @font-face { font-family: "Proposal Charter"; src: url("fonts/Charter-Bold.ttf");    font-weight: 700; font-style: normal; }
+  @font-face { font-family: "Proposal Sans"; src: url("fonts/Inter-Regular.ttf");  font-weight: 400; }
+  @font-face { font-family: "Proposal Sans"; src: url("fonts/Inter-SemiBold.ttf"); font-weight: 600; }
+  @font-face { font-family: "Proposal Sans"; src: url("fonts/Inter-Bold.ttf");     font-weight: 700; }
+
+  :root {
+    --serif: "Proposal Charter", "Charter", "Georgia", serif;
+    --sans: "Proposal Sans", "Helvetica Neue", Arial, sans-serif;
+    --navy: #0f2340;
+    --ink: #1c2b42;
+    --muted: #4d5d73;
+    --rule: #d3dbe5;
+    --teal: #0e7a7e;
+    --teal-soft: #e9f4f4;
+    --panel: #f6f8fb;
+    --fail: #b8503c;
+  }
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #ffffff; }
+  body {
+    font-family: var(--serif); color: var(--ink);
+    font-size: 7.9pt; line-height: 1.3;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    font-kerning: normal;
+  }
+  .page {
+    width: 210mm; height: 297mm;
+    padding: 9mm 12mm 7.5mm;
+    display: flex; flex-direction: column; overflow: hidden;
+  }
+
+  /* ---------- Header ---------- */
+  .kicker {
+    font-family: var(--sans); font-size: 6.3pt; font-weight: 600;
+    letter-spacing: .12em; text-transform: uppercase; color: var(--teal);
+    display: flex; justify-content: space-between;
+  }
+  .kicker span:last-child { color: var(--muted); letter-spacing: .06em; }
+  h1 {
+    font-size: 13.2pt; line-height: 1.18; font-weight: 700; color: var(--navy);
+    margin: 1.3mm 0 1.5mm;
+  }
+  .meta {
+    font-family: var(--sans); font-size: 6.6pt; color: var(--muted);
+    display: flex; flex-wrap: wrap; gap: 0 4mm;
+    padding-bottom: 1.6mm; border-bottom: 1.3pt solid var(--navy);
+  }
+  .meta b { color: var(--navy); font-weight: 600; }
+
+  .glance {
+    margin-top: 2mm; background: var(--teal-soft);
+    border-left: 2.3pt solid var(--teal);
+    padding: 1.4mm 2.6mm 1.5mm; font-size: 8pt; line-height: 1.3;
+  }
+  .glance .lbl {
+    font-family: var(--sans); font-size: 6.1pt; font-weight: 700;
+    letter-spacing: .1em; text-transform: uppercase; color: var(--teal); margin-right: 1.2mm;
+  }
+
+  /* ---------- Sections ---------- */
+  h2 {
+    font-family: var(--sans); font-size: 7.1pt; font-weight: 700; letter-spacing: .07em;
+    text-transform: uppercase; color: var(--navy);
+    display: flex; align-items: baseline; gap: 1.4mm; margin-bottom: .9mm;
+  }
+  h2 .n { color: var(--teal); }
+  h2::after { content: ""; flex: 1; border-bottom: .6pt solid var(--rule); transform: translateY(-1pt); }
+  p + p { margin-top: .9mm; }
+  .nw { white-space: nowrap; }
+  .row { display: grid; gap: 4.6mm; margin-top: 3mm; }
+  .r1 { grid-template-columns: 1fr 90mm; }
+  .r2 { grid-template-columns: 1fr 1fr; }
+  .r3 { grid-template-columns: 1fr 1fr; }
+
+  ol.obj { list-style: none; }
+  ol.obj li { display: grid; grid-template-columns: 5.6mm 1fr; padding: .2mm 0; }
+  .tag, .chip { font-family: var(--sans); font-weight: 700; color: var(--teal); }
+  .tag { font-size: 6.2pt; padding-top: .3pt; }
+  .chip {
+    font-size: 5.5pt; border: .5pt solid #9fcfd0; background: #fff;
+    border-radius: 1.5pt; padding: 0 .8mm; line-height: 1.45;
+  }
+  .cite { font-family: var(--sans); font-size: 6.2pt; font-weight: 600; color: var(--teal); }
+
+  /* ---------- Figure 1 ---------- */
+  figure { margin: 0; }
+  .fig1 { border: .6pt solid var(--rule); border-radius: 2pt; padding: 1.3mm 1.6mm 1.2mm;
+          display: flex; flex-direction: column; justify-content: space-between; }
+  .fig1 svg { width: 100%; height: auto; display: block; }
+  figcaption, .pipe-note { font-size: 6.6pt; line-height: 1.27; color: var(--muted); margin-top: .7mm; }
+  figcaption b, .pipe-note b { color: var(--navy); font-family: var(--sans); font-weight: 600; }
+
+  /* ---------- Figure 2: pipeline ---------- */
+  .bands, .pipe { display: grid; grid-template-columns: repeat(7, 1fr); column-gap: 3mm; }
+  .bands {
+    font-family: var(--sans); font-size: 5.6pt; font-weight: 600; letter-spacing: .07em;
+    text-transform: uppercase; color: var(--muted); margin-bottom: .8mm;
+  }
+  .bands div { border-top: .9pt solid var(--teal); padding-top: .4mm; text-align: center; }
+  .bands .b-in  { grid-column: 1 / 2; border-color: var(--muted); }
+  .bands .b-die { grid-column: 2 / 5; }
+  .bands .b-rob { grid-column: 5 / 6; }
+  .bands .b-waf { grid-column: 6 / 8; }
+  .st {
+    position: relative; background: var(--panel);
+    border: .6pt solid var(--rule); border-top: 1.5pt solid var(--navy);
+    border-radius: 0 0 2pt 2pt; padding: .9mm 1.2mm 1mm;
+  }
+  .st.key { border-top-color: var(--teal); background: #eff7f7; }
+  .st:not(:last-child)::after {
+    content: ""; position: absolute; right: -2.7mm; top: 3.6mm;
+    border-left: 2.2mm solid var(--teal);
+    border-top: 1.4mm solid transparent; border-bottom: 1.4mm solid transparent;
+  }
+  .st .hd { display: flex; justify-content: space-between; align-items: center; }
+  .st .num { font-family: var(--sans); font-size: 5.7pt; font-weight: 700; color: var(--teal); letter-spacing: .05em; }
+  .st h3 {
+    font-family: var(--sans); font-size: 6.5pt; line-height: 1.16; font-weight: 700;
+    color: var(--navy); margin: .3mm 0 .6mm; min-height: 5.6mm;
+  }
+  .st ul { list-style: none; font-size: 6.25pt; line-height: 1.22; }
+  .st li { padding-left: 1.6mm; position: relative; margin-bottom: .2mm; }
+  .st li::before { content: "–"; position: absolute; left: 0; color: var(--teal); }
+
+  /* ---------- Challenges table ---------- */
+  table.ch { width: 100%; border-collapse: collapse; font-size: 7.1pt; line-height: 1.22; }
+  table.ch th {
+    font-family: var(--sans); font-size: 5.7pt; font-weight: 700; letter-spacing: .07em;
+    text-transform: uppercase; color: var(--muted); text-align: left;
+    padding: 0 1mm .5mm 0; border-bottom: .7pt solid var(--navy);
+  }
+  table.ch td { padding: .55mm 1mm .55mm 0; border-bottom: .45pt solid var(--rule); vertical-align: top; }
+  table.ch td:first-child { font-weight: 700; color: var(--navy); width: 40%; }
+  table.ch tr:last-child td { border-bottom: none; }
+
+  ul.dot { list-style: none; }
+  ul.dot li { position: relative; padding-left: 2.8mm; margin-bottom: .55mm; }
+  ul.dot li::before {
+    content: ""; position: absolute; left: .3mm; top: 1.3mm;
+    width: 1.2mm; height: 1.2mm; background: var(--teal); border-radius: 50%;
+  }
+  ul.dot b { color: var(--navy); }
+
+  .ladder { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1mm; margin-top: .8mm; }
+  .ladder div {
+    font-family: var(--sans); font-size: 5.8pt; line-height: 1.2; color: var(--navy);
+    padding: .8mm 1.1mm; border-radius: 1.5pt; border: .5pt solid #a9d2d3;
+  }
+  .ladder div b { display: block; font-size: 5.4pt; letter-spacing: .06em; text-transform: uppercase; color: var(--teal); }
+  .ladder .l2 { background: #e6f3f3; }
+  .ladder .l3 { background: #cde7e7; }
+
+  .box {
+    background: var(--panel); border: .6pt solid var(--rule); border-radius: 2pt;
+    padding: 1.2mm 1.9mm; font-size: 7.25pt; line-height: 1.26;
+  }
+  .box + .box { margin-top: 1.1mm; }
+  .caution { border-left: 2pt solid var(--fail); }
+  .k { font-family: var(--sans); font-weight: 700; color: var(--navy); font-size: 6.6pt; }
+
+  /* ---------- References ---------- */
+  .refs { margin-top: 2.4mm; }
+  ol.ref { list-style: none; font-size: 6.6pt; line-height: 1.26; }
+  ol.ref li { display: grid; grid-template-columns: 4.2mm 1fr; margin-bottom: .35mm; }
+  ol.ref .i { font-family: var(--sans); font-weight: 700; color: var(--teal); }
+  ol.ref .why { color: var(--muted); font-style: italic; }
+  a { color: var(--teal); text-decoration: none; }
+
+  .foot {
+    margin-top: auto; padding-top: 1.1mm; border-top: .6pt solid var(--rule);
+    font-family: var(--sans); font-size: 5.8pt; color: var(--muted);
+    display: flex; justify-content: space-between; gap: 4mm;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ================= HEADER ================= -->
+  <div class="kicker"><span>Research Proposal · Semiconductor Computer Vision</span><span>One-page summary · Draft for discussion</span></div>
+  <h1>An Intelligent Computer Vision Framework for Wafer Die Defect Detection, Localization, Classification, Rotation Robustness, and Potential Root-Cause Analysis</h1>
+  <div class="meta">
+    <span><b>Researcher:</b> [Researcher Name]</span>
+    <span><b>Student ID:</b> [Student ID]</span>
+    <span><b>Supervisor:</b> [Supervisor Name]</span>
+    <span><b>Institution:</b> [Department, University]</span>
+    <span><b>Date:</b> [Month Year]</span>
+  </div>
+
+  <div class="glance">
+    <span class="lbl">In one sentence</span>
+    We will build and evaluate a die-to-wafer inspection framework that detects and classifies defective dies, localizes defects where annotations permit, tests robustness to rotation and viewing angle, and links wafer-level patterns to <i>candidate</i> causes as evidence-graded hypotheses, not verified diagnoses.
+  </div>
+
+  <!-- ================= ROW 1: PROBLEM + OBJECTIVES | FIGURE 1 ================= -->
+  <div class="row r1">
+    <div>
+      <h2><span class="n">1</span>Problem &amp; Motivation</h2>
+      <p>Yield problems in wafer fabrication first appear as defective dies and as <i>spatial patterns</i> of failures across the wafer (edge rings, scratches, local clusters). Manual review is slow and inconsistent, and automated methods often address only one part of the task: image-level defect classification or wafer-map pattern recognition <span class="cite">[1–3]</span>. Real data also vary in orientation, alignment and viewing geometry, and unseen defect types appear.</p>
+      <p><b>Research question:</b> can one modular framework link die-level evidence to wafer-level patterns reliably under geometric variation, and how far can those patterns support root-cause investigation without over-claiming?</p>
+
+      <h2 style="margin-top:1.9mm"><span class="n">2</span>Research Objectives</h2>
+      <ol class="obj">
+        <li><span class="tag">O1</span><span>Detect normal and defective dies.</span></li>
+        <li><span class="tag">O2</span><span>Classify recognizable defect categories; localize defect regions where annotations permit.</span></li>
+        <li><span class="tag">O3</span><span>Analyze wafer-level defect distributions and spatial patterns.</span></li>
+        <li><span class="tag">O4</span><span>Evaluate robustness to rotation, alignment errors and viewing-angle variation.</span></li>
+        <li><span class="tag">O5</span><span>Investigate potential root causes from defect patterns and, where available, process metadata.</span></li>
+      </ol>
+    </div>
+
+    <figure class="fig1">
+      <svg id="wafer" viewBox="0 0 360 246" xmlns="http://www.w3.org/2000/svg" font-family="'Proposal Sans', Arial, sans-serif" role="img" aria-label="Schematic wafer map with die grid, failure patterns, notch, rotation angle, an enlarged die with a localized defect, and an oblique-view inset">
+        <defs>
+          <marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M0,0 L8,4 L0,8 z" fill="#0e7a7e"/>
+          </marker>
+        </defs>
+        <!-- wafer body with notch (path drawn by script) -->
+        <path id="waferBody" fill="#f2f5f9" stroke="#0f2340" stroke-width="1.3"/>
+        <g id="dies"></g>
+        <circle cx="108" cy="116" r="93" fill="none" stroke="#7d8ea6" stroke-width=".7" stroke-dasharray="2.4 2"/>
+        <g id="labels"></g>
+
+        <!-- in-plane rotation θ -->
+        <path d="M 10.1 70.4 A 108 108 0 0 1 54 22.5" fill="none" stroke="#0e7a7e" stroke-width="1.2" marker-end="url(#arr)"/>
+        <text x="0" y="10" font-size="8" fill="#0e7a7e" font-weight="600">in-plane rotation</text>
+        <text x="16" y="40" font-size="12" font-style="italic" font-family="'Proposal Charter', Georgia, serif" fill="#0e7a7e">θ</text>
+
+        <!-- notch -->
+        <line x1="108" y1="218" x2="108" y2="228" stroke="#4d5d73" stroke-width=".6"/>
+        <text x="108" y="237" font-size="7.6" fill="#4d5d73" text-anchor="middle">notch (orientation reference)</text>
+        <!-- edge exclusion -->
+        <line x1="40" y1="182" x2="18" y2="205" stroke="#4d5d73" stroke-width=".6"/>
+        <text x="0" y="213" font-size="7.4" fill="#4d5d73">edge exclusion</text>
+
+        <!-- enlarged die -->
+        <g id="callout"></g>
+        <g id="zoom" transform="translate(236,4)">
+          <rect x="0" y="0" width="120" height="100" rx="1.5" fill="#eef3f8" stroke="#0e7a7e" stroke-width="1.3"/>
+          <rect x="3" y="3" width="114" height="94" fill="none" stroke="#9fb0c4" stroke-width=".6"/>
+          <g id="pads" fill="#a9b6c6"></g>
+          <rect x="16" y="16" width="42" height="31" fill="#dbe4ee" stroke="#9fb0c4" stroke-width=".5"/>
+          <g stroke="#bccadb" stroke-width=".45" id="sram"></g>
+          <rect x="63" y="16" width="41" height="31" fill="#e3eaf2" stroke="#9fb0c4" stroke-width=".5"/>
+          <rect x="16" y="52" width="88" height="32" fill="#e7edf4" stroke="#9fb0c4" stroke-width=".5"/>
+          <g stroke="#c4cfdc" stroke-width=".45" id="logic"></g>
+          <g font-size="7" fill="#4d5d73" text-anchor="middle" paint-order="stroke" stroke="#eef3f8" stroke-width="2.2">
+            <text x="37" y="34">memory</text>
+            <text x="83.5" y="34">analog / I/O</text>
+            <text x="34" y="80">logic</text>
+          </g>
+          <!-- defect: particle + micro-scratch, enclosed by ROI -->
+          <path d="M78 62 q3 -3 6 -1 q4 1 3 5 q-1 4 -5 3 q-5 0 -4 -7 z" fill="#b8503c"/>
+          <path d="M70 75 Q81 71 96 67" fill="none" stroke="#b8503c" stroke-width="1.1"/>
+          <rect x="65" y="56" width="35" height="24" fill="none" stroke="#0e7a7e" stroke-width="1.1" stroke-dasharray="2.6 1.6"/>
+          <text x="82.5" y="54" font-size="7" fill="#0e7a7e" font-weight="700" text-anchor="middle" paint-order="stroke" stroke="#e7edf4" stroke-width="2.2">defect ROI</text>
+        </g>
+        <text x="296" y="114" font-size="7.8" fill="#0f2340" text-anchor="middle" font-weight="600">single die, enlarged</text>
+        <text x="296" y="123" font-size="7" fill="#4d5d73" text-anchor="middle">ROI box / mask only if annotated</text>
+
+        <!-- oblique-view inset -->
+        <g transform="translate(236,130)">
+          <rect x="0" y="0" width="120" height="74" rx="1.5" fill="#ffffff" stroke="#c7d1dd" stroke-width=".7"/>
+          <g id="oblique"></g>
+          <g transform="translate(103,12)">
+            <rect x="-8" y="-4.5" width="12" height="9" rx="1" fill="#0f2340"/>
+            <path d="M4 -2 L9 -4.5 L9 4.5 L4 2 z" fill="#0f2340"/>
+          </g>
+          <line x1="94" y1="18" x2="72" y2="33" stroke="#0e7a7e" stroke-width=".8" stroke-dasharray="1.8 1.3"/>
+          <text x="5" y="11" font-size="7.6" fill="#0f2340" font-weight="600">oblique view <tspan font-family="'Proposal Charter', Georgia, serif" font-style="italic" font-size="9" fill="#0e7a7e">φ</tspan></text>
+          <text x="60" y="68" font-size="7" fill="#4d5d73" text-anchor="middle">perspective (projective) distortion</text>
+        </g>
+
+        <!-- legend -->
+        <g transform="translate(236,214)" font-size="7.2" fill="#1c2b42">
+          <rect x="0" y="0" width="8" height="7" fill="#dfe7f0" stroke="#9fb0c4" stroke-width=".5"/><text x="11" y="6.3">pass die</text>
+          <rect x="60" y="0" width="8" height="7" fill="#b8503c"/><text x="71" y="6.3">fail die</text>
+          <rect x="0" y="13" width="8" height="7" fill="none" stroke="#0e7a7e" stroke-width="1" stroke-dasharray="1.8 1.1"/><text x="11" y="19.3">defect ROI</text>
+          <rect x="60" y="13" width="8" height="7" fill="none" stroke="#0e7a7e" stroke-width="1.4"/><text x="71" y="19.3">selected die</text>
+        </g>
+      </svg>
+      <figcaption><b>Fig. 1.</b> Schematic, not real data: wafer map with per-die pass/fail states and <span class="nw">WM-811K-style</span> patterns <span class="cite">[4]</span>; one die enlarged with a localized defect; inset: perspective distortion.</figcaption>
+    </figure>
+  </div>
+
+  <!-- ================= FIGURE 2: PIPELINE ================= -->
+  <div style="margin-top:2.6mm">
+    <h2><span class="n">3</span>Proposed Method · Modular Pipeline</h2>
+    <div class="bands">
+      <div class="b-in">Input</div>
+      <div class="b-die">Die-level perception</div>
+      <div class="b-rob">Robustness</div>
+      <div class="b-waf">Wafer-level analytics</div>
+    </div>
+    <div class="pipe">
+      <div class="st">
+        <div class="hd"><span class="num">01</span></div>
+        <h3>Wafer Image / Wafer Map</h3>
+        <ul><li>Optical / SEM die images</li><li>Wafer maps (pass/fail)</li><li>Process metadata, if any</li></ul>
+      </div>
+      <div class="st">
+        <div class="hd"><span class="num">02</span><span class="chip">O4</span></div>
+        <h3>Alignment &amp; Preprocessing</h3>
+        <ul><li>OpenCV: notch and die-grid registration</li><li>Homography correction</li><li>Normalization</li></ul>
+      </div>
+      <div class="st">
+        <div class="hd"><span class="num">03</span><span class="chip">O1</span></div>
+        <h3>Die-Level Detection</h3>
+        <ul><li>Die cropping from grid</li><li>Normal vs. defective: CNN / ResNet</li><li>Imbalance-aware training</li></ul>
+      </div>
+      <div class="st">
+        <div class="hd"><span class="num">04</span><span class="chip">O2</span></div>
+        <h3>Classification &amp; Localization</h3>
+        <ul><li>Defect-type classifiers</li><li>Detection / segmentation if annotated</li><li>Anomaly detection</li></ul>
+      </div>
+      <div class="st key">
+        <div class="hd"><span class="num">05</span><span class="chip">O4</span></div>
+        <h3>Rotation-Robustness Evaluation</h3>
+        <ul><li>Controlled θ, shift, tilt φ</li><li>Augmentation vs. invariant designs</li><li>Score-vs-angle curves</li></ul>
+      </div>
+      <div class="st">
+        <div class="hd"><span class="num">06</span><span class="chip">O3</span></div>
+        <h3>Spatial Pattern Analysis</h3>
+        <ul><li>Wafer-map pattern classes</li><li>Clustering; radial and angular statistics</li></ul>
+      </div>
+      <div class="st key">
+        <div class="hd"><span class="num">07</span><span class="chip">O5</span></div>
+        <h3>Evidence-Based Root-Cause Investigation</h3>
+        <ul><li>Pattern ↔ process-step links</li><li>Metadata correlation</li><li>Graded hypotheses</li></ul>
+      </div>
+    </div>
+    <p class="pipe-note"><b>Fig. 2.</b> Planned pipeline; chips show the objective each stage serves. Listed techniques are <i>candidates</i> to be compared, not final choices, and none has been implemented yet. Planned metrics: per-class recall and macro-F1 (imbalance), mAP / IoU (localization), AUROC (anomaly detection), and accuracy as a function of θ and φ (robustness).</p>
+  </div>
+
+  <!-- ================= ROW 2: CHALLENGES | NOVELTY ================= -->
+  <div class="row r2">
+    <div>
+      <h2><span class="n">4</span>Research Gap &amp; Key Challenges</h2>
+      <table class="ch">
+        <thead><tr><th>Challenge</th><th>Planned response</th></tr></thead>
+        <tbody>
+          <tr><td>Subtle, small defects</td><td>High-resolution die crops; multi-scale features</td></tr>
+          <tr><td>Class imbalance; few labels</td><td>Re-weighting, augmentation <span class="cite">[3]</span>, synthesis <span class="cite">[2]</span></td></tr>
+          <tr><td>Rotation / alignment variation</td><td>Notch-based registration; invariant features</td></tr>
+          <tr><td>Perspective at oblique angles</td><td>Homography rectification; tilt-stratified tests</td></tr>
+          <tr><td>Localizing defects within dies</td><td>Detection or segmentation, only if annotated</td></tr>
+          <tr><td>Unknown defect categories</td><td>Anomaly / open-set detection with abstention</td></tr>
+          <tr><td>Observed pattern ≠ cause</td><td>Evidence grading; physical failure analysis</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <h2><span class="n">5</span>Novelty &amp; Expected Contribution</h2>
+      <ul class="dot">
+        <li><b>Die-to-wafer integration:</b> one framework linking die-level detection and localization to wafer-level spatial analytics.</li>
+        <li><b>Explicit robustness protocol:</b> reproducible tests under controlled rotation, misalignment and viewing angle.</li>
+        <li><b>Open-set awareness:</b> flag unseen defect types instead of forcing a label.</li>
+        <li><b>Evidence-graded root-cause output:</b> every hypothesis states its level of support.</li>
+      </ul>
+      <div class="ladder">
+        <div><b>Level 1</b>Pattern only: candidate cause</div>
+        <div class="l2"><b>Level 2</b>+ process metadata: correlated</div>
+        <div class="l3"><b>Level 3</b>+ failure analysis: verified</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= ROW 3: DATA | FEASIBILITY ================= -->
+  <div class="row r3">
+    <div>
+      <h2><span class="n">6</span>Data &amp; Scope</h2>
+      <div class="box"><span class="k"><span class="nw">WM-811K</span></span> <span class="cite">[4]</span>: 811,457 real-world wafer maps; a labeled subset covers patterns such as Center, Donut, Edge-Ring and Scratch. Candidate data for O3 and for rotation tests (O4).</div>
+      <div class="box caution"><span class="k">Limitation:</span> <span class="nw">WM-811K</span> has pass/fail maps, not microscope images. Surface-defect detection and localization (O1–O2) and physical root-cause analysis (O5) need additional annotated images and process metadata.</div>
+    </div>
+    <div>
+      <h2><span class="n">7</span>Feasibility &amp; Plan</h2>
+      <ul class="dot" style="font-size:7.4pt">
+        <li><b>Phase 1:</b> review <span class="cite">[1]</span>; <span class="nw">WM-811K</span> baselines; robustness protocol.</li>
+        <li><b>Phase 2:</b> alignment, die detection, localization on image data.</li>
+        <li><b>Phase 3:</b> anomaly detection, spatial analytics, root-cause study.</li>
+        <li><b>Resources:</b> public data; Python, OpenCV, PyTorch; GPU [to be confirmed].</li>
+        <li><b>Main risk:</b> no image or process data. <i>Fallback:</i> O3–O4 on wafer maps.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ================= REFERENCES ================= -->
+  <div class="refs">
+    <h2><span class="n">8</span>Key References</h2>
+    <ol class="ref">
+      <li><span class="i">[1]</span><span>J. Ma <i>et al.</i>, “Review of Wafer Surface Defect Detection Methods,” <i>Electronics</i>, vol. 12, no. 8, Art. 1787, 2023. <a href="https://doi.org/10.3390/electronics12081787">doi.org/10.3390/electronics12081787</a> <span class="why">Survey; defect causes.</span></span></li>
+      <li><span class="i">[2]</span><span>D. A. Altantawy and M. A. Yakout, “Sparse deep encoded features with enhanced sinogramic red deer optimization for fault inspection in wafer maps,” <i>J. Intell. Manuf.</i>, 2025 (online 2024). <a href="https://doi.org/10.1007/s10845-024-02377-4">doi.org/10.1007/s10845-024-02377-4</a> <span class="why">Wafer-map faults; imbalance handling.</span></span></li>
+      <li><span class="i">[3]</span><span>F. López de la Rosa <i>et al.</i>, “Defect detection and classification on semiconductor wafers using two-stage geometric transformation-based data augmentation and SqueezeNet lightweight convolutional neural network,” <i>Comput. Ind. Eng.</i>, Art. 109549, 2023. <a href="https://doi.org/10.1016/j.cie.2023.109549">doi.org/10.1016/j.cie.2023.109549</a> <span class="why">Geometric augmentation; lightweight CNN.</span></span></li>
+      <li><span class="i">[4]</span><span>M.-J. Wu, J.-S. R. Jang and J.-L. Chen, “Wafer map failure pattern recognition and similarity ranking for large-scale data sets,” <i>IEEE Trans. Semicond. Manuf.</i>, vol. 28, no. 1, pp. 1–12, 2015. <a href="https://doi.org/10.1109/TSM.2014.2364237">doi.org/10.1109/TSM.2014.2364237</a> <span class="why">Source of <span class="nw">WM-811K</span>.</span></span></li>
+    </ol>
+  </div>
+
+  <div class="foot">
+    <span>Status: proposal stage. No experiments have been run and no results are claimed. Bracketed fields are placeholders.</span>
+    <span>[Researcher Name] · [Institution]</span>
+  </div>
+</div>
+
+<script>
+/* Draws Figure 1: wafer outline with notch, die grid, illustrative failure
+   patterns (Scratch, Edge-Loc, Random), the callout to the enlarged die, bond
+   pads, and the oblique-view inset. Deterministic, so the PDF is reproducible. */
+(function () {
+  const NS = "http://www.w3.org/2000/svg";
+  const el = (tag, attrs, parent) => {
+    const n = document.createElementNS(NS, tag);
+    for (const k in attrs) n.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(n);
+    return n;
+  };
+  const cx = 108, cy = 116, R = 100, usable = 93;
+
+  // Wafer outline with a V-notch at 6 o'clock.
+  const d = Math.asin(5 / R);
+  const p = a => [cx + R * Math.cos(a), cy + R * Math.sin(a)];
+  const a0 = p(Math.PI / 2 + d), a1 = p(Math.PI / 2 - d);
+  document.getElementById("waferBody").setAttribute("d",
+    `M${a0[0]},${a0[1]} A${R},${R} 0 1 1 ${a1[0]},${a1[1]} L${cx},${cy + R - 7} Z`);
+
+  // Die grid: only dies lying fully inside the edge-exclusion radius.
+  const W = 8.4, H = 7.0, g = 0.9;
+  const dies = [];
+  for (let j = -16; j <= 16; j++) {
+    for (let i = -16; i <= 16; i++) {
+      const x = cx + i * (W + g) - W / 2, y = cy + j * (H + g) - H / 2;
+      const corners = [[x, y], [x + W, y], [x, y + H], [x + W, y + H]];
+      if (corners.every(([u, v]) => Math.hypot(u - cx, v - cy) <= usable))
+        dies.push({ x, y, mx: x + W / 2, my: y + H / 2 });
+    }
+  }
+
+  let s = 11;                                   // seeded PRNG
+  const rnd = () => (s = (s * 16807) % 2147483647) / 2147483647;
+
+  const S0 = [50, 70], S1 = [138, 160];         // scratch segment
+  const segDist = (px, py) => {
+    const vx = S1[0] - S0[0], vy = S1[1] - S0[1];
+    const t = Math.max(0, Math.min(1, ((px - S0[0]) * vx + (py - S0[1]) * vy) / (vx * vx + vy * vy)));
+    return Math.hypot(px - (S0[0] + t * vx), py - (S0[1] + t * vy));
+  };
+
+  let selected = null, randomPick = null;
+  const gDies = document.getElementById("dies");
+  dies.forEach(dd => {
+    const r = Math.hypot(dd.mx - cx, dd.my - cy);
+    const ang = Math.atan2(dd.my - cy, dd.mx - cx) * 180 / Math.PI;   // y down
+    const scratch = segDist(dd.mx, dd.my) < 4.2;
+    const edgeLoc = r > 62 && ang > -60 && ang < -22 && rnd() < 0.8;
+    const random = !scratch && !edgeLoc && rnd() < 0.035;
+    const fail = scratch || edgeLoc || random;
+    el("rect", {
+      x: dd.x.toFixed(2), y: dd.y.toFixed(2), width: W, height: H,
+      fill: fail ? "#b8503c" : "#dfe7f0",
+      stroke: fail ? "#9a3f2e" : "#b4c2d2", "stroke-width": .3
+    }, gDies);
+    if (edgeLoc && r > 76 && (!selected || dd.mx > selected.mx)) selected = dd;
+    if (random && dd.my > cy + 20 && segDist(dd.mx, dd.my) > 24 && !randomPick) randomPick = dd;
+  });
+
+  // Pattern labels with a white halo so they stay legible over the die grid.
+  const L = document.getElementById("labels");
+  const label = (x, y, txt, anchor, lx, ly) => {
+    if (lx !== undefined) el("line", { x1: lx, y1: ly, x2: x, y2: y - 2.5, stroke: "#7a2f22", "stroke-width": .7 }, L);
+    const t = el("text", { x, y, "font-size": 8.2, "font-weight": 700, fill: "#7a2f22", "text-anchor": anchor || "start",
+      "paint-order": "stroke", stroke: "#ffffff", "stroke-width": 2.6, "stroke-linejoin": "round" }, L);
+    t.textContent = txt;
+  };
+  label(28, 92, "Scratch", "start");
+  label(186, 18, "Edge-Loc", "start", 172, 56);
+  if (randomPick) label(randomPick.mx + 12, randomPick.my + 20, "Random", "start", randomPick.mx + 2, randomPick.my + 3);
+
+  // Highlight the selected die and connect it to the enlarged view.
+  if (selected) {
+    el("rect", { x: selected.x - .9, y: selected.y - .9, width: W + 1.8, height: H + 1.8,
+      fill: "none", stroke: "#0e7a7e", "stroke-width": 1.4 }, gDies);
+    const c = document.getElementById("callout");
+    el("line", { x1: selected.x + W + .9, y1: selected.y - .9, x2: 236, y2: 4,
+      stroke: "#0e7a7e", "stroke-width": .7, "stroke-dasharray": "2 1.5" }, c);
+    el("line", { x1: selected.x + W + .9, y1: selected.y + H + .9, x2: 236, y2: 104,
+      stroke: "#0e7a7e", "stroke-width": .7, "stroke-dasharray": "2 1.5" }, c);
+  }
+
+  // Bond pads around the enlarged die.
+  const pads = document.getElementById("pads");
+  for (let k = 0; k < 13; k++) {
+    el("rect", { x: 8.5 + k * 8, y: 6.5, width: 4.2, height: 4.2 }, pads);
+    el("rect", { x: 8.5 + k * 8, y: 89.3, width: 4.2, height: 4.2 }, pads);
+  }
+  for (let k = 0; k < 10; k++) {
+    el("rect", { x: 6.5, y: 14.5 + k * 7.3, width: 4.2, height: 4.2 }, pads);
+    el("rect", { x: 109.3, y: 14.5 + k * 7.3, width: 4.2, height: 4.2 }, pads);
+  }
+  const sram = document.getElementById("sram");
+  for (let k = 1; k < 10; k++) el("line", { x1: 16 + k * 4.2, y1: 16, x2: 16 + k * 4.2, y2: 47 }, sram);
+  for (let k = 1; k < 6; k++) el("line", { x1: 16, y1: 16 + k * 5.2, x2: 58, y2: 16 + k * 5.2 }, sram);
+  const logic = document.getElementById("logic");
+  [[20, 58, 58, 58], [20, 64, 56, 64], [24, 70, 60, 70], [44, 55, 44, 82], [55, 55, 55, 82]]
+    .forEach(([x1, y1, x2, y2]) => el("line", { x1, y1, x2, y2 }, logic));
+
+  // Oblique-view inset: the same wafer foreshortened, with far rows narrower.
+  const ob = document.getElementById("oblique");
+  const ocx = 52, ocy = 38, k = 0.16, sx = 0.4, sy = 0.4 * 0.5;
+  const proj = (u, v) => {
+    const X = (u - cx) * sx, Y = (v - cy) * sy;
+    const persp = 1 + k * (Y / (R * sy));
+    return (ocx + X * persp).toFixed(2) + "," + (ocy + Y).toFixed(2);
+  };
+  const rim = [];
+  for (let t = 0; t < 90; t++) {
+    const a = t / 90 * 2 * Math.PI;
+    rim.push(proj(cx + R * Math.cos(a), cy + R * Math.sin(a)));
+  }
+  el("polygon", { points: rim.join(" "), fill: "#f2f5f9", stroke: "#0f2340", "stroke-width": .9 }, ob);
+  dies.forEach(dd => {
+    const pts = [[dd.x, dd.y], [dd.x + W, dd.y], [dd.x + W, dd.y + H], [dd.x, dd.y + H]]
+      .map(([u, v]) => proj(u, v)).join(" ");
+    el("polygon", { points: pts, fill: "#dfe7f0", stroke: "#b4c2d2", "stroke-width": .22 }, ob);
+  });
+})();
+</script>
+</body>
+</html>
