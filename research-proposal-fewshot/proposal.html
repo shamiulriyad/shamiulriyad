@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Few-Shot Die Anomaly Detection</title>
+<!--
+  Editable source for the one-page research proposal (A4).
+  PDF:  node research-proposal-fewshot/build.cjs   (fails if the page no longer fits on one A4 sheet)
+  Both figures are inline SVG. The wafer's die grid in Fig. 2 is drawn by the short script at the end.
+-->
+<style>
+  :root {
+    --ink: #14213d;
+    --muted: #55617a;
+    --navy: #1b3a6b;
+    --blue: #2563a8;
+    --teal: #0e7c86;
+    --tint: #eef4f8;
+    --teal-tint: #e6f3f4;
+    --rule: #c8d2de;
+    --hot: #c2410c;
+  }
+  @page { size: A4 portrait; margin: 0; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #ffffff; }
+  body {
+    color: var(--ink);
+    font-family: "Liberation Serif", "Times New Roman", serif;
+    font-size: 8.5pt;
+    line-height: 1.23;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .page {
+    width: 210mm; height: 297mm;
+    padding: 7.5mm 10.5mm 5.5mm;
+    overflow: hidden;
+    display: flex; flex-direction: column;
+  }
+  .sans, h1, h2, .byline, .kicker, table, figcaption b, .tag, .lbl { font-family: "Carlito", "Liberation Sans", Arial, sans-serif; }
+  a { color: var(--blue); text-decoration: none; }
+  p { margin: 0 0 0.8mm; }
+  b { font-weight: 700; }
+  .cite { color: var(--blue); font-family: "Carlito", sans-serif; font-size: 8pt; white-space: nowrap; }
+
+  /* Header */
+  header { border-bottom: 1.2pt solid var(--navy); padding-bottom: 1.4mm; margin-bottom: 1.8mm; }
+  .kicker { font-size: 7.6pt; letter-spacing: 0.08em; text-transform: uppercase; color: var(--teal); font-weight: 600; margin: 0 0 1mm;
+            display: flex; justify-content: space-between; }
+  .kicker .status { color: var(--hot); letter-spacing: 0.04em; }
+  h1 { font-size: 13pt; line-height: 1.17; margin: 0 0 1.2mm; color: var(--navy); font-weight: 700; letter-spacing: -0.005em; }
+  .byline { font-size: 8.4pt; color: var(--muted); margin: 0; }
+  .byline strong { color: var(--ink); font-weight: 600; }
+
+  h2 { font-size: 9.4pt; font-weight: 700; color: var(--navy); margin: 0 0 0.7mm; letter-spacing: 0.01em; }
+  h2 .n { display: inline-block; min-width: 4.2mm; color: var(--teal); }
+  section { margin-bottom: 1.2mm; }
+
+  .row { display: grid; column-gap: 6mm; }
+  .r-top { grid-template-columns: 1fr 60mm; align-items: start; }
+  .r-mid { grid-template-columns: 1fr 1fr; }
+
+  .solution { background: var(--tint); border-left: 2.2pt solid var(--blue); padding: 1.4mm 3mm 1.2mm; }
+  .solution p { margin: 0; }
+
+  /* Figures */
+  figure { margin: 0; }
+  figure svg { display: block; width: 100%; height: auto; }
+  figcaption { font-size: 7.6pt; line-height: 1.25; color: var(--muted); margin-top: 0.8mm; }
+  figcaption b { font-size: 7.8pt; color: var(--navy); font-weight: 700; }
+  .fig1 { margin: 0.6mm 0 1.2mm; padding: 1.2mm 0 0.8mm; border-top: 0.5pt solid var(--rule); border-bottom: 0.5pt solid var(--rule); }
+
+  /* Lists */
+  ol.obj { margin: 0; padding: 0; list-style: none; counter-reset: o; }
+  ol.obj li { counter-increment: o; position: relative; padding-left: 6mm; margin-bottom: 0.35mm; }
+  ol.obj li::before { content: "O" counter(o); position: absolute; left: 0; top: 0.1mm; font-family: "Carlito", sans-serif;
+                      font-size: 8pt; font-weight: 700; color: var(--teal); }
+  ul.m { margin: 0; padding: 0; list-style: none; }
+  ul.m li { position: relative; padding-left: 3.2mm; margin-bottom: 0.35mm; }
+  ul.m li::before { content: ""; position: absolute; left: 0.3mm; top: 1.15mm; width: 1.3mm; height: 1.3mm; border-radius: 50%; background: var(--teal); }
+  .k { font-family: "Carlito", sans-serif; font-size: 8.4pt; font-weight: 600; color: var(--navy); }
+
+  /* Dataset table */
+  table.data { width: 100%; border-collapse: collapse; font-size: 7.6pt; line-height: 1.24; margin-top: 0.3mm; }
+  table.data th { text-align: left; font-weight: 700; color: var(--navy); border-top: 1pt solid var(--navy);
+                  border-bottom: 0.5pt solid var(--rule); padding: 0.6mm 2mm 0.6mm 0; }
+  table.data td { vertical-align: top; border-bottom: 0.4pt solid #e1e7ee; padding: 0.5mm 2mm 0.5mm 0; }
+  table.data tr:last-child td { border-bottom: 1pt solid var(--navy); }
+  table.data td:first-child { font-weight: 600; white-space: nowrap; }
+  .tag { display: inline-block; font-size: 6.8pt; font-weight: 600; padding: 0 1.1mm; border-radius: 1mm; }
+  .tag.core { background: var(--teal-tint); color: var(--teal); }
+  .tag.ctx { background: #edf1f7; color: var(--navy); }
+  .tag.ref { background: #f3f3f3; color: var(--muted); }
+  .note { font-size: 7.4pt; color: var(--muted); margin: 0.8mm 0 0; }
+
+  .hyp { border: 0.6pt solid var(--teal); background: #f7fbfb; padding: 1.3mm 2.6mm 1.1mm; }
+  .hyp p { margin-bottom: 0.7mm; }
+  .hyp p:last-child { margin-bottom: 0; }
+  .lbl { font-size: 7.6pt; font-weight: 700; color: var(--teal); text-transform: uppercase; letter-spacing: 0.05em; margin-right: 1mm; }
+
+  /* References */
+  footer.refs { border-top: 0.9pt solid var(--navy); padding-top: 1mm; margin-top: auto; font-size: 6.8pt; line-height: 1.18; }
+  footer.refs h2 { font-size: 8.4pt; margin-bottom: 0.6mm; }
+  footer.refs h2 span { font-weight: 500; color: var(--muted); }
+  footer.refs ol { margin: 0; padding: 0; list-style: none; columns: 3; column-gap: 5mm; }
+  footer.refs li { padding-left: 4.6mm; text-indent: -4.6mm; margin-bottom: 0.5mm; break-inside: avoid; }
+  footer.refs .rn { display: inline-block; width: 4.6mm; text-indent: 0; color: var(--blue); font-weight: 700; font-family: "Carlito", sans-serif; }
+  footer.refs li.recent .rn { color: var(--teal); }
+  footer.refs .sub { grid-column: 1 / -1; font-family: "Carlito", sans-serif; font-size: 6.6pt; font-weight: 700; color: var(--teal);
+                     text-transform: uppercase; letter-spacing: 0.06em; padding-left: 0; text-indent: 0; margin-top: 0.3mm; }
+  footer.refs .sub.b { color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <p class="kicker"><span>Research concept note · one-page proposal</span><span class="status">Proposed study · no experiments run yet</span></p>
+    <h1>Sample-Guided, Rotation-Robust Few-Shot Anomaly Detection and Localization for Semiconductor Wafer Dies with Feedback-Driven Adaptation</h1>
+    <p class="byline"><strong>Md Shamiul Islam Riyad</strong> · B.Sc. CSE, United International University · October 2026</p>
+  </header>
+
+  <div class="row r-top">
+    <div>
+      <section>
+        <h2><span class="n">1</span>Problem statement</h2>
+        <p>Fully supervised inspectors need many labelled examples of every defect type, yet a new product or process step yields <b>few labelled defects</b>, and <b>defect types absent from training</b> fall outside a closed-set classifier’s outputs. Learned features are also tied to the <b>orientation, position and scale</b> seen in training, so a rotated or shifted die can raise a false alarm or hide a defect, the motivation for registration-based few-shot methods <span class="cite">[5, 6]</span>. An image-level label does not say <b>where</b> the defect is, and pixel masks are costly to draw. Large public sets such as WM-811K are <b>discrete wafer maps</b> (one pass/fail cell per die), not die-surface images <span class="cite">[7]</span>, so alone they cannot support pixel-level localization.</p>
+      </section>
+      <section class="solution">
+        <h2><span class="n">2</span>Proposed solution</h2>
+        <p>An engineer supplies <i>K</i> = 1–8 defect-free sample dies of the same design. Each new die is aligned to them and compared patch by patch in a pretrained feature space, giving an anomaly map and a decision: <b>normal, known defect type or unknown anomaly</b>. Engineer-verified decisions update the reference memory; an update is kept only if held-out results do not degrade.</p>
+      </section>
+    </div>
+    <figure>
+      <svg viewBox="0 0 240 178" role="img" aria-label="Conceptual illustration: a wafer divided into dies, one die enlarged and slightly rotated, with a highlighted suspected defect region.">
+        <defs>
+          <radialGradient id="heat" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#ea580c" stop-opacity="0.85"/>
+            <stop offset="45%" stop-color="#f59e0b" stop-opacity="0.55"/>
+            <stop offset="100%" stop-color="#fde68a" stop-opacity="0"/>
+          </radialGradient>
+          <clipPath id="waferClip"><circle cx="66" cy="84" r="58"/></clipPath>
+        </defs>
+        <text x="66" y="12" text-anchor="middle" font-family="Carlito" font-size="9.2" font-weight="600" fill="#1b3a6b">Wafer (die grid)</text>
+        <circle cx="66" cy="84" r="60" fill="#f4f7fb" stroke="#1b3a6b" stroke-width="1.1"/>
+        <path d="M58 143.5 L66 137.5 L74 143.5" fill="none" stroke="#1b3a6b" stroke-width="1"/>
+        <g id="dies" clip-path="url(#waferClip)"></g>
+        <!-- inspected die, at grid cell (col 6, row 3) -->
+        <rect id="pick" x="0" y="0" width="10" height="10" fill="#0e7c86" fill-opacity="0.25" stroke="#0e7c86" stroke-width="1.4"/>
+        <!-- zoom guides -->
+        <line id="g1" stroke="#0e7c86" stroke-width="0.6" stroke-dasharray="2 1.5"/>
+        <line id="g2" stroke="#0e7c86" stroke-width="0.6" stroke-dasharray="2 1.5"/>
+        <!-- enlarged die (imaged at an arbitrary angle) -->
+        <g transform="translate(184 84)">
+          <rect x="-44" y="-44" width="88" height="88" fill="none" stroke="#8a97ab" stroke-width="0.7" stroke-dasharray="2.5 2"/>
+          <g transform="rotate(-11)">
+            <rect x="-40" y="-40" width="80" height="80" fill="#ffffff" stroke="#0e7c86" stroke-width="1.4"/>
+            <!-- bond pads -->
+            <g fill="#b9c4d3">
+              <rect x="-34" y="-37" width="5" height="4"/><rect x="-22" y="-37" width="5" height="4"/><rect x="-10" y="-37" width="5" height="4"/><rect x="2" y="-37" width="5" height="4"/><rect x="14" y="-37" width="5" height="4"/><rect x="26" y="-37" width="5" height="4"/>
+              <rect x="-34" y="33" width="5" height="4"/><rect x="-22" y="33" width="5" height="4"/><rect x="-10" y="33" width="5" height="4"/><rect x="2" y="33" width="5" height="4"/><rect x="14" y="33" width="5" height="4"/><rect x="26" y="33" width="5" height="4"/>
+            </g>
+            <!-- circuit-like pattern -->
+            <g stroke="#7d8ca3" stroke-width="1.5" fill="none">
+              <path d="M-32 -24 H32"/><path d="M-32 -16 H32"/><path d="M-32 -8 H6"/><path d="M-32 0 H6"/>
+              <path d="M-32 8 H6"/><path d="M-32 16 H6"/><path d="M-32 24 H32"/>
+            </g>
+            <rect x="12" y="-10" width="20" height="28" fill="#dde5ef" stroke="#7d8ca3" stroke-width="1"/>
+            <!-- suspected defect: particle bridging two lines -->
+            <ellipse cx="-12" cy="4" rx="13" ry="11" fill="url(#heat)"/>
+            <path d="M-15 1.5 q3 -3 6 -0.5 q2 3 -1 5.5 q-4 1.5 -5.5 -1.5 z" fill="#3b2a1a"/>
+            <ellipse cx="-12" cy="4" rx="9.5" ry="8" fill="none" stroke="#c2410c" stroke-width="1.1" stroke-dasharray="2.4 1.6"/>
+          </g>
+        </g>
+        <text x="184" y="12" text-anchor="middle" font-family="Carlito" font-size="9.2" font-weight="600" fill="#1b3a6b">One die, enlarged</text>
+        <text x="184" y="22" text-anchor="middle" font-family="Carlito" font-size="7.7" fill="#55617a">imaged at unknown angle θ</text>
+        <!-- callout -->
+        <line x1="166" y1="98" x2="152" y2="150" stroke="#c2410c" stroke-width="0.7"/>
+        <text x="152" y="158" text-anchor="middle" font-family="Carlito" font-size="8.1" font-weight="600" fill="#c2410c">suspected anomaly</text>
+        <text x="152" y="167" text-anchor="middle" font-family="Carlito" font-size="7.5" fill="#55617a">score above threshold τ</text>
+        <rect x="0.5" y="170" width="239" height="7.5" fill="#fff4e5"/>
+        <text x="120" y="176" text-anchor="middle" font-family="Carlito" font-size="7.0" font-weight="700" fill="#9a3412" letter-spacing="0.03em">CONCEPTUAL ILLUSTRATION · NOT REAL DATA OR A RESULT</text>
+      </svg>
+      <figcaption><b>Fig. 2.</b> Schematic only. The system marks <i>where</i> a die looks abnormal, not <i>why</i>; root cause needs failure analysis.</figcaption>
+    </figure>
+  </div>
+
+  <figure class="fig1">
+    <svg viewBox="0 0 716 128" role="img" aria-label="Workflow: sample die references, geometric alignment, feature encoder and reference memory, new wafer inspection, defect localization and unknown-anomaly detection, verified feedback looping back to the memory.">
+      <defs>
+        <marker id="ah" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#1b3a6b"/></marker>
+        <marker id="aht" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#0e7c86"/></marker>
+        <radialGradient id="heat2" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#ea580c" stop-opacity="0.85"/><stop offset="100%" stop-color="#fde68a" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <g font-family="Carlito" text-anchor="middle">
+        <!-- boxes: x = 2 + i*121, width 104 -->
+        <g fill="#ffffff" stroke="#1b3a6b" stroke-width="0.9">
+          <rect x="2" y="4" width="104" height="104" rx="5"/>
+          <rect x="123" y="4" width="104" height="104" rx="5"/>
+          <rect x="244" y="4" width="104" height="104" rx="5" fill="#f2f8f8" stroke="#0e7c86"/>
+          <rect x="365" y="4" width="104" height="104" rx="5"/>
+          <rect x="486" y="4" width="104" height="104" rx="5"/>
+          <rect x="607" y="4" width="104" height="104" rx="5" fill="#f2f8f8" stroke="#0e7c86"/>
+        </g>
+        <!-- step numbers -->
+        <g font-size="8.2" font-weight="700" fill="#0e7c86">
+          <text x="12" y="15">1</text><text x="133" y="15">2</text><text x="254" y="15">3</text><text x="375" y="15">4</text><text x="496" y="15">5</text><text x="617" y="15">6</text>
+        </g>
+
+        <!-- 1 sample dies: K stacked normal dies -->
+        <g stroke="#1b3a6b" stroke-width="0.8">
+          <rect x="34" y="16" width="32" height="32" fill="#eef4f8"/>
+          <rect x="39" y="21" width="32" height="32" fill="#eef4f8"/>
+          <rect x="44" y="26" width="32" height="32" fill="#ffffff"/>
+        </g>
+        <g stroke="#8a97ab" stroke-width="1.1"><path d="M48 33 H72"/><path d="M48 39 H64"/><path d="M48 45 H64"/><path d="M48 51 H72"/></g>
+        <rect x="66" y="37" width="7" height="11" fill="#dde5ef" stroke="#8a97ab" stroke-width="0.6"/>
+        <text x="54" y="77" font-size="9.5" font-weight="700" fill="#1b3a6b">Sample die</text>
+        <text x="54" y="87" font-size="9.5" font-weight="700" fill="#1b3a6b">references</text>
+        <text x="54" y="99" font-size="7.9" fill="#55617a">K = 1–8 normal dies</text>
+
+        <!-- 2 alignment -->
+        <rect x="157" y="20" width="34" height="34" fill="none" stroke="#8a97ab" stroke-width="0.8" stroke-dasharray="2.5 2" transform="rotate(-18 174 37)"/>
+        <rect x="157" y="20" width="34" height="34" fill="#ffffff" stroke="#1b3a6b" stroke-width="0.9"/>
+        <g stroke="#8a97ab" stroke-width="1.1"><path d="M161 28 H187"/><path d="M161 35 H178"/><path d="M161 42 H178"/><path d="M161 49 H187"/></g>
+        <path d="M150 30 A 26 26 0 0 1 160 16" fill="none" stroke="#0e7c86" stroke-width="1" marker-end="url(#aht)"/>
+        <text x="146" y="44" font-size="8.1" fill="#0e7c86" font-style="italic">θ</text>
+        <text x="175" y="77" font-size="9.5" font-weight="700" fill="#1b3a6b">Geometric</text>
+        <text x="175" y="87" font-size="9.5" font-weight="700" fill="#1b3a6b">alignment</text>
+        <text x="175" y="99" font-size="7.9" fill="#55617a">rotation · shift · scale</text>
+
+        <!-- 3 encoder + memory -->
+        <g fill="#ffffff" stroke="#1b3a6b" stroke-width="0.6">
+          <rect x="256" y="22" width="9" height="9"/><rect x="265" y="22" width="9" height="9"/><rect x="256" y="31" width="9" height="9"/><rect x="265" y="31" width="9" height="9"/>
+          <rect x="256" y="40" width="9" height="9"/><rect x="265" y="40" width="9" height="9"/>
+        </g>
+        <path d="M277 36 L289 36" stroke="#1b3a6b" stroke-width="0.9" marker-end="url(#ah)"/>
+        <path d="M291 24 L300 30 L300 42 L291 48 z" fill="#dbe7f3" stroke="#1b3a6b" stroke-width="0.7"/>
+        <path d="M302 36 L311 36" stroke="#1b3a6b" stroke-width="0.9" marker-end="url(#ah)"/>
+        <rect x="313" y="18" width="30" height="38" rx="3" fill="#ffffff" stroke="#0e7c86" stroke-width="0.8"/>
+        <g fill="#0e7c86">
+          <circle cx="319" cy="25" r="1.6"/><circle cx="326" cy="27" r="1.6"/><circle cx="334" cy="24" r="1.6"/><circle cx="321" cy="33" r="1.6"/>
+          <circle cx="330" cy="35" r="1.6"/><circle cx="337" cy="32" r="1.6"/><circle cx="318" cy="42" r="1.6"/><circle cx="327" cy="44" r="1.6"/>
+          <circle cx="336" cy="41" r="1.6"/><circle cx="322" cy="50" r="1.6"/><circle cx="333" cy="50" r="1.6"/>
+        </g>
+        <text x="296" y="66" font-size="6.9" fill="#55617a">patches → encoder → memory</text>
+        <text x="296" y="77" font-size="9.5" font-weight="700" fill="#1b3a6b">Feature encoder +</text>
+        <text x="296" y="87" font-size="9.5" font-weight="700" fill="#1b3a6b">reference memory</text>
+        <text x="296" y="99" font-size="7.9" fill="#55617a">frozen pretrained features</text>
+
+        <!-- 4 new wafer -->
+        <circle cx="417" cy="37" r="22" fill="#f4f7fb" stroke="#1b3a6b" stroke-width="0.9"/>
+        <g stroke="#b9c4d3" stroke-width="0.6">
+          <path d="M401 23 V51"/><path d="M409 17 V57"/><path d="M417 15 V59"/><path d="M425 17 V57"/><path d="M433 23 V51"/>
+          <path d="M403 21 H431"/><path d="M397 29 H437"/><path d="M395 37 H439"/><path d="M397 45 H437"/><path d="M403 53 H431"/>
+        </g>
+        <rect x="425" y="29" width="8" height="8" fill="#0e7c86" fill-opacity="0.3" stroke="#0e7c86" stroke-width="1"/>
+        <text x="417" y="77" font-size="9.5" font-weight="700" fill="#1b3a6b">New wafer</text>
+        <text x="417" y="87" font-size="9.5" font-weight="700" fill="#1b3a6b">inspection</text>
+        <text x="417" y="99" font-size="7.9" fill="#55617a">unseen dies, any pose</text>
+
+        <!-- 5 localization + unknown -->
+        <rect x="498" y="18" width="34" height="34" fill="#ffffff" stroke="#1b3a6b" stroke-width="0.9"/>
+        <g stroke="#8a97ab" stroke-width="1.1"><path d="M502 26 H528"/><path d="M502 33 H519"/><path d="M502 40 H519"/><path d="M502 47 H528"/></g>
+        <ellipse cx="512" cy="37" rx="9" ry="8" fill="url(#heat2)"/>
+        <ellipse cx="512" cy="37" rx="6" ry="5.5" fill="none" stroke="#c2410c" stroke-width="0.9" stroke-dasharray="2 1.3"/>
+        <g font-size="7.3" text-anchor="start">
+          <rect x="537" y="18" width="48" height="10" rx="2" fill="#eef4f8"/><text x="540" y="25.5" fill="#1b3a6b">normal</text>
+          <rect x="537" y="30" width="48" height="10" rx="2" fill="#eef4f8"/><text x="540" y="37.5" fill="#1b3a6b">known type</text>
+          <rect x="537" y="42" width="48" height="10" rx="2" fill="#fff4e5"/><text x="540" y="49.5" fill="#9a3412" font-weight="600">unknown</text>
+        </g>
+        <text x="538" y="77" font-size="9.5" font-weight="700" fill="#1b3a6b">Defect localization</text>
+        <text x="538" y="87" font-size="9.5" font-weight="700" fill="#1b3a6b">+ unknown anomalies</text>
+        <text x="538" y="99" font-size="7.9" fill="#55617a">anomaly map + decision</text>
+
+        <!-- 6 verified feedback -->
+        <circle cx="646" cy="36" r="11" fill="#e6f3f4" stroke="#0e7c86" stroke-width="0.9"/>
+        <path d="M640.5 36.5 L644.5 40.5 L651.5 31.5" fill="none" stroke="#0e7c86" stroke-width="1.8"/>
+        <circle cx="673" cy="36" r="11" fill="#fff4e5" stroke="#c2410c" stroke-width="0.9"/>
+        <path d="M668.5 31.5 L677.5 40.5 M677.5 31.5 L668.5 40.5" stroke="#c2410c" stroke-width="1.8"/>
+        <text x="646" y="58" font-size="7.0" fill="#0e7c86">confirm</text>
+        <text x="673" y="58" font-size="7.0" fill="#c2410c">correct</text>
+        <text x="659" y="77" font-size="9.5" font-weight="700" fill="#1b3a6b">Verified</text>
+        <text x="659" y="87" font-size="9.5" font-weight="700" fill="#1b3a6b">feedback</text>
+        <text x="659" y="99" font-size="7.9" fill="#55617a">engineer decision</text>
+
+        <!-- forward arrows -->
+        <g stroke="#1b3a6b" stroke-width="1.1" marker-end="url(#ah)">
+          <path d="M107 56 H121"/><path d="M228 56 H242"/><path d="M349 56 H363"/><path d="M470 56 H484"/><path d="M591 56 H605"/>
+        </g>
+        <!-- feedback loop back to the memory -->
+        <path d="M659 108 V122 H296 V110" fill="none" stroke="#0e7c86" stroke-width="1.3" marker-end="url(#aht)"/>
+        <rect x="356" y="116" width="244" height="12" fill="#ffffff"/>
+        <text x="478" y="125" font-size="7.7" font-weight="600" fill="#0e7c86">verified updates only · kept if held-out results do not degrade</text>
+      </g>
+    </svg>
+    <figcaption><b>Fig. 1. Proposed inspection workflow</b> (planned, not yet built). New dies share the alignment and encoder used for the references; feedback changes only the teal memory.</figcaption>
+  </figure>
+
+  <div class="row r-mid">
+    <section>
+      <h2><span class="n">3</span>Research objectives</h2>
+      <ol class="obj">
+        <li><b>Few-shot detection</b> from <i>K</i> ≤ 8 normal references, no retraining.</li>
+        <li><b>Rotation robustness</b> to die rotation, shift, scale, illumination.</li>
+        <li><b>Localization:</b> pixel-level anomaly maps that match expert masks.</li>
+        <li><b>Unknown anomalies</b> kept apart from normal and known defect types.</li>
+        <li><b>Verified feedback</b> that improves later inspections, without forgetting.</li>
+      </ol>
+    </section>
+    <section>
+      <h2><span class="n">4</span>Proposed method</h2>
+      <ul class="m">
+        <li><span class="k">Geometric alignment</span>: rotation, shift and scale vs. the references (feature matching + RANSAC or Fourier–Mellin); rotated references as fallback.</li>
+        <li><span class="k">Pretrained features</span>: frozen patch features, DINOv2 ViT or CNN <span class="cite">[1, 4]</span>.</li>
+        <li><span class="k">Memory &amp; scoring</span>: patch bank; nearest-neighbour distance per patch <span class="cite">[4]</span>.</li>
+        <li><span class="k">Localization</span>: upsampled score map; τ set on held-out normals.</li>
+        <li><span class="k">Optional classification</span>: defect prototypes; far from all → <b>unknown</b>.</li>
+      </ul>
+    </section>
+  </div>
+
+  <section>
+    <h2><span class="n">5</span>Datasets <span class="sans" style="font-weight:500;color:var(--muted);font-size:7.4pt">· raw surface images and discrete wafer maps are different data, used for different questions</span></h2>
+    <table class="data">
+      <thead><tr><th style="width:13%">Dataset</th><th style="width:30%">What it contains</th><th style="width:27%">Role in this study</th><th>Limitations</th></tr></thead>
+      <tbody>
+        <tr><td>Carinthia-S <span class="cite">[8]</span><br><span class="tag core">core · semiconductor</span></td>
+            <td>SEM images of <b>unpatterned</b> wafers (one layer); 4,591 images, 6 defect classes, expert binary masks.</td>
+            <td>Core test of pixel localization and known classes; held-out classes act as unknowns.</td>
+            <td>No repeated die layout or documented defect-free set (references from clean areas); licence unconfirmed.</td></tr>
+        <tr><td>WM-811K <span class="cite">[7]</span><br><span class="tag ctx">wafer-level context</span></td>
+            <td><b>Wafer maps, not images</b>: 811,457 per-die pass/fail maps; 172,950 labelled (9 classes).</td>
+            <td>Wafer-level few-shot and held-out-pattern tests; choosing which dies to inspect.</td>
+            <td>No die-surface appearance and <b>no pixel-level defect masks</b>.</td></tr>
+        <tr><td>MVTec AD <span class="cite">[9]</span><br><span class="tag ref">method check</span></td>
+            <td>5,354 industrial images, 15 categories, pixel masks.</td>
+            <td>Reproduce published baselines to check the implementation.</td>
+            <td>Not semiconductor data; CC BY-NC-SA 4.0.</td></tr>
+      </tbody>
+    </table>
+    <p class="note">Gap: no public, mask-annotated image set of <i>patterned</i> dies was found; rotation tests use rotated copies plus a small synthetic die set, reported as synthetic.</p>
+  </section>
+
+  <div class="row r-mid">
+    <section>
+      <h2><span class="n">6</span>Evaluation plan</h2>
+      <ul class="m">
+        <li><span class="k">Detection</span>: image AUROC, AUPR, false-alarm rate at 95 % recall.</li>
+        <li><span class="k">Localization</span>: pixel AUROC, AUPRO, IoU/Dice at τ.</li>
+        <li><span class="k">Few-shot</span>: <i>K</i> = 1, 2, 4, 8; 5 random reference draws, mean ± s.d.</li>
+        <li><span class="k">Rotation</span>: 0–360° (15° steps), shift, ±10 % scale; ± alignment.</li>
+        <li><span class="k">Unknown</span>: leave-one-class-out; unknown-detection AUROC.</li>
+        <li><span class="k">Feedback</span>: simulated stream incl. wrong labels; gain, forgetting.</li>
+        <li><span class="k">Baselines</span>: PatchCore <span class="cite">[4]</span>, RegAD <span class="cite">[5]</span>, GraphCore <span class="cite">[6]</span>, AnomalyDINO <span class="cite">[1]</span>, UniVAD <span class="cite">[10]</span>, IC segmentation <span class="cite">[2]</span>; supervised U-Net as upper bound.</li>
+      </ul>
+    </section>
+    <section>
+      <h2><span class="n">7</span>Expected contribution <span class="sans" style="font-weight:500;color:var(--muted);font-size:7.4pt">(hypotheses, to be validated)</span></h2>
+      <div class="hyp">
+        <p><span class="lbl">H1</span>At <i>K</i> ≤ 8, alignment plus rotated references reduces the accuracy loss under die rotation versus the same memory without alignment.</p>
+        <p><span class="lbl">H2</span>Verified feedback written to the memory improves later localization without retraining or forgetting.</p>
+        <p><span class="lbl">vs. prior work</span>Memory scoring <span class="cite">[1, 4]</span>, registration <span class="cite">[5]</span>, rotation-invariant features <span class="cite">[6]</span> and feedback memory correction <span class="cite">[3]</span> (MVTec AD, simulated feedback) exist separately. New here is their <b>joint, reproducible test on semiconductor SEM data</b> under rotation, open-set and feedback conditions; negative results count too.</p>
+      </div>
+    </section>
+  </div>
+
+  <footer class="refs">
+    <h2><span class="n" style="color:var(--teal)">8</span>References <span>· <b style="color:var(--teal)">[1]–[3]</b> selected recent work (2025–2026) · [4]–[10] baselines and datasets</span></h2>
+    <ol>
+      <li class="recent"><span class="rn">[1]</span>S. Damm, M. Laszkiewicz, J. Lederer, A. Fischer, “AnomalyDINO: Boosting patch-based few-shot anomaly detection with DINOv2,” <i>WACV</i>, 2025. <a href="https://openaccess.thecvf.com/content/WACV2025/html/Damm_AnomalyDINO_Boosting_Patch-Based_Few-Shot_Anomaly_Detection_with_DINOv2_WACV_2025_paper.html">CVF open access</a></li>
+      <li class="recent"><span class="rn">[2]</span>B. Zhao, Q. Shi, S. Lyu, Y. Lu, “Unsupervised integrated-circuit defect segmentation via image-intrinsic normality,” arXiv:2509.09375, 2025 (preprint). <a href="https://doi.org/10.48550/arXiv.2509.09375">doi:10.48550/arXiv.2509.09375</a></li>
+      <li class="recent"><span class="rn">[3]</span>A. Abbas, S. Abbas, K. Adhikari, “Training-free human-in-the-loop anomaly detection via memory bank correction,” arXiv:2608.17775, 2026 (preprint). <a href="https://doi.org/10.48550/arXiv.2608.17775">doi:10.48550/arXiv.2608.17775</a></li>
+      <li><span class="rn">[4]</span>K. Roth, L. Pemula, J. Zepeda <i>et al.</i>, “Towards total recall in industrial anomaly detection” (PatchCore), <i>CVPR</i>, 2022. <a href="https://doi.org/10.1109/CVPR52688.2022.01392">doi:10.1109/CVPR52688.2022.01392</a></li>
+      <li><span class="rn">[5]</span>C. Huang, H. Guan, A. Jiang <i>et al.</i>, “Registration based few-shot anomaly detection” (RegAD), <i>ECCV</i>, 2022. <a href="https://doi.org/10.1007/978-3-031-20053-3_18">doi:10.1007/978-3-031-20053-3_18</a></li>
+      <li><span class="rn">[6]</span>G. Xie, J. Wang, J. Liu <i>et al.</i>, “Pushing the limits of fewshot anomaly detection in industry vision: GraphCore,” <i>ICLR</i>, 2023. <a href="https://arxiv.org/abs/2301.12082">arXiv:2301.12082</a></li>
+      <li><span class="rn">[7]</span>M.-J. Wu, J.-S. R. Jang, J.-L. Chen, “Wafer map failure pattern recognition and similarity ranking for large-scale data sets” (WM-811K), <i>IEEE Trans. Semicond. Manuf.</i>, 28(1), 2015. <a href="https://doi.org/10.1109/TSM.2014.2364237">doi:10.1109/TSM.2014.2364237</a></li>
+      <li><span class="rn">[8]</span>KAI GmbH &amp; Univ. of Sarajevo, “Carinthia-S” (SEM images + masks), v1, Zenodo, 2025. <a href="https://zenodo.org/records/16895427">zenodo.org/records/16895427</a></li>
+      <li><span class="rn">[9]</span>P. Bergmann, M. Fauser, D. Sattlegger, C. Steger, “MVTec AD — A comprehensive real-world dataset for unsupervised anomaly detection,” <i>CVPR</i>, 2019. <a href="https://doi.org/10.1109/CVPR.2019.00982">doi:10.1109/CVPR.2019.00982</a></li>
+      <li><span class="rn">[10]</span>Z. Gu, B. Zhu, G. Zhu <i>et al.</i>, “UniVAD: A training-free unified model for few-shot visual anomaly detection,” <i>CVPR</i>, 2025. <a href="https://openaccess.thecvf.com/content/CVPR2025/html/Gu_UniVAD_A_Training-free_Unified_Model_for_Few-shot_Visual_Anomaly_Detection_CVPR_2025_paper.html">CVF open access</a></li>
+    </ol>
+  </footer>
+
+</div>
+<script>
+  // Fig. 2: draw the die grid (pitch 11, die 10) and connect the picked die to the enlarged view.
+  (function () {
+    const NS = 'http://www.w3.org/2000/svg', cx = 66, cy = 84, R = 57, pitch = 11, size = 10;
+    const g = document.getElementById('dies');
+    const x0 = cx - 5.5 * pitch, y0 = cy - 5.5 * pitch;
+    const pick = { col: 7, row: 4 };
+    for (let r = 0; r < 11; r++) for (let c = 0; c < 11; c++) {
+      const x = x0 + c * pitch, y = y0 + r * pitch;
+      const corners = [[x, y], [x + size, y], [x, y + size], [x + size, y + size]];
+      if (!corners.every(([px, py]) => Math.hypot(px - cx, py - cy) <= R)) continue;
+      const d = document.createElementNS(NS, 'rect');
+      Object.entries({ x, y, width: size, height: size, fill: '#ffffff', stroke: '#9aa8bb', 'stroke-width': 0.5 })
+        .forEach(([k, v]) => d.setAttribute(k, v));
+      g.appendChild(d);
+      if (c === pick.col && r === pick.row) {
+        const p = document.getElementById('pick');
+        p.setAttribute('x', x); p.setAttribute('y', y);
+        const set = (id, x1, y1, x2, y2) => Object.entries({ x1, y1, x2, y2 }).forEach(([k, v]) => document.getElementById(id).setAttribute(k, v));
+        set('g1', x + size, y, 140, 40);
+        set('g2', x + size, y + size, 140, 128);
+      }
+    }
+  })();
+</script>
+</body>
+</html>
