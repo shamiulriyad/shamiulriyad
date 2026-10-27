@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 700" font-family="'Liberation Sans', Arial, sans-serif"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#5b6573"/></marker><pattern id="hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="8" height="8" fill="#fbf3e4"/><rect width="3" height="8" fill="#b7791f"/></pattern></defs><rect width="1600" height="700" fill="#ffffff"/><rect x="20" y="40" width="300" height="150" rx="8" fill="#eef2f7" stroke="#1f3a5f" stroke-width="1.6"/>
+<text x="40" y="78" font-size="22" font-weight="700" fill="#1c2430" text-anchor="start">Clean references</text>
+<text x="40" y="110.0" font-size="19" font-weight="400" fill="#5b6573" text-anchor="start">held-out designs only;</text>
+<text x="40" y="134.7" font-size="19" font-weight="400" fill="#5b6573" text-anchor="start">split by design / layer</text>
+<text x="40" y="159.4" font-size="19" font-weight="400" fill="#5b6573" text-anchor="start">before any generation</text>
+<rect x="20" y="230" width="300" height="150" rx="8" fill="#ffffff" stroke="#9fb0c6" stroke-width="1.6" stroke-dasharray="7 5"/>
+<text x="40" y="268" font-size="22" font-weight="700" fill="#1c2430" text-anchor="start">Real same-design groups</text>
+<text x="40" y="300.0" font-size="19" font-weight="400" fill="#5b6573" text-anchor="start">if acquired (Level 3),</text>
+<text x="40" y="324.7" font-size="19" font-weight="400" fill="#5b6573" text-anchor="start">with verified clean or</text>
+<text x="40" y="349.4" font-size="19" font-weight="400" fill="#5b6573" text-anchor="start">design-rendered reference</text>
+<rect x="370" y="40" width="330" height="340" rx="8" fill="#ffffff" stroke="#1f3a5f" stroke-width="1.6"/>
+<text x="390" y="78" font-size="22" font-weight="700" fill="#1c2430" text-anchor="start">Synthetic group generator</text>
+<text x="390" y="112" font-size="19" font-weight="400" fill="#1c2430" text-anchor="start">seeded; parameters θ:</text>
+<text x="390" y="141" font-size="19" font-weight="400" fill="#1c2430" text-anchor="start">• N dies (2–5)</text>
+<text x="390" y="170" font-size="19" font-weight="400" fill="#1c2430" text-anchor="start">• defect types, size, count</text>
+<text x="390" y="199" font-size="19" font-weight="400" fill="#1c2430" text-anchor="start">• inter-die overlap (incl. all-N)</text>
+<text x="390" y="228" font-size="19" font-weight="400" fill="#1c2430" text-anchor="start">• rotation, shift, scale</text>
+<text x="390" y="257" font-size="19" font-weight="400" fill="#1c2430" text-anchor="start">• illumination, noise, blur</text>
+<text x="390" y="286" font-size="19" font-weight="400" fill="#1c2430" text-anchor="start">• registration perturbation</text>
+<line x1="320" y1="115" x2="366" y2="115" stroke="#5b6573" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="750" y="40" width="300" height="150" rx="8" fill="#e3ecf6" stroke="#1f3a5f" stroke-width="1.6"/>
+<text x="770" y="78" font-size="22" font-weight="700" fill="#1c2430" text-anchor="start">Groups with exact truth</text>
+<text x="770" y="110.0" font-size="19" font-weight="400" fill="#5b6573" text-anchor="start">R, Mₖ, Tₖ and the</text>
+<text x="770" y="134.7" font-size="19" font-weight="400" fill="#5b6573" text-anchor="start">unrecoverable set Z</text>
+<text x="770" y="159.4" font-size="19" font-weight="400" fill="#5b6573" text-anchor="start">(support &lt; s_min)</text>
+<line x1="700" y1="115" x2="746" y2="115" stroke="#5b6573" stroke-width="2" marker-end="url(#ah)"/>
+<path d="M170,380 L170,398 L725,398 L725,262 L900,262 L900,194" fill="none" stroke="#5b6573" stroke-width="1.8" stroke-dasharray="7 5" marker-end="url(#ah)"/>
+<text x="738" y="292" font-size="17" font-weight="400" fill="#5b6573" text-anchor="start" font-style="italic">real groups: truth only where verified</text>
+<rect x="1100" y="40" width="480" height="340" rx="8" fill="#ffffff" stroke="#1f3a5f" stroke-width="1.6"/>
+<text x="1120" y="78" font-size="22" font-weight="700" fill="#1c2430" text-anchor="start">Methods, frozen configs</text>
+<text x="1120" y="116" font-size="20" font-weight="400" fill="#1c2430" text-anchor="start">M1  single-image reference</text>
+<text x="1120" y="148" font-size="20" font-weight="400" fill="#1c2430" text-anchor="start">M2  registration + robust fusion</text>
+<text x="1120" y="180" font-size="20" font-weight="400" fill="#1c2430" text-anchor="start">      (median / trimmed mean)</text>
+<text x="1120" y="212" font-size="20" font-weight="400" fill="#1c2430" text-anchor="start">M3  defect-mask-aware fusion</text>
+<text x="1120" y="244" font-size="20" font-weight="400" fill="#1c2430" text-anchor="start">      + abstention</text>
+<text x="1120" y="276" font-size="20" font-weight="400" fill="#1c2430" text-anchor="start">M4  M3 + learned reconstruction</text>
+<text x="1120" y="308" font-size="20" font-weight="400" fill="#1c2430" text-anchor="start">      (only where validated)</text>
+<line x1="1050" y1="115" x2="1096" y2="115" stroke="#5b6573" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="20" y="440" width="1100" height="230" rx="8" fill="#ffffff" stroke="#1f3a5f" stroke-width="1.6"/>
+<text x="40" y="478" font-size="22" font-weight="700" fill="#1c2430" text-anchor="start">Metrics per group (Section J)</text>
+<text x="40" y="516" font-size="20" font-weight="400" fill="#1c2430" text-anchor="start">Fidelity: PSNR, SSIM, MAE on valid pixels</text>
+<text x="40" y="554" font-size="20" font-weight="400" fill="#1c2430" text-anchor="start">Defect leakage rate and instance leakage</text>
+<text x="40" y="592" font-size="20" font-weight="400" fill="#1c2430" text-anchor="start">Structure: edge F-score, gradient error</text>
+<text x="40" y="630" font-size="20" font-weight="400" fill="#1c2430" text-anchor="start">Registration: TRE in pixels</text>
+<text x="580" y="516" font-size="20" font-weight="400" fill="#1c2430" text-anchor="start">Segmentation: precision, recall, IoU</text>
+<text x="580" y="554" font-size="20" font-weight="400" fill="#1c2430" text-anchor="start">Uncertainty: AUSE, selective risk, AURC</text>
+<text x="580" y="592" font-size="20" font-weight="400" fill="#1c2430" text-anchor="start">Abstention: precision / recall vs Z</text>
+<text x="580" y="630" font-size="20" font-weight="400" fill="#1c2430" text-anchor="start">Runtime and peak memory</text>
+<path d="M1340,380 L1340,418 L570,418 L570,436" fill="none" stroke="#5b6573" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="1170" y="440" width="410" height="230" rx="8" fill="#eef2f7" stroke="#1f3a5f" stroke-width="1.6"/>
+<text x="1190" y="478" font-size="22" font-weight="700" fill="#1c2430" text-anchor="start">Analysis and report</text>
+<text x="1190" y="516" font-size="20" font-weight="400" fill="#1c2430" text-anchor="start">paired comparison per group</text>
+<text x="1190" y="554" font-size="20" font-weight="400" fill="#1c2430" text-anchor="start">bootstrap CIs over designs</text>
+<text x="1190" y="592" font-size="20" font-weight="400" fill="#1c2430" text-anchor="start">ablation curves per factor</text>
+<text x="1190" y="630" font-size="20" font-weight="400" fill="#1c2430" text-anchor="start">failure-case gallery</text>
+<line x1="1120" y1="555" x2="1166" y2="555" stroke="#5b6573" stroke-width="2" marker-end="url(#ah)"/></svg>

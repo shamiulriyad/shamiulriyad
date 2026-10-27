@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1640 760" font-family="'Liberation Sans', Arial, sans-serif"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#5b6573"/></marker><pattern id="hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="8" height="8" fill="#fbf3e4"/><rect width="3" height="8" fill="#b7791f"/></pattern></defs><rect width="1640" height="760" fill="#ffffff"/><rect x="20" y="10" width="500" height="730" rx="8" fill="#ffffff" stroke="#1f3a5f" stroke-width="1.8"/>
+<rect x="20" y="10" width="500" height="112" rx="8" fill="#1f3a5f"/>
+<text x="44" y="52" font-size="26" font-weight="700" fill="#ffffff" text-anchor="start">1  CPU-only prototype</text>
+<text x="44" y="84" font-size="20" font-weight="400" fill="#dbe4ef" text-anchor="start">Classical registration, fusion,</text>
+<text x="44" y="108" font-size="20" font-weight="400" fill="#dbe4ef" text-anchor="start">small experiments</text>
+<text x="44" y="168" font-size="19" font-weight="700" fill="#5b6573" text-anchor="start">CPU</text>
+<text x="150" y="168" font-size="21" font-weight="400" fill="#1c2430" text-anchor="start">4–8 modern cores</text>
+<line x1="40" y1="188" x2="500" y2="188" stroke="#e3e8ee"/>
+<text x="44" y="224" font-size="19" font-weight="700" fill="#5b6573" text-anchor="start">RAM</text>
+<text x="150" y="224" font-size="21" font-weight="400" fill="#1c2430" text-anchor="start">16 GB (32 GB for large images)</text>
+<line x1="40" y1="244" x2="500" y2="244" stroke="#e3e8ee"/>
+<text x="44" y="280" font-size="19" font-weight="700" fill="#5b6573" text-anchor="start">GPU</text>
+<text x="150" y="280" font-size="21" font-weight="400" fill="#1c2430" text-anchor="start">none</text>
+<line x1="40" y1="300" x2="500" y2="300" stroke="#e3e8ee"/>
+<text x="44" y="336" font-size="19" font-weight="700" fill="#5b6573" text-anchor="start">Storage</text>
+<text x="150" y="336" font-size="21" font-weight="400" fill="#1c2430" text-anchor="start">SSD, 100–250 GB free</text>
+<line x1="40" y1="356" x2="500" y2="356" stroke="#e3e8ee"/>
+<text x="44" y="392" font-size="19" font-weight="700" fill="#5b6573" text-anchor="start">OS</text>
+<text x="150" y="392" font-size="21" font-weight="400" fill="#1c2430" text-anchor="start">Linux, Windows or macOS</text>
+<line x1="40" y1="412" x2="500" y2="412" stroke="#e3e8ee"/>
+<text x="44" y="486" font-size="20" font-weight="700" fill="#1f3a5f" text-anchor="start">Typical use</text>
+<rect x="44" y="510" width="10" height="10" fill="#1f3a5f"/>
+<text x="66" y="520" font-size="20" font-weight="400" fill="#1c2430" text-anchor="start">Inference on 4–5 images: yes</text>
+<rect x="44" y="554" width="10" height="10" fill="#1f3a5f"/>
+<text x="66" y="564" font-size="20" font-weight="400" fill="#1c2430" text-anchor="start">U-Net training: toy scale only</text>
+<rect x="44" y="598" width="10" height="10" fill="#1f3a5f"/>
+<text x="66" y="608" font-size="20" font-weight="400" fill="#1c2430" text-anchor="start">PatchCore: small images, slow</text>
+<rect x="44" y="642" width="10" height="10" fill="#1f3a5f"/>
+<text x="66" y="652" font-size="20" font-weight="400" fill="#1c2430" text-anchor="start">Diffusion: no</text>
+<text x="44" y="712" font-size="17" font-weight="400" fill="#5b6573" text-anchor="start" font-style="italic">Estimates, not measured minimums</text>
+<rect x="570" y="10" width="500" height="730" rx="8" fill="#ffffff" stroke="#1f3a5f" stroke-width="1.8"/>
+<rect x="570" y="10" width="500" height="112" rx="8" fill="#1f3a5f"/>
+<text x="594" y="52" font-size="26" font-weight="700" fill="#ffffff" text-anchor="start">2  Entry-level GPU</text>
+<text x="594" y="84" font-size="20" font-weight="400" fill="#dbe4ef" text-anchor="start">Segmentation and modest</text>
+<text x="594" y="108" font-size="20" font-weight="400" fill="#dbe4ef" text-anchor="start">reconstruction models</text>
+<text x="594" y="168" font-size="19" font-weight="700" fill="#5b6573" text-anchor="start">CPU</text>
+<text x="700" y="168" font-size="21" font-weight="400" fill="#1c2430" text-anchor="start">8–16 cores</text>
+<line x1="590" y1="188" x2="1050" y2="188" stroke="#e3e8ee"/>
+<text x="594" y="224" font-size="19" font-weight="700" fill="#5b6573" text-anchor="start">RAM</text>
+<text x="700" y="224" font-size="21" font-weight="400" fill="#1c2430" text-anchor="start">32 GB</text>
+<line x1="590" y1="244" x2="1050" y2="244" stroke="#e3e8ee"/>
+<text x="594" y="280" font-size="19" font-weight="700" fill="#5b6573" text-anchor="start">GPU</text>
+<text x="700" y="280" font-size="21" font-weight="400" fill="#1c2430" text-anchor="start">8–12 GB VRAM (NVIDIA)</text>
+<line x1="590" y1="300" x2="1050" y2="300" stroke="#e3e8ee"/>
+<text x="594" y="336" font-size="19" font-weight="700" fill="#5b6573" text-anchor="start">Storage</text>
+<text x="700" y="336" font-size="21" font-weight="400" fill="#1c2430" text-anchor="start">NVMe, 1 TB</text>
+<line x1="590" y1="356" x2="1050" y2="356" stroke="#e3e8ee"/>
+<text x="594" y="392" font-size="19" font-weight="700" fill="#5b6573" text-anchor="start">OS</text>
+<text x="700" y="392" font-size="21" font-weight="400" fill="#1c2430" text-anchor="start">Ubuntu LTS; NVIDIA driver</text>
+<line x1="590" y1="412" x2="1050" y2="412" stroke="#e3e8ee"/>
+<text x="594" y="486" font-size="20" font-weight="700" fill="#1f3a5f" text-anchor="start">Typical use</text>
+<rect x="594" y="510" width="10" height="10" fill="#1f3a5f"/>
+<text x="616" y="520" font-size="20" font-weight="400" fill="#1c2430" text-anchor="start">U-Net on 256–512 px patches</text>
+<rect x="594" y="554" width="10" height="10" fill="#1f3a5f"/>
+<text x="616" y="564" font-size="20" font-weight="400" fill="#1c2430" text-anchor="start">PatchCore / PaDiM feature extraction</text>
+<rect x="594" y="598" width="10" height="10" fill="#1f3a5f"/>
+<text x="616" y="608" font-size="20" font-weight="400" fill="#1c2430" text-anchor="start">Masked U-Net reconstruction</text>
+<rect x="594" y="642" width="10" height="10" fill="#1f3a5f"/>
+<text x="616" y="652" font-size="20" font-weight="400" fill="#1c2430" text-anchor="start">Diffusion: pretrained inference, small</text>
+<text x="594" y="712" font-size="17" font-weight="400" fill="#5b6573" text-anchor="start" font-style="italic">Estimates, not measured minimums</text>
+<rect x="1120" y="10" width="500" height="730" rx="8" fill="#ffffff" stroke="#1f3a5f" stroke-width="1.8"/>
+<rect x="1120" y="10" width="500" height="112" rx="8" fill="#1f3a5f"/>
+<text x="1144" y="52" font-size="26" font-weight="700" fill="#ffffff" text-anchor="start">3  Research workstation</text>
+<text x="1144" y="84" font-size="20" font-weight="400" fill="#dbe4ef" text-anchor="start">High resolution, ablations,</text>
+<text x="1144" y="108" font-size="20" font-weight="400" fill="#dbe4ef" text-anchor="start">optional diffusion</text>
+<text x="1144" y="168" font-size="19" font-weight="700" fill="#5b6573" text-anchor="start">CPU</text>
+<text x="1250" y="168" font-size="21" font-weight="400" fill="#1c2430" text-anchor="start">16–32 cores</text>
+<line x1="1140" y1="188" x2="1600" y2="188" stroke="#e3e8ee"/>
+<text x="1144" y="224" font-size="19" font-weight="700" fill="#5b6573" text-anchor="start">RAM</text>
+<text x="1250" y="224" font-size="21" font-weight="400" fill="#1c2430" text-anchor="start">64–128 GB</text>
+<line x1="1140" y1="244" x2="1600" y2="244" stroke="#e3e8ee"/>
+<text x="1144" y="280" font-size="19" font-weight="700" fill="#5b6573" text-anchor="start">GPU</text>
+<text x="1250" y="280" font-size="21" font-weight="400" fill="#1c2430" text-anchor="start">16–24 GB, or 40–48 GB+</text>
+<line x1="1140" y1="300" x2="1600" y2="300" stroke="#e3e8ee"/>
+<text x="1144" y="336" font-size="19" font-weight="700" fill="#5b6573" text-anchor="start">Storage</text>
+<text x="1250" y="336" font-size="21" font-weight="400" fill="#1c2430" text-anchor="start">NVMe 2–4 TB + backup</text>
+<line x1="1140" y1="356" x2="1600" y2="356" stroke="#e3e8ee"/>
+<text x="1144" y="392" font-size="19" font-weight="700" fill="#5b6573" text-anchor="start">OS</text>
+<text x="1250" y="392" font-size="21" font-weight="400" fill="#1c2430" text-anchor="start">Ubuntu LTS; NVIDIA driver</text>
+<line x1="1140" y1="412" x2="1600" y2="412" stroke="#e3e8ee"/>
+<text x="1144" y="486" font-size="20" font-weight="700" fill="#1f3a5f" text-anchor="start">Typical use</text>
+<rect x="1144" y="510" width="10" height="10" fill="#1f3a5f"/>
+<text x="1166" y="520" font-size="20" font-weight="400" fill="#1c2430" text-anchor="start">Larger tiles, larger batches</text>
+<rect x="1144" y="554" width="10" height="10" fill="#1f3a5f"/>
+<text x="1166" y="564" font-size="20" font-weight="400" fill="#1c2430" text-anchor="start">Parallel ablation sweeps</text>
+<rect x="1144" y="598" width="10" height="10" fill="#1f3a5f"/>
+<text x="1166" y="608" font-size="20" font-weight="400" fill="#1c2430" text-anchor="start">Ensembles for uncertainty</text>
+<rect x="1144" y="642" width="10" height="10" fill="#1f3a5f"/>
+<text x="1166" y="652" font-size="20" font-weight="400" fill="#1c2430" text-anchor="start">Pretrained diffusion fine-tuning</text>
+<text x="1144" y="712" font-size="17" font-weight="400" fill="#5b6573" text-anchor="start" font-style="italic">Estimates, not measured minimums</text></svg>

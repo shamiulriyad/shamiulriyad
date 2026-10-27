@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1660 1010" font-family="'Liberation Sans', Arial, sans-serif"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#5b6573"/></marker><pattern id="hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="8" height="8" fill="#fbf3e4"/><rect width="3" height="8" fill="#b7791f"/></pattern></defs><rect width="1660" height="1010" fill="#ffffff"/><rect x="20" y="10" width="500" height="54" rx="8" fill="#1f3a5f" stroke="#1f3a5f" stroke-width="0"/>
+<text x="270.0" y="46" font-size="23" font-weight="700" fill="#ffffff" text-anchor="middle">Registration</text>
+<rect x="570" y="10" width="500" height="54" rx="8" fill="#1f3a5f" stroke="#1f3a5f" stroke-width="0"/>
+<text x="820.0" y="46" font-size="23" font-weight="700" fill="#ffffff" text-anchor="middle">Defect / reliability evidence</text>
+<rect x="1120" y="10" width="500" height="54" rx="8" fill="#1f3a5f" stroke="#1f3a5f" stroke-width="0"/>
+<text x="1370.0" y="46" font-size="23" font-weight="700" fill="#ffffff" text-anchor="middle">Reconstruction of each region</text>
+<rect x="20" y="90" width="500" height="82" rx="22" fill="#ffffff" stroke="#1f3a5f" stroke-width="1.8"/>
+<text x="270.0" y="124" font-size="20" font-weight="700" fill="#1c2430" text-anchor="middle">Only translation between images</text>
+<text x="270.0" y="150" font-size="20" font-weight="700" fill="#1c2430" text-anchor="middle">(same magnification, stage-aligned)?</text>
+<rect x="20" y="200" width="300" height="76" rx="8" fill="#e3ecf6" stroke="#1f3a5f" stroke-width="1.6"/>
+<text x="36" y="232" font-size="19" font-weight="400" fill="#1c2430" text-anchor="start">Phase correlation, sub-pixel</text>
+<text x="36" y="257" font-size="19" font-weight="400" fill="#1c2430" text-anchor="start">(Guizar-Sicairos) [29]</text>
+<line x1="135" y1="172" x2="135" y2="196" stroke="#5b6573" stroke-width="2" marker-end="url(#ah)"/>
+<text x="144" y="190" font-size="18" font-weight="700" fill="#5b6573" text-anchor="start">yes</text>
+<line x1="400" y1="172" x2="400" y2="300" stroke="#5b6573" stroke-width="2" marker-end="url(#ah)"/>
+<text x="410" y="190" font-size="18" font-weight="700" fill="#5b6573" text-anchor="start">no</text>
+<rect x="20" y="304" width="500" height="82" rx="22" fill="#ffffff" stroke="#1f3a5f" stroke-width="1.8"/>
+<text x="270.0" y="338" font-size="20" font-weight="700" fill="#1c2430" text-anchor="middle">Rotation / scale small and</text>
+<text x="270.0" y="364" font-size="20" font-weight="700" fill="#1c2430" text-anchor="middle">a good initial estimate exists?</text>
+<rect x="20" y="416" width="360" height="76" rx="8" fill="#e3ecf6" stroke="#1f3a5f" stroke-width="1.6"/>
+<text x="36" y="448" font-size="19" font-weight="400" fill="#1c2430" text-anchor="start">ECC, Euclidean or affine, initialised</text>
+<text x="36" y="473" font-size="19" font-weight="400" fill="#1c2430" text-anchor="start">by phase correlation [27]</text>
+<line x1="135" y1="386" x2="135" y2="412" stroke="#5b6573" stroke-width="2" marker-end="url(#ah)"/>
+<text x="144" y="404" font-size="18" font-weight="700" fill="#5b6573" text-anchor="start">yes</text>
+<line x1="460" y1="386" x2="460" y2="520" stroke="#5b6573" stroke-width="2" marker-end="url(#ah)"/>
+<text x="470" y="404" font-size="18" font-weight="700" fill="#5b6573" text-anchor="start">no</text>
+<rect x="20" y="524" width="500" height="82" rx="22" fill="#ffffff" stroke="#1f3a5f" stroke-width="1.8"/>
+<text x="270.0" y="558" font-size="20" font-weight="700" fill="#1c2430" text-anchor="middle">Distinct, non-repetitive</text>
+<text x="270.0" y="584" font-size="20" font-weight="700" fill="#1c2430" text-anchor="middle">features in the ROI?</text>
+<rect x="20" y="636" width="300" height="76" rx="8" fill="#e3ecf6" stroke="#1f3a5f" stroke-width="1.6"/>
+<text x="36" y="668" font-size="19" font-weight="400" fill="#1c2430" text-anchor="start">SIFT / ORB + RANSAC [24–26],</text>
+<text x="36" y="693" font-size="19" font-weight="400" fill="#1c2430" text-anchor="start">then ECC refinement</text>
+<line x1="135" y1="606" x2="135" y2="632" stroke="#5b6573" stroke-width="2" marker-end="url(#ah)"/>
+<text x="144" y="624" font-size="18" font-weight="700" fill="#5b6573" text-anchor="start">yes</text>
+<line x1="460" y1="606" x2="460" y2="740" stroke="#5b6573" stroke-width="2" marker-end="url(#ah)"/>
+<text x="470" y="624" font-size="18" font-weight="700" fill="#5b6573" text-anchor="start">no</text>
+<rect x="20" y="744" width="500" height="101" rx="8" fill="#e3ecf6" stroke="#1f3a5f" stroke-width="1.6"/>
+<text x="36" y="776" font-size="19" font-weight="400" fill="#1c2430" text-anchor="start">Fourier–Mellin [28] or fiducial / layout-</text>
+<text x="36" y="801" font-size="19" font-weight="400" fill="#1c2430" text-anchor="start">anchored coarse alignment; check for</text>
+<text x="36" y="826" font-size="19" font-weight="400" fill="#1c2430" text-anchor="start">one-pitch ambiguity in periodic patterns</text>
+<rect x="20" y="880" width="500" height="76" rx="8" fill="#ffffff" stroke="#9fb0c6" stroke-width="1.6" stroke-dasharray="7 5"/>
+<text x="36" y="912" font-size="19" font-weight="400" fill="#1c2430" text-anchor="start">Always: report residual map and</text>
+<text x="36" y="937" font-size="19" font-weight="400" fill="#1c2430" text-anchor="start">per-image confidence; reject if too high</text>
+<rect x="570" y="90" width="500" height="82" rx="22" fill="#ffffff" stroke="#1f3a5f" stroke-width="1.8"/>
+<text x="820.0" y="124" font-size="20" font-weight="700" fill="#1c2430" text-anchor="middle">Pixel-level defect masks</text>
+<text x="820.0" y="150" font-size="20" font-weight="700" fill="#1c2430" text-anchor="middle">available for this domain?</text>
+<rect x="570" y="200" width="300" height="76" rx="8" fill="#e3ecf6" stroke="#1f3a5f" stroke-width="1.6"/>
+<text x="586" y="232" font-size="19" font-weight="400" fill="#1c2430" text-anchor="start">Supervised U-Net [22]</text>
+<text x="586" y="257" font-size="19" font-weight="400" fill="#1c2430" text-anchor="start">(BCE + Dice), per-pixel p̂ₖ(x)</text>
+<line x1="685" y1="172" x2="685" y2="196" stroke="#5b6573" stroke-width="2" marker-end="url(#ah)"/>
+<text x="694" y="190" font-size="18" font-weight="700" fill="#5b6573" text-anchor="start">yes</text>
+<line x1="1010" y1="172" x2="1010" y2="300" stroke="#5b6573" stroke-width="2" marker-end="url(#ah)"/>
+<text x="1020" y="190" font-size="18" font-weight="700" fill="#5b6573" text-anchor="start">no</text>
+<rect x="570" y="304" width="500" height="82" rx="22" fill="#ffffff" stroke="#1f3a5f" stroke-width="1.8"/>
+<text x="820.0" y="338" font-size="20" font-weight="700" fill="#1c2430" text-anchor="middle">Defect-free images of the</text>
+<text x="820.0" y="364" font-size="20" font-weight="700" fill="#1c2430" text-anchor="middle">same layer / imaging setup?</text>
+<rect x="570" y="416" width="330" height="76" rx="8" fill="#e3ecf6" stroke="#1f3a5f" stroke-width="1.6"/>
+<text x="586" y="448" font-size="19" font-weight="400" fill="#1c2430" text-anchor="start">One-class: PatchCore [18] or</text>
+<text x="586" y="473" font-size="19" font-weight="400" fill="#1c2430" text-anchor="start">PaDiM [19]; calibrate threshold</text>
+<line x1="685" y1="386" x2="685" y2="412" stroke="#5b6573" stroke-width="2" marker-end="url(#ah)"/>
+<text x="694" y="404" font-size="18" font-weight="700" fill="#5b6573" text-anchor="start">yes</text>
+<line x1="1010" y1="386" x2="1010" y2="520" stroke="#5b6573" stroke-width="2" marker-end="url(#ah)"/>
+<text x="1020" y="404" font-size="18" font-weight="700" fill="#5b6573" text-anchor="start">no</text>
+<rect x="570" y="524" width="500" height="76" rx="8" fill="#e3ecf6" stroke="#1f3a5f" stroke-width="1.6"/>
+<text x="586" y="556" font-size="19" font-weight="400" fill="#1c2430" text-anchor="start">Cross-die robust deviation only</text>
+<text x="586" y="581" font-size="19" font-weight="400" fill="#1c2430" text-anchor="start">(median / MAD z-score)</text>
+<rect x="570" y="632" width="500" height="101" rx="8" fill="#ffffff" stroke="#9fb0c6" stroke-width="1.6" stroke-dasharray="7 5"/>
+<text x="586" y="664" font-size="19" font-weight="400" fill="#1c2430" text-anchor="start">In every branch: combine with cross-die</text>
+<text x="586" y="689" font-size="19" font-weight="400" fill="#1c2430" text-anchor="start">consistency and registration confidence</text>
+<text x="586" y="714" font-size="19" font-weight="400" fill="#1c2430" text-anchor="start">to form wₖ(x) (Section G)</text>
+<rect x="570" y="768" width="500" height="126" rx="8" fill="#fbf3e4" stroke="#b7791f" stroke-width="1.6"/>
+<text x="586" y="800" font-size="19" font-weight="400" fill="#1c2430" text-anchor="start">Not sufficient alone: an image-level</text>
+<text x="586" y="825" font-size="19" font-weight="400" fill="#1c2430" text-anchor="start">classifier (e.g. ResNet) outputs one label</text>
+<text x="586" y="850" font-size="19" font-weight="400" fill="#1c2430" text-anchor="start">per image, not a mask; CAM heat-maps are</text>
+<text x="586" y="875" font-size="19" font-weight="400" fill="#1c2430" text-anchor="start">coarse and not calibrated masks</text>
+<rect x="1120" y="90" width="500" height="82" rx="22" fill="#ffffff" stroke="#1f3a5f" stroke-width="1.8"/>
+<text x="1370.0" y="124" font-size="20" font-weight="700" fill="#1c2430" text-anchor="middle">Support S(x) ≥ s_min</text>
+<text x="1370.0" y="150" font-size="20" font-weight="700" fill="#1c2430" text-anchor="middle">reliable dies at this region?</text>
+<line x1="1235" y1="172" x2="1235" y2="196" stroke="#5b6573" stroke-width="2" marker-end="url(#ah)"/>
+<text x="1244" y="190" font-size="18" font-weight="700" fill="#5b6573" text-anchor="start">yes</text>
+<rect x="1120" y="200" width="300" height="82" rx="22" fill="#ffffff" stroke="#1f3a5f" stroke-width="1.8"/>
+<text x="1270.0" y="234" font-size="20" font-weight="700" fill="#1c2430" text-anchor="middle">Reliable observations</text>
+<text x="1270.0" y="260" font-size="20" font-weight="700" fill="#1c2430" text-anchor="middle">structurally consistent?</text>
+<line x1="1270" y1="282" x2="1270" y2="306" stroke="#5b6573" stroke-width="2" marker-end="url(#ah)"/>
+<text x="1280" y="300" font-size="18" font-weight="700" fill="#5b6573" text-anchor="start">yes</text>
+<rect x="1120" y="310" width="300" height="76" rx="8" fill="#e3ecf6" stroke="#1f3a5f" stroke-width="1.6"/>
+<text x="1136" y="342" font-size="19" font-weight="400" fill="#1c2430" text-anchor="start">Weighted median / Huber</text>
+<text x="1136" y="367" font-size="19" font-weight="400" fill="#1c2430" text-anchor="start">fusion over reliable dies</text>
+<line x1="1420" y1="241" x2="1438" y2="241" stroke="#5b6573" stroke-width="2" marker-end="url(#ah)"/>
+<text x="1416" y="226" font-size="18" font-weight="700" fill="#5b6573" text-anchor="end">no</text>
+<rect x="1442" y="200" width="150" height="101" rx="8" fill="#e3ecf6" stroke="#1f3a5f" stroke-width="1.6"/>
+<text x="1458" y="232" font-size="19" font-weight="400" fill="#1c2430" text-anchor="start">Region-level</text>
+<text x="1458" y="257" font-size="19" font-weight="400" fill="#1c2430" text-anchor="start">source select;</text>
+<text x="1458" y="282" font-size="19" font-weight="400" fill="#1c2430" text-anchor="start">raise U(x)</text>
+<line x1="1608" y1="172" x2="1608" y2="410" stroke="#5b6573" stroke-width="2" marker-end="url(#ah)"/>
+<text x="1576" y="190" font-size="18" font-weight="700" fill="#5b6573" text-anchor="start">no</text>
+<rect x="1120" y="414" width="500" height="82" rx="22" fill="#ffffff" stroke="#1f3a5f" stroke-width="1.8"/>
+<text x="1370.0" y="448" font-size="20" font-weight="700" fill="#1c2430" text-anchor="middle">Learned fill validated on held-out</text>
+<text x="1370.0" y="474" font-size="20" font-weight="700" fill="#1c2430" text-anchor="middle">designs with hallucination checks?</text>
+<line x1="1235" y1="496" x2="1235" y2="520" stroke="#5b6573" stroke-width="2" marker-end="url(#ah)"/>
+<text x="1244" y="514" font-size="18" font-weight="700" fill="#5b6573" text-anchor="start">no</text>
+<rect x="1120" y="524" width="280" height="76" rx="8" fill="#fbf3e4" stroke="#b7791f" stroke-width="1.6"/>
+<text x="1136" y="556" font-size="19" font-weight="400" fill="#1c2430" text-anchor="start">Abstain (default):</text>
+<text x="1136" y="581" font-size="19" font-weight="400" fill="#1c2430" text-anchor="start">mark uncertain, do not fill</text>
+<line x1="1560" y1="496" x2="1560" y2="520" stroke="#5b6573" stroke-width="2" marker-end="url(#ah)"/>
+<text x="1570" y="514" font-size="18" font-weight="700" fill="#5b6573" text-anchor="start">yes</text>
+<rect x="1416" y="524" width="204" height="101" rx="8" fill="#e3ecf6" stroke="#1f3a5f" stroke-width="1.6"/>
+<text x="1432" y="556" font-size="19" font-weight="400" fill="#1c2430" text-anchor="start">Masked U-Net fill,</text>
+<text x="1432" y="581" font-size="19" font-weight="400" fill="#1c2430" text-anchor="start">labelled ‘model-</text>
+<text x="1432" y="606" font-size="19" font-weight="400" fill="#1c2430" text-anchor="start">filled’, U stays high</text>
+<rect x="1120" y="680" width="500" height="126" rx="8" fill="#ffffff" stroke="#9fb0c6" stroke-width="1.6" stroke-dasharray="7 5"/>
+<text x="1136" y="712" font-size="19" font-weight="400" fill="#1c2430" text-anchor="start">Diffusion inpainting (e.g. RePaint [36]):</text>
+<text x="1136" y="737" font-size="19" font-weight="400" fill="#1c2430" text-anchor="start">only pretrained models, only as an</text>
+<text x="1136" y="762" font-size="19" font-weight="400" fill="#1c2430" text-anchor="start">experiment, never shown as verified</text>
+<text x="1136" y="787" font-size="19" font-weight="400" fill="#1c2430" text-anchor="start">pattern; no training from scratch</text>
+<rect x="1120" y="846" width="500" height="76" rx="8" fill="#fbf3e4" stroke="#b7791f" stroke-width="1.6"/>
+<text x="1136" y="878" font-size="19" font-weight="400" fill="#1c2430" text-anchor="start">Any region defective in all dies</text>
+<text x="1136" y="903" font-size="19" font-weight="400" fill="#1c2430" text-anchor="start">(systematic defect) stays abstained</text></svg>

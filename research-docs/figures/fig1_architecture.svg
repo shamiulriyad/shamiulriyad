@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 780" font-family="'Liberation Sans', Arial, sans-serif"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#5b6573"/></marker><pattern id="hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="8" height="8" fill="#fbf3e4"/><rect width="3" height="8" fill="#b7791f"/></pattern></defs><rect width="1600" height="780" fill="#ffffff"/><text x="0" y="30" font-size="22" font-weight="700" fill="#1f3a5f" text-anchor="start">Modular pipeline: each stage has a defined input, output and a classical baseline</text>
+<rect x="20" y="70" width="287" height="160" rx="8" fill="#eef2f7" stroke="#1f3a5f" stroke-width="1.8"/>
+<text x="36" y="104" font-size="24" font-weight="700" fill="#1f3a5f" text-anchor="start">0</text>
+<text x="64" y="104" font-size="21" font-weight="700" fill="#1c2430" text-anchor="start">Input group</text>
+<text x="36" y="142.0" font-size="19" font-weight="400" fill="#5b6573" text-anchor="start">N = 4–5 images</text>
+<text x="36" y="166.7" font-size="19" font-weight="400" fill="#5b6573" text-anchor="start">same layer, design,</text>
+<text x="36" y="191.4" font-size="19" font-weight="400" fill="#5b6573" text-anchor="start">tool settings</text>
+<text x="36" y="216.1" font-size="19" font-weight="400" fill="#5b6573" text-anchor="start">+ metadata</text>
+<rect x="338" y="70" width="287" height="160" rx="8" fill="#ffffff" stroke="#9fb0c6" stroke-width="1.8"/>
+<text x="354" y="104" font-size="24" font-weight="700" fill="#1f3a5f" text-anchor="start">1</text>
+<text x="382" y="104" font-size="21" font-weight="700" fill="#1c2430" text-anchor="start">Quality check &amp; ROI</text>
+<text x="354" y="142.0" font-size="19" font-weight="400" fill="#5b6573" text-anchor="start">focus, saturation,</text>
+<text x="354" y="166.7" font-size="19" font-weight="400" fill="#5b6573" text-anchor="start">noise, coverage;</text>
+<text x="354" y="191.4" font-size="19" font-weight="400" fill="#5b6573" text-anchor="start">crop shared region</text>
+<rect x="656" y="70" width="287" height="160" rx="8" fill="#ffffff" stroke="#9fb0c6" stroke-width="1.8"/>
+<text x="672" y="104" font-size="24" font-weight="700" fill="#1f3a5f" text-anchor="start">2</text>
+<text x="700" y="104" font-size="21" font-weight="700" fill="#1c2430" text-anchor="start">Normalisation</text>
+<text x="672" y="142.0" font-size="19" font-weight="400" fill="#5b6573" text-anchor="start">gain/offset or</text>
+<text x="672" y="166.7" font-size="19" font-weight="400" fill="#5b6573" text-anchor="start">histogram match,</text>
+<text x="672" y="191.4" font-size="19" font-weight="400" fill="#5b6573" text-anchor="start">only if justified</text>
+<rect x="974" y="70" width="287" height="160" rx="8" fill="#ffffff" stroke="#9fb0c6" stroke-width="1.8"/>
+<text x="990" y="104" font-size="24" font-weight="700" fill="#1f3a5f" text-anchor="start">3</text>
+<text x="1018" y="104" font-size="21" font-weight="700" fill="#1c2430" text-anchor="start">Registration</text>
+<text x="990" y="142.0" font-size="19" font-weight="400" fill="#5b6573" text-anchor="start">T̂ₖ: translation →</text>
+<text x="990" y="166.7" font-size="19" font-weight="400" fill="#5b6573" text-anchor="start">rigid/affine; residual</text>
+<text x="990" y="191.4" font-size="19" font-weight="400" fill="#5b6573" text-anchor="start">and confidence map</text>
+<rect x="1292" y="70" width="287" height="160" rx="8" fill="#ffffff" stroke="#9fb0c6" stroke-width="1.8"/>
+<text x="1308" y="104" font-size="24" font-weight="700" fill="#1f3a5f" text-anchor="start">4</text>
+<text x="1336" y="104" font-size="21" font-weight="700" fill="#1c2430" text-anchor="start">Defect evidence</text>
+<text x="1308" y="142.0" font-size="19" font-weight="400" fill="#5b6573" text-anchor="start">U-Net masks and/or</text>
+<text x="1308" y="166.7" font-size="19" font-weight="400" fill="#5b6573" text-anchor="start">PatchCore/PaDiM</text>
+<text x="1308" y="191.4" font-size="19" font-weight="400" fill="#5b6573" text-anchor="start">anomaly scores</text>
+<rect x="1292" y="300" width="287" height="160" rx="8" fill="#ffffff" stroke="#9fb0c6" stroke-width="1.8"/>
+<text x="1308" y="334" font-size="24" font-weight="700" fill="#1f3a5f" text-anchor="start">5</text>
+<text x="1336" y="334" font-size="21" font-weight="700" fill="#1c2430" text-anchor="start">Reliability</text>
+<text x="1308" y="372.0" font-size="19" font-weight="400" fill="#5b6573" text-anchor="start">wₖ(x) from defect</text>
+<text x="1308" y="396.7" font-size="19" font-weight="400" fill="#5b6573" text-anchor="start">prob., cross-die</text>
+<text x="1308" y="421.4" font-size="19" font-weight="400" fill="#5b6573" text-anchor="start">deviation, reg. conf.</text>
+<rect x="974" y="300" width="287" height="160" rx="8" fill="#e3ecf6" stroke="#1f3a5f" stroke-width="1.8"/>
+<text x="990" y="334" font-size="24" font-weight="700" fill="#1f3a5f" text-anchor="start">6</text>
+<text x="1018" y="334" font-size="21" font-weight="700" fill="#1c2430" text-anchor="start">Defect-aware fusion</text>
+<text x="990" y="372.0" font-size="19" font-weight="400" fill="#5b6573" text-anchor="start">weighted median /</text>
+<text x="990" y="396.7" font-size="19" font-weight="400" fill="#5b6573" text-anchor="start">Huber over reliable</text>
+<text x="990" y="421.4" font-size="19" font-weight="400" fill="#5b6573" text-anchor="start">dies; provenance</text>
+<rect x="656" y="300" width="287" height="160" rx="8" fill="#ffffff" stroke="#9fb0c6" stroke-width="1.8" stroke-dasharray="8 6"/>
+<text x="672" y="334" font-size="24" font-weight="700" fill="#1f3a5f" text-anchor="start">7</text>
+<text x="700" y="334" font-size="21" font-weight="700" fill="#1c2430" text-anchor="start">Learned fill (opt.)</text>
+<text x="672" y="372.0" font-size="19" font-weight="400" fill="#5b6573" text-anchor="start">masked U-Net only if</text>
+<text x="672" y="396.7" font-size="19" font-weight="400" fill="#5b6573" text-anchor="start">validated; output</text>
+<text x="672" y="421.4" font-size="19" font-weight="400" fill="#5b6573" text-anchor="start">flagged as model-filled</text>
+<rect x="338" y="300" width="287" height="160" rx="8" fill="#e3ecf6" stroke="#1f3a5f" stroke-width="1.8"/>
+<text x="354" y="334" font-size="24" font-weight="700" fill="#1f3a5f" text-anchor="start">8</text>
+<text x="382" y="334" font-size="21" font-weight="700" fill="#1c2430" text-anchor="start">Uncertainty &amp; abstain</text>
+<text x="354" y="372.0" font-size="19" font-weight="400" fill="#5b6573" text-anchor="start">support S(x),</text>
+<text x="354" y="396.7" font-size="19" font-weight="400" fill="#5b6573" text-anchor="start">dispersion, n_eff;</text>
+<text x="354" y="421.4" font-size="19" font-weight="400" fill="#5b6573" text-anchor="start">abstention mask A</text>
+<rect x="20" y="300" width="287" height="160" rx="8" fill="#ffffff" stroke="#9fb0c6" stroke-width="1.8"/>
+<text x="36" y="334" font-size="24" font-weight="700" fill="#1f3a5f" text-anchor="start">9</text>
+<text x="64" y="334" font-size="21" font-weight="700" fill="#1c2430" text-anchor="start">Evaluation &amp; export</text>
+<text x="36" y="372.0" font-size="19" font-weight="400" fill="#5b6573" text-anchor="start">metrics, report,</text>
+<text x="36" y="396.7" font-size="19" font-weight="400" fill="#5b6573" text-anchor="start">failure gallery,</text>
+<text x="36" y="421.4" font-size="19" font-weight="400" fill="#5b6573" text-anchor="start">all maps saved</text>
+<line x1="311" y1="150.0" x2="334" y2="150.0" stroke="#5b6573" stroke-width="2" marker-end="url(#ah)"/>
+<line x1="629" y1="150.0" x2="652" y2="150.0" stroke="#5b6573" stroke-width="2" marker-end="url(#ah)"/>
+<line x1="947" y1="150.0" x2="970" y2="150.0" stroke="#5b6573" stroke-width="2" marker-end="url(#ah)"/>
+<line x1="1265" y1="150.0" x2="1288" y2="150.0" stroke="#5b6573" stroke-width="2" marker-end="url(#ah)"/>
+<line x1="1435.5" y1="234" x2="1435.5" y2="294" stroke="#5b6573" stroke-width="2" marker-end="url(#ah)"/>
+<line x1="1288" y1="380.0" x2="1265" y2="380.0" stroke="#5b6573" stroke-width="2" marker-end="url(#ah)"/>
+<line x1="970" y1="380.0" x2="947" y2="380.0" stroke="#5b6573" stroke-width="2" marker-end="url(#ah)"/>
+<line x1="652" y1="380.0" x2="629" y2="380.0" stroke="#5b6573" stroke-width="2" marker-end="url(#ah)"/>
+<line x1="334" y1="380.0" x2="311" y2="380.0" stroke="#5b6573" stroke-width="2" marker-end="url(#ah)"/>
+<path d="M1117.5,464 L1117.5,500 L481.5,500 L481.5,466" fill="none" stroke="#5b6573" stroke-width="1.8" stroke-dasharray="6 5" marker-end="url(#ah)"/>
+<text x="799.5" y="522" font-size="18" font-weight="400" fill="#5b6573" text-anchor="middle" font-style="italic">default path: skip stage 7</text>
+<rect x="20" y="582" width="1560" height="92" rx="8" fill="#eef2f7" stroke="#1f3a5f" stroke-width="1.4"/>
+<text x="40" y="616" font-size="21" font-weight="700" fill="#1f3a5f" text-anchor="start">Outputs (per group)</text>
+<text x="40" y="650" font-size="20" font-weight="400" fill="#1c2430" text-anchor="start">candidate reference R̂  ·  per-die masks Mₖ and weights wₖ  ·  support S  ·  uncertainty U  ·  abstention mask A  ·  provenance map  ·  report</text>
+<line x1="163.5" y1="464" x2="163.5" y2="576" stroke="#5b6573" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="20" y="692" width="1560" height="70" rx="8" fill="#ffffff" stroke="#c9d1db" stroke-width="1.2"/>
+<text x="40" y="735" font-size="19" font-weight="400" fill="#5b6573" text-anchor="start">Cross-cutting: YAML configuration · fixed seeds · versioned data manifest · per-stage logs · failure-case gallery · no stage may overwrite an abstained pixel</text></svg>
