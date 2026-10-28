@@ -1,14 +1,42 @@
 # Implications of Advanced Statistics in Business and Research
 
-An eight-slide, 16:9 university presentation, plus one supplementary reference slide.
+A 16:9 university presentation in three versions: a **6-slide deck** that keeps every topic of the full deck with less text, a **short deck (title + 5 slides)** and a full 8-slide deck with a supplementary reference slide.
 
 | File | Use it for |
 | --- | --- |
+| `Advanced_Statistics_Presentation_6_Slides.pptx` | **Recommended:** the full deck's topics on 6 uncluttered slides. Each slide has a short spoken explanation in its speaker notes. |
+| `Advanced_Statistics_Presentation_6_Slides.pdf` | PDF copy of the 6-slide version. |
+| `Advanced_Statistics_Short_Presentation.pptx` | **Short version:** a title slide plus 5 content slides, with little text. Each slide has a short spoken explanation in its speaker notes. |
+| `Advanced_Statistics_Short_Presentation.pdf` | PDF copy of the short version. |
 | `Advanced_Statistics_Presentation.pptx` | The editable deck: PowerPoint, Keynote or Google Slides. Speaker notes on every slide hold the full explanations and calculations. |
 | `Advanced_Statistics_Presentation.pdf` | A quick-review copy with all animated content shown. |
 | `build/` | Scripts that rebuild the deck (`build.sh`). |
 
-## Slide plan
+## 6-slide version
+
+| # | Slide | What it says |
+| --- | --- | --- |
+| 1 | Title | Topic, team members, course details |
+| 2 | Why it matters & key methods | Data → description → prediction → inference → decision; six methods in one line each; 5–6% productivity evidence |
+| 3 | Business & research implications | Business uses + Bing A/B test (+12% revenue); research uses + RECOVERY trial (deaths 41.4% → 29.3%) |
+| 4 | A/B test case (**illustrative data**) | 4.20% vs 4.80%; +0.60 pp, 95% CI +0.19 to +1.01 pp, p = 0.004; launch B |
+| 5 | Challenges & ethics | Six risks in one line each; five-step responsible practice |
+| 6 | Conclusion | Four takeaways, closing quote, key references |
+
+## Short version (title + 5 slides)
+
+| # | Slide | What it says |
+| --- | --- | --- |
+| 1 | Title | Topic, team members, course details |
+| 2 | Statistics turns data into decisions | Data → patterns → uncertainty → decision; four key methods (regression, hypothesis testing, forecasting, A/B testing) |
+| 3 | Better decisions in business and research | Four uses in each field, plus two real cases: Bing A/B test (+12% revenue) and the RECOVERY trial (deaths 41.4% → 29.3% in ventilated patients) |
+| 4 | A/B test case (**illustrative data**) | Old page 4.20% vs new page 4.80%; difference +0.60 pp, 95% CI +0.19 to +1.01 pp, p = 0.004; decision: launch B |
+| 5 | Challenges | Four cautions (biased data, correlation ≠ causation, significant ≠ important, privacy & fairness) and a note on AI |
+| 6 | Conclusion | Three takeaways, closing quote, thank you, key references |
+
+Team and course details are edited the same way as in the full version (see below).
+
+## Full version: slide plan
 
 | # | Slide | Main visual | Animation |
 | --- | --- | --- | --- |
