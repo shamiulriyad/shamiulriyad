@@ -86,17 +86,16 @@
 |:--|:--|:--|:--|
 | `01` | [**AI Study Assistant**](https://github.com/shamiulriyad/AI-Study-Assistant) | Ask by text or voice and get a simple Bangla answer, read aloud | <sub>React · .NET 8 · Gemini</sub> |
 | `02` | [**LoadShed Planner**](https://github.com/shamiulriyad/lsh26-t035-p01) | LSH26 build: schedules a print shop's jobs around rotating power cuts | <sub>Spring Boot · Java · JavaScript · Docker</sub> |
-| `03` | [**Nurture-Glow**](https://github.com/shamiulriyad/Nurture-Glow) | Team platform for mothers, pregnancy and baby care, with a local RAG assistant | <sub>React · Express · MySQL · Qdrant</sub> |
-| `04` | [**Smart Shelf Robot**](https://github.com/shamiulriyad/smart-shelf-autonomous-robot) | Vision-guided pick-and-place prototype with ArUco markers and A* planning | <sub>Python · OpenCV</sub> |
-| `05` | [**Smart Office Monitor**](https://github.com/shamiulriyad/Techathon_TheLastDance) | IUT Techathon: simulated IoT office with a live 3D dashboard and a Discord bot | <sub>Node.js · Socket.IO · React · SQLite</sub> |
-| `06` | [**CoWork Booking API**](https://github.com/shamiulriyad/ICT_Fest_Hackathon_Preliminary) | IUT ICT Fest agentic AI hackathon: multi-tenant booking API, bugs fixed to contract | <sub>FastAPI · SQLAlchemy · JWT</sub> |
-| `07` | [**QueueStorm Ticket Sorter**](https://github.com/shamiulriyad/sust_hacathon) | bKash SUST mock round: rules-based Bangla and English ticket classifier | <sub>ASP.NET Core 8</sub> |
-| `08` | [**Doctor MCP Server**](https://github.com/shamiulriyad/make-my-mcp-server) | MCP server foundation for doctor scheduling over an existing MySQL database | <sub>Node.js · Express · MySQL</sub> |
-| `09` | [**E-Learning API**](https://github.com/shamiulriyad/DatabaseHub) | Courses, assessments, payments and gamification behind a REST API | <sub>ASP.NET Core · PostgreSQL</sub> |
-| `10` | [**learnEnglish & web builds**](https://github.com/shamiulriyad/web-Project) | AI grammar-learning platform plus FreshBox, Startup and coding-platform builds | <sub>React · ASP.NET Core · OpenAI</sub> |
-| `11` | [**Flappy Bird**](https://github.com/shamiulriyad/lag-legend) | A Java Swing clone of Flappy Bird | <sub>Java · Swing</sub> |
-| `12` | [**AI Algorithms**](https://github.com/shamiulriyad/AI-ML) | Constraint satisfaction and A* search, implemented from scratch | <sub>Python</sub> |
-| `13` | [**Portfolio**](https://riyadsn.vercel.app/) | Personal portfolio site (live, private repo) | <sub>React · .NET · Supabase</sub> |
+| `03` | [**Smart Shelf Robot**](https://github.com/shamiulriyad/smart-shelf-autonomous-robot) | Vision-guided pick-and-place prototype with ArUco markers and A* planning | <sub>Python · OpenCV</sub> |
+| `04` | [**Smart Office Monitor**](https://github.com/shamiulriyad/Techathon_TheLastDance) | IUT Techathon: simulated IoT office with a live 3D dashboard and a Discord bot | <sub>Node.js · Socket.IO · React · SQLite</sub> |
+| `05` | [**CoWork Booking API**](https://github.com/shamiulriyad/ICT_Fest_Hackathon_Preliminary) | IUT ICT Fest agentic AI hackathon: multi-tenant booking API, bugs fixed to contract | <sub>FastAPI · SQLAlchemy · JWT</sub> |
+| `06` | [**QueueStorm Ticket Sorter**](https://github.com/shamiulriyad/sust_hacathon) | bKash SUST mock round: rules-based Bangla and English ticket classifier | <sub>ASP.NET Core 8</sub> |
+| `07` | [**Doctor MCP Server**](https://github.com/shamiulriyad/make-my-mcp-server) | MCP server foundation for doctor scheduling over an existing MySQL database | <sub>Node.js · Express · MySQL</sub> |
+| `08` | [**E-Learning API**](https://github.com/shamiulriyad/DatabaseHub) | Courses, assessments, payments and gamification behind a REST API | <sub>ASP.NET Core · PostgreSQL</sub> |
+| `09` | [**learnEnglish & web builds**](https://github.com/shamiulriyad/web-Project) | AI grammar-learning platform plus FreshBox, Startup and coding-platform builds | <sub>React · ASP.NET Core · OpenAI</sub> |
+| `10` | [**Flappy Bird**](https://github.com/shamiulriyad/lag-legend) | A Java Swing clone of Flappy Bird | <sub>Java · Swing</sub> |
+| `11` | [**AI Algorithms**](https://github.com/shamiulriyad/AI-ML) | Constraint satisfaction and A* search, implemented from scratch | <sub>Python</sub> |
+| `12` | [**Portfolio**](https://riyadsn.vercel.app/) | Personal portfolio site (live, private repo) | <sub>React · .NET · Supabase</sub> |
 
 <img src="./assets/sub-practice.svg" width="100%" alt="Training ground — problem-solving archives" />
 
