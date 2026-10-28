@@ -1,4 +1,5 @@
-// Builds Advanced_Statistics_Short_5_Slides.pptx: a five-slide, short-text version of the deck.
+// Builds Advanced_Statistics_Short_Presentation.pptx: a short-text version of the deck
+// (a title slide plus five content slides).
 //
 //   NODE_PATH=<node_modules with pptxgenjs, react-icons, react, react-dom, sharp> \
 //     node build_short_deck.cjs <path to pptx skill apply_theme.js>
@@ -11,7 +12,7 @@ const fa = require("react-icons/fa");
 
 const HERE = __dirname;
 const ASSETS = path.join(HERE, "assets");
-const OUT = path.join(HERE, "..", "Advanced_Statistics_Short_5_Slides.pptx");
+const OUT = path.join(HERE, "..", "Advanced_Statistics_Short_Presentation.pptx");
 const { applyTheme } = require(process.argv[2]);
 
 const THEME = {
@@ -31,7 +32,7 @@ const pres = new pptxgen();
 pres.layout = "LAYOUT_WIDE"; // 13.333 x 7.5 in
 pres.theme = { headFontFace: THEME.headFontFace, bodyFontFace: THEME.bodyFontFace };
 pres.title = "Implications of Advanced Statistics in Business and Research";
-pres.subject = "Short five-slide university presentation on advanced statistics";
+pres.subject = "Short university presentation on advanced statistics (title + five slides)";
 pres.author = "[Team Name]";
 
 const C = pres.SchemeColor;
@@ -248,48 +249,73 @@ function slideCase() {
 	);
 }
 
-// ---------- slide 5: challenges and conclusion ----------
+// ---------- slide 5: challenges ----------
+async function slideChallenges() {
+	const s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Content" });
+	s.addText("04 · CHALLENGES", { placeholder: "kicker" });
+	s.addText("Use statistics carefully and honestly", { placeholder: "title" });
+	text(s, "Statistics is powerful, but careless use can lead to confident and wrong decisions.", { x: M, y: 1.6, w: CW, h: 0.5, fontSize: 16, color: SLATE, objectName: "Slide description" });
+
+	const risks = [
+		[fa.FaDatabase, "Bad or biased data", "If the data is wrong or one-sided, the answer will be wrong too."],
+		[fa.FaProjectDiagram, "Correlation ≠ causation", "Two things moving together does not prove one causes the other."],
+		[fa.FaSearchPlus, "“Significant” ≠ important", "A tiny effect can still be significant. Always check how big it is."],
+		[fa.FaUserShield, "Privacy & fairness", "Protect personal data and check that models are fair to every group."],
+	];
+	const w = (CW - 3 * 0.25) / 4, y = 2.3, h = 3.0;
+	for (let i = 0; i < risks.length; i++) {
+		const [Ic, head, body] = risks[i];
+		const x = M + i * (w + 0.25);
+		box(s, { x, y, w, h, radius: 0.08, fill: { color: MIST }, objectName: `Risk ${i + 1} card` });
+		s.addShape(pres.ShapeType.ellipse, { x: x + 0.25, y: y + 0.28, w: 0.66, h: 0.66, fill: { color: CORAL }, line: { type: "none" }, objectName: `Risk ${i + 1} icon circle` });
+		s.addImage({ data: await icon(Ic), x: x + 0.42, y: y + 0.45, w: 0.32, h: 0.32, altText: head, objectName: `Risk ${i + 1} icon` });
+		text(s, head, { x: x + 0.25, y: y + 1.12, w: w - 0.5, h: 0.72, fontFace: HEAD, fontSize: 17, bold: true, color: NAVY, objectName: `Risk ${i + 1} heading` });
+		text(s, body, { x: x + 0.25, y: y + 1.9, w: w - 0.5, h: 1.0, fontSize: 14, objectName: `Risk ${i + 1} text` });
+	}
+
+	box(s, { x: M, y: 5.6, w: CW, h: 1.15, radius: 0.08, fill: { color: NAVY }, objectName: "AI note box" });
+	s.addShape(pres.ShapeType.ellipse, { x: M + 0.3, y: 5.84, w: 0.66, h: 0.66, fill: { color: TEAL }, line: { type: "none" }, objectName: "AI icon circle" });
+	s.addImage({ data: await icon(fa.FaRobot), x: M + 0.47, y: 6.01, w: 0.32, h: 0.32, altText: "Machine learning and AI", objectName: "AI icon" });
+	text(s, [
+		{ text: "WHAT ABOUT AI?", options: { bold: true, color: AMBER, charSpacing: 2, fontSize: 11, breakLine: true } },
+		{ text: "Machine learning is great at prediction, but a good prediction does not prove cause. Good practice: plan first, check the data, report results honestly.", options: { color: WHITE } },
+	], { x: M + 1.2, y: 5.6, w: CW - 1.5, h: 1.15, fontSize: 14.5, valign: "middle", objectName: "AI note text" });
+
+	s.addNotes(
+		"Statistics can mislead if we are careless. First, bad or biased data gives wrong answers. Second, correlation is not causation: two things moving together does not prove one causes the other. " +
+			"Third, 'significant' does not mean important; a very small effect can still be significant, so we always check its size. Fourth, we must protect privacy and make sure models are fair. " +
+			"Finally, AI and machine learning are very good at prediction, but prediction alone does not prove cause, so careful planning and honest reporting still matter."
+	);
+}
+
+// ---------- slide 6: conclusion ----------
 function slideConclusion() {
 	pres.addSection({ title: "Conclusion" });
 	const s = pres.addSlide({ masterName: "CLOSING_DARK", sectionTitle: "Conclusion" });
-	s.addText("04 · CHALLENGES & CONCLUSION", { placeholder: "kicker" });
-	s.addText("Use statistics carefully and honestly", { placeholder: "title" });
+	s.addText("05 · CONCLUSION", { placeholder: "kicker" });
+	s.addText("Key takeaways", { placeholder: "title" });
 
-	const colW = 5.75;
-	text(s, "WATCH OUT FOR", { x: M, y: 1.72, w: colW, h: 0.26, fontSize: 11, bold: true, color: AMBER, charSpacing: 2, objectName: "Risks heading" });
-	const risks = [
-		["Bad or biased data", "wrong data gives wrong answers"],
-		["Correlation ≠ causation", "two things moving together is not proof"],
-		["“Significant” ≠ important", "always check how big the effect is"],
-		["Privacy & fairness", "protect people and avoid biased models"],
-	];
-	risks.forEach(([k, v], i) => {
-		const y = 2.1 + i * 0.68;
-		s.addShape(pres.ShapeType.ellipse, { x: M, y: y + 0.08, w: 0.4, h: 0.4, fill: { color: CORAL }, line: { type: "none" }, objectName: `Risk ${i + 1} marker` });
-		text(s, "!", { x: M, y: y + 0.08, w: 0.4, h: 0.4, fontSize: 15, bold: true, color: WHITE, align: "center", valign: "middle", objectName: `Risk ${i + 1} symbol` });
-		text(s, [{ text: k, options: { bold: true, color: WHITE, fontSize: 15, breakLine: true } }, { text: v, options: { color: ICE, fontSize: 13 } }], { x: M + 0.6, y, w: colW - 0.6, h: 0.6, objectName: `Risk ${i + 1} text` });
-	});
-
-	const tx = 7.0, tw = RIGHT - tx;
-	text(s, "KEY TAKEAWAYS", { x: tx, y: 1.72, w: tw, h: 0.26, fontSize: 11, bold: true, color: AMBER, charSpacing: 2, objectName: "Takeaways heading" });
 	const takeaways = [
-		"Statistics turns raw data into evidence.",
-		"Testing and measuring uncertainty lead to better decisions.",
-		"Careful interpretation matters as much as the method.",
+		["Data becomes evidence", "Statistics turns raw data into results we can trust."],
+		["Better decisions", "Testing ideas and measuring uncertainty beat guesswork."],
+		["Careful interpretation", "How we read results matters as much as the method."],
 	];
-	takeaways.forEach((t, i) => {
-		const y = 2.1 + i * 0.9;
-		text(s, `0${i + 1}`, { x: tx, y, w: 0.65, h: 0.55, fontFace: HEAD, fontSize: 26, bold: true, color: AMBER, objectName: `Takeaway ${i + 1} number` });
-		text(s, t, { x: tx + 0.75, y: y + 0.04, w: tw - 0.75, h: 0.75, fontSize: 16, bold: true, color: WHITE, objectName: `Takeaway ${i + 1} text` });
+	const w = (CW - 2 * 0.35) / 3, y = 1.85, h = 2.3;
+	takeaways.forEach(([head, body], i) => {
+		const x = M + i * (w + 0.35);
+		box(s, { x, y, w, h, radius: 0.08, fill: { color: STEEL }, objectName: `Takeaway ${i + 1} card` });
+		text(s, `0${i + 1}`, { x: x + 0.3, y: y + 0.25, w: 1.0, h: 0.6, fontFace: HEAD, fontSize: 30, bold: true, color: AMBER, objectName: `Takeaway ${i + 1} number` });
+		text(s, head, { x: x + 0.3, y: y + 0.95, w: w - 0.6, h: 0.4, fontSize: 18, bold: true, color: WHITE, objectName: `Takeaway ${i + 1} heading` });
+		text(s, body, { x: x + 0.3, y: y + 1.4, w: w - 0.6, h: 0.75, fontSize: 14.5, color: ICE, objectName: `Takeaway ${i + 1} text` });
 	});
 
-	text(s, "“The value of data lies not merely in collecting it, but in drawing reliable conclusions from it.”", { x: M, y: 4.95, w: CW, h: 0.9, fontFace: HEAD, fontSize: 21, italic: true, color: WHITE, objectName: "Closing statement" });
-	text(s, "Thank you · Questions?", { x: M, y: 5.85, w: CW, h: 0.35, fontSize: 15, bold: true, color: AMBER, objectName: "Thank you" });
-	text(s, "References: Kohavi & Thomke (2017), Harvard Business Review 95(5) · RECOVERY Collaborative Group (2021), NEJM 384(8) · Wasserstein & Lazar (2016), The American Statistician 70(2) · Shmueli (2010), Statistical Science 25(3)", { x: M, y: 6.38, w: CW, h: 0.5, fontSize: 10, color: ICE, objectName: "References" });
+	text(s, "“The value of data lies not merely in collecting it, but in drawing reliable conclusions from it.”", { x: M, y: 4.5, w: CW, h: 0.95, fontFace: HEAD, fontSize: 23, italic: true, color: WHITE, objectName: "Closing statement" });
+	text(s, "Thank you · Questions?", { x: M, y: 5.55, w: CW, h: 0.4, fontSize: 17, bold: true, color: AMBER, objectName: "Thank you" });
+	text(s, "References: Kohavi & Thomke (2017), Harvard Business Review 95(5) · RECOVERY Collaborative Group (2021), NEJM 384(8) · Wasserstein & Lazar (2016), The American Statistician 70(2) · Shmueli (2010), Statistical Science 25(3)", { x: M, y: 6.3, w: CW, h: 0.5, fontSize: 10, color: ICE, objectName: "References" });
 
 	s.addNotes(
-		"Statistics is powerful, but it can mislead if we are careless. Bad data gives bad answers; correlation does not prove causation; a 'significant' result is not always an important one; and we must protect privacy and avoid unfair models. " +
-			"Our three takeaways: statistics turns data into evidence, testing and measuring uncertainty improve decisions, and careful interpretation matters as much as the method. " +
+		"To conclude, three takeaways. One: statistics turns raw data into evidence we can trust. Two: testing ideas and measuring uncertainty lead to better decisions than guesswork. " +
+			"Three: careful interpretation matters as much as the method. " +
 			"The value of data lies not merely in collecting it, but in drawing reliable conclusions from it. Thank you. We are happy to take questions."
 	);
 }
@@ -299,6 +325,7 @@ function slideConclusion() {
 	await slideWhy();
 	await slideUses();
 	slideCase();
+	await slideChallenges();
 	slideConclusion();
 	await pres.writeFile({ fileName: OUT });
 	await applyTheme(OUT, THEME);

@@ -1,16 +1,16 @@
 # Implications of Advanced Statistics in Business and Research
 
-A 16:9 university presentation in two versions: a **short 5-slide deck** and a full 8-slide deck with a supplementary reference slide.
+A 16:9 university presentation in two versions: a **short deck (title + 5 slides)** and a full 8-slide deck with a supplementary reference slide.
 
 | File | Use it for |
 | --- | --- |
-| `Advanced_Statistics_Short_5_Slides.pptx` | **Short version:** 5 slides with little text. Each slide has a short spoken explanation in its speaker notes. |
-| `Advanced_Statistics_Short_5_Slides.pdf` | PDF copy of the short version. |
+| `Advanced_Statistics_Short_Presentation.pptx` | **Short version:** a title slide plus 5 content slides, with little text. Each slide has a short spoken explanation in its speaker notes. |
+| `Advanced_Statistics_Short_Presentation.pdf` | PDF copy of the short version. |
 | `Advanced_Statistics_Presentation.pptx` | The editable deck: PowerPoint, Keynote or Google Slides. Speaker notes on every slide hold the full explanations and calculations. |
 | `Advanced_Statistics_Presentation.pdf` | A quick-review copy with all animated content shown. |
 | `build/` | Scripts that rebuild the deck (`build.sh`). |
 
-## Short version (5 slides)
+## Short version (title + 5 slides)
 
 | # | Slide | What it says |
 | --- | --- | --- |
@@ -18,7 +18,8 @@ A 16:9 university presentation in two versions: a **short 5-slide deck** and a f
 | 2 | Statistics turns data into decisions | Data → patterns → uncertainty → decision; four key methods (regression, hypothesis testing, forecasting, A/B testing) |
 | 3 | Better decisions in business and research | Four uses in each field, plus two real cases: Bing A/B test (+12% revenue) and the RECOVERY trial (deaths 41.4% → 29.3% in ventilated patients) |
 | 4 | A/B test case (**illustrative data**) | Old page 4.20% vs new page 4.80%; difference +0.60 pp, 95% CI +0.19 to +1.01 pp, p = 0.004; decision: launch B |
-| 5 | Challenges and conclusion | Four cautions, three takeaways, closing quote, key references |
+| 5 | Challenges | Four cautions (biased data, correlation ≠ causation, significant ≠ important, privacy & fairness) and a note on AI |
+| 6 | Conclusion | Three takeaways, closing quote, thank you, key references |
 
 Team and course details are edited the same way as in the full version (see below).
 
