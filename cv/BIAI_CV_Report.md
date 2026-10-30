@@ -28,7 +28,7 @@ Checked on 2026-10-30 against fresh clones of each repository (default branch).
 | ragkit-dev: CLI, FastAPI, Streamlit, npm generator | `cli.py`, `api.py`, `ui/app.py`, `generator/` (`rag-kit-dev`) |
 | ragkit-dev: 290+ tests, offline CI with no API keys | 217 `def test_` in `tests/`, 75 `test(` in `generator/test/`; `.github/workflows/ci.yml` guard step fails if `GOOGLE_API_KEY` is set |
 | ragkit-dev: personal project | 69 of 71 commits are yours (the other 2 are Dependabot) |
-| FactoryBrain: hybrid retrieval, BM25, Bangla-aware tokenizer, citations | `Application/Rag/HybridScorer.cs`, `Dtos/Ask/AskAnswerResponse.cs` (`Citations`) |
+| FactoryBrain: cited Q&A through a Python RAG service | `Infrastructure/Services/AskService.cs` calls `PyRagClient` → `rag/main.py` (`/api/kb/{collection}/query`); `Citations` in `AskAnswerResponse.cs`. Corrected on 2026-10-30: the C# BM25 hybrid scorer (`HybridScorer.cs`) is no longer on the Ask path |
 | FactoryBrain: risk tiers, approval queue | `Infrastructure/Services/AgentRunService.cs` (`approvalPending = risk != RiskTier.Low`) |
 | FactoryBrain: vision-language defect detection, inspector review | `Infrastructure/Qc/LlmVisionDefectProvider.cs`, README "Quality inspection" |
 | FactoryBrain: 174 xUnit, 57 Playwright tests, demo mode | `FactoryBrain.Api.Tests` (`[Fact]`/`[Theory]`), `frontend/e2e/tests/*.spec.ts`, README "Demo mode" |
