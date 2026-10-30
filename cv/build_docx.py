@@ -69,7 +69,12 @@ def bullets(doc, ul):
         p = doc.add_paragraph(style="List Bullet")
         spacing(p, after=1)
         p.paragraph_format.left_indent = Mm(4.5)
-        p.add_run(text(li))
+        label = li.find("strong")
+        if label:
+            p.add_run(text(label)).bold = True
+            p.add_run(text(li)[len(text(label)):])
+        else:
+            p.add_run(text(li))
 
 
 soup = BeautifulSoup((HERE / f"{NAME}.html").read_text(encoding="utf-8"), "html.parser")
@@ -91,6 +96,13 @@ p.alignment = WD_ALIGN_PARAGRAPH.CENTER
 spacing(p, after=2)
 r = p.add_run(text(header.find("h1")))
 r.bold, r.font.size = True, Pt(20)
+tagline = header.find(class_="tagline")
+if tagline:
+    p = doc.add_paragraph()
+    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    spacing(p, after=2)
+    r = p.add_run(text(tagline))
+    r.font.size, r.font.color.rgb = Pt(10.5), RGBColor(0x33, 0x33, 0x33)
 p = doc.add_paragraph()
 p.alignment = WD_ALIGN_PARAGRAPH.CENTER
 spacing(p, after=4)
@@ -149,6 +161,9 @@ for section in soup.find_all("section"):
         p.add_run(text(left)[len(text(left.find("strong"))):])
         p.add_run("\t")
         p.add_run(text(right)).font.color.rgb = MUTED
+        for note in section.find_all("p", class_="note"):
+            p = doc.add_paragraph(text(note))
+            spacing(p, before=1)
         continue
 
     if section.find("ul"):

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Md Shamiul Islam Riyad - CV</title>
+<meta name="author" content="Md Shamiul Islam Riyad">
+<style>
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #fff; }
+  body {
+    font-family: "Calibri", "Carlito", Arial, sans-serif;
+    font-size: 10pt;
+    line-height: 1.25;
+    color: #111;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .page { width: 210mm; height: 297mm; overflow: hidden; padding: 10mm 14mm 7mm; }
+  a { color: inherit; text-decoration: none; }
+  header { text-align: center; margin-bottom: 5pt; }
+  h1 { font-size: 20pt; font-weight: 700; letter-spacing: 0.2pt; }
+  .tagline { margin-top: 1pt; font-size: 10.4pt; color: #333; }
+  .contact { margin-top: 2.5pt; font-size: 9.3pt; color: #222; }
+  .contact .sep { color: #888; padding: 0 3.5pt; }
+  .contact a { color: #1a4f8b; white-space: nowrap; }
+  section { margin-top: 7pt; }
+  h2 {
+    font-size: 10.6pt; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8pt;
+    border-bottom: 0.7pt solid #444; padding-bottom: 1.5pt; margin-bottom: 3.5pt;
+  }
+  .skill { margin: 1pt 0; padding-left: 10pt; text-indent: -10pt; }
+  .project { margin-bottom: 4.5pt; }
+  .project:last-child { margin-bottom: 0; }
+  .row { display: flex; justify-content: space-between; align-items: baseline; gap: 10pt; }
+  .title { font-weight: 700; font-size: 10.6pt; }
+  .title .what { font-weight: 400; }
+  .link { font-size: 9.4pt; color: #1a4f8b; white-space: nowrap; }
+  .stack { font-size: 9.5pt; color: #444; font-style: italic; margin-bottom: 0.5pt; }
+  .note { margin-top: 1.5pt; }
+  ul { padding-left: 12pt; }
+  li { margin: 0.9pt 0; padding-left: 1pt; }
+  .muted { color: #444; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <h1>Md Shamiul Islam Riyad</h1>
+    <div class="tagline">Applied AI &middot; RAG and LLM Applications &middot; CSE Undergraduate</div>
+    <div class="contact">
+      <a href="mailto:shamiulriyad1418@gmail.com">shamiulriyad1418@gmail.com</a><span class="sep">|</span><a href="https://github.com/shamiulriyad">github.com/shamiulriyad</a><span class="sep">|</span><a href="https://www.linkedin.com/in/md-shamiul-islam-riyad-31b8352b4/">linkedin.com/in/md-shamiul-islam-riyad-31b8352b4</a><span class="sep">|</span><a href="https://riyadsn.vercel.app/">riyadsn.vercel.app</a>
+    </div>
+  </header>
+
+  <section>
+    <h2>Summary</h2>
+    <p>CSE undergraduate who builds working AI applications: RAG pipelines with cited answers, LLM assistants with safety checks and fallbacks, and Bengali vision and voice tools on the Gemini and Claude APIs. Writes step-by-step documentation and offline tests for each build; 7 hackathons in 2026. Seeking the BIAI Applied AI Internship to build demos and learning content, test AI tools and learn from senior builders.</p>
+  </section>
+
+  <section>
+    <h2>Education</h2>
+    <div class="row">
+      <div><strong>BSc in Computer Science and Engineering</strong>, United International University (UIU), Dhaka</div>
+      <div class="muted">2023 &ndash; 2027 (expected)</div>
+    </div>
+    <p class="note">AI coursework: k-nearest neighbours, k-means, A* search and a CSP solver, implemented from scratch in Python.</p>
+  </section>
+
+  <section>
+    <h2>Applied AI Projects</h2>
+
+    <div class="project">
+      <div class="row">
+        <div class="title">ragkit-dev <span class="what">&ndash; open-source RAG toolkit for learning and reuse</span></div>
+        <a class="link" href="https://github.com/shamiulriyad/rag-learning">github.com/shamiulriyad/rag-learning</a>
+      </div>
+      <div class="stack">Python, LangChain, Qdrant, Hugging Face embeddings, Gemini, FastAPI, Streamlit. Personal project.</div>
+      <ul>
+        <li>Split the RAG pipeline into 11 single-purpose modules (extract, clean, chunk, embed, retrieve, generate&hellip;) so each step can be read, tested and swapped; answers cite the source chunk and PDF page.</li>
+        <li>Packaged it with a CLI, FastAPI service, Streamlit test UI and an npm generator that guides new users through setup.</li>
+        <li>Wrote 290+ tests and an offline GitHub Actions pipeline that needs no API keys; documented setup and every step.</li>
+      </ul>
+    </div>
+
+    <div class="project">
+      <div class="row">
+        <div class="title">FactoryBrain <span class="what">&ndash; AI operations platform for garment factories (English and Bangla)</span></div>
+        <a class="link" href="https://github.com/shamiulriyad/FactoryBrain">github.com/shamiulriyad/FactoryBrain</a>
+      </div>
+      <div class="stack">ASP.NET Core 9, Next.js, PostgreSQL + pgvector; OpenAI, Anthropic or Gemini; 174 xUnit and 57 Playwright tests. Personal project.</div>
+      <ul>
+        <li>Built cited Q&amp;A over factory manuals with hybrid retrieval: vector search plus BM25 with a Bangla-aware tokenizer.</li>
+        <li>Added AI agents whose medium- and high-risk runs wait in a human approval queue, and garment defect detection with a vision-language model plus inspector review.</li>
+      </ul>
+    </div>
+
+    <div class="project">
+      <div class="row">
+        <div class="title">QueueStorm Investigator <span class="what">&ndash; LLM support copilot for digital finance</span></div>
+        <a class="link" href="https://github.com/shamiulriyad/sust_preli">github.com/shamiulriyad/sust_preli</a>
+      </div>
+      <div class="stack">ASP.NET Core 8, Claude API, Docker. bKash SUST CSE Carnival 2026 hackathon.</div>
+      <ul>
+        <li>Checks a complaint in English, Bangla or Banglish against transaction history and returns one JSON decision: verdict, matching transaction, routing team and draft reply.</li>
+        <li>Falls back to a rule-based engine if Claude fails or times out; every reply passes schema validation and a safety filter that blocks PIN/OTP requests and refund promises.</li>
+      </ul>
+    </div>
+
+    <div class="project">
+      <div class="row">
+        <div class="title">Chokh <span class="what">&ndash; AI narration for visually impaired users, in Bengali</span></div>
+        <a class="link" href="https://ml-bangladesh-hackthon-1.onrender.com/">Live demo</a>
+      </div>
+      <div class="stack">React, ASP.NET Core, Gemini vision, Web Speech API, Docker. ML Bangladesh Hackathon 2026.</div>
+      <ul>
+        <li>Deployed web app: sends a camera frame to Gemini every ~2.5 s and speaks hazards first, then position and text.</li>
+        <li>Wrote the Bengali system prompt to admit uncertainty rather than invent objects, and to refuse medical advice.</li>
+      </ul>
+    </div>
+
+    <div class="project">
+      <div class="row">
+        <div class="title">NogorSathi AI <span class="what">&ndash; Gemma 4 commuter-agent prototype</span></div>
+        <a class="link" href="https://github.com/shamiulriyad/NogorSathi_UIU_GemmaHackathon">github.com/shamiulriyad/NogorSathi_UIU_GemmaHackathon</a>
+      </div>
+      <div class="stack">JavaScript, HTML, CSS. Team project, Build with Gemma @ Bangladesh 2026.</div>
+      <ul>
+        <li>Built the demo interface that shows each tool call (geocoding, routes, flood and safety checks) and explains why one Dhaka route beats the others, in Bangla and English.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <h2>Other Projects</h2>
+    <ul>
+      <li><strong>rag-kit:</strong> multi-tenant RAG platform; ASP.NET Core gateway, FastAPI RAG service, one Qdrant collection per knowledge base.</li>
+      <li><strong>AI Study Assistant:</strong> ask by text or voice, get a simple Bangla answer from Gemini, read aloud in the browser.</li>
+      <li><strong>ShilpoHubBD:</strong> team of 5; wrote 790 of 964 backend commits (ASP.NET Core, PostgreSQL), merged 96 pull requests.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Technical Skills</h2>
+    <div class="skills">
+      <p class="skill"><strong>AI and LLMs:</strong> Gemini and Claude APIs, prompt design, RAG (chunking, embeddings, hybrid retrieval), LangChain, Qdrant, pgvector</p>
+      <p class="skill"><strong>Languages:</strong> Python, C#, TypeScript, JavaScript, C++, SQL</p>
+      <p class="skill"><strong>Frameworks and tools:</strong> FastAPI, Streamlit, ASP.NET Core, React, Next.js, PostgreSQL, Docker</p>
+      <p class="skill"><strong>Testing and CI:</strong> pytest, xUnit, Playwright, GitHub Actions, Git</p>
+      <p class="skill"><strong>Currently learning:</strong> PyTorch and computer vision fundamentals</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Achievements</h2>
+    <ul>
+      <li>Featured in Google Developer Experts AI Community Highlights, Build with Gemma @ Bangladesh (Jul 2026).</li>
+      <li>Top 70 of 700+ teams, Infinity AI BuildFest (Jun 2026); 2nd runner-up, UIU CSE Project Show (Mar 2026).</li>
+      <li>575+ problems solved in 55+ contests (LeetCode 1562, CodeChef 1448); 4th place, UIU Team Contest (Jul 2026).</li>
+    </ul>
+  </section>
+
+</div>
+</body>
+</html>
