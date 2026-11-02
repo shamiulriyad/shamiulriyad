@@ -1,0 +1,7 @@
+%% Diagram 4 · Cross-wafer and cross-type generalisation (Scenario 2) — research objective, requires validation
+flowchart LR
+  A["Wafer A · lot 1 · design X<br/>(reference dies)"] --> M[("Memory M(A)")]
+  M -. "2a · cross-wafer, same design?<br/>shift: drift, focus, illumination, tool" .-> B["Wafer B · lot 7 · design X"]
+  M -. "2b · cross-type, new design?<br/>expected to fail without new references" .-> C["Wafer C · design Y"]
+  C -- "re-enrol K' = 0, 1, 2, 5 references of design Y" --> M2[("Memory M(C)")]
+  H{{"Hypothesis H3 — to be tested, not assumed"}}

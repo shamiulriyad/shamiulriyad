@@ -1,0 +1,68 @@
+# Example configuration for Experiment B (rotation robustness).
+# Planned configuration only: nothing has been run yet.
+experiment: B_rotation
+description: "Alignment vs augmentation vs invariance under 0-360 deg rotation, with defect preservation ratio"
+seed: [0, 1, 2, 3, 4]                     # one run per random reference draw
+
+data:
+  dataset: carinthia_s                    # tier T1 (real SEM, unpatterned)
+  tier: T1
+  split_manifest: manifests/carinthia_s_v1.json   # file hashes per split; leakage-checked
+  reference_source: defect_free_regions   # normal patches taken outside expert masks
+
+references:
+  K: [1, 2, 5, 10]
+  selection: random_stratified
+  memory_qc: {leave_one_out_outliers: true, dedup: true}
+
+encoder:
+  name: wide_resnet50_2                   # second run: dinov2_vits14
+  layers: [layer2, layer3]
+  weights: imagenet1k_v1
+  input: native_tiles_448                 # tile at native resolution; never downscale defects away
+  frozen: true
+
+memory:
+  coreset_ratio: 1.0                      # K <= 10 dies: no subsampling needed
+  window: 3                               # aligned search window in feature cells (0 = global only)
+  metric: l2
+  index: faiss_flat
+
+alignment:
+  pipelines: [none, warp_target, warp_reference, rot_aug_memory]
+  coarse: rot90_ncc
+  fine: [fourier_mellin, ecc_euclidean]
+  ecc_iterations: 200
+  min_alignment_score: 0.6                # below this: flag + fall back to rotation-augmented memory
+
+transforms:                               # applied to TEST images with logged parameters
+  angles_deg: "0:360:15"
+  translate_frac: 0.10
+  scale: [0.9, 1.1]
+  illumination_gradient: [0.0, 0.3]
+
+defect_injection:                         # for the defect preservation ratio (DPR)
+  sizes_px: [1, 2, 3, 5, 10, 20]
+  types: [particle, scratch, bridge, missing_via]
+  shape_source: [carinthia_s_masks, procedural]
+
+scoring:
+  image_score: top_q_mean
+  q: 0.01
+  map_sigma: 4
+
+threshold:
+  alpha: 0.01                             # target false-alarm rate on normal validation dies
+  source: validation
+
+metrics: [auroc, auprc, pixel_auroc, aupro, dpr, false_alarm_rate, tre_px, ms_per_die, memory_mb]
+
+statistics:
+  bootstrap_resamples: 2000
+  paired_test: wilcoxon
+  multiple_comparison: holm
+
+logging:
+  tracker: mlflow                         # or csv
+  save_maps: 20
+  record: [git_commit, resolved_config, env_versions, manifest_hashes]

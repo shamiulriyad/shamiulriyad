@@ -1,0 +1,194 @@
+<h1 id="s18"><span class="num">18</span>Proposed Technical Methodology</h1>
+<p>The methodology follows the ten stages of the research brief. For each stage: what it does, which options were compared, what is recommended for the first implementation, and what can go wrong.</p>
+
+<h2>18.1 Stage 1: Data input</h2>
+<table><caption>Required and optional inputs.</caption>
+<thead><tr><th style="width:25%">Input</th><th style="width:15%">Required?</th><th>Details</th></tr></thead>
+<tbody>
+<tr><td>Reference die collection</td><td>Yes (K ≥ 1)</td><td>K images of normal dies of one design and layer, same modality as the targets. Prefer dies spread across the wafer (centre and edge) to capture natural variation. For SEM sets without normal images, normal regions of defect images, masked by the expert mask, serve as references.</td></tr>
+<tr><td>Normal samples for calibration</td><td>Strongly recommended</td><td>A few extra normal dies, not used as references, to set the threshold (Section 18.6). With K = 1 and none available, use augmentation-based self-scoring.</td></tr>
+<tr><td>Known defective samples</td><td>Optional</td><td>A few verified defect examples per known class (with masks or boxes) to build defect prototypes for triage.</td></tr>
+<tr><td>Target die images</td><td>Yes</td><td>Dies to inspect; any orientation; same design (Scenarios 1, 2a) or new design (2b).</td></tr>
+<tr><td>Metadata</td><td>Optional</td><td>Wafer ID, lot, die index (i, j), layer, tool, magnification, timestamp. Required for wafer-level analysis and for leak-free splits.</td></tr>
+</tbody></table>
+<p><b>Minimum viable input:</b> one normal reference die and a set of target dies. <b>Recommended:</b> K = 5 references, 3–5 calibration normals, metadata, and 2–5 examples per known defect class.</p>
+
+<h2>18.2 Stage 2: Image preprocessing</h2>
+<table><caption>Preprocessing options and their risk to small defects.</caption>
+<thead><tr><th style="width:22%">Operation</th><th style="width:30%">Purpose</th><th>Risk to defects</th><th style="width:16%">Decision</th></tr></thead>
+<tbody>
+<tr><td>Resizing</td><td>Match the encoder's input size</td><td><b>High.</b> Downsampling by a factor of 4 can shrink a 3-pixel particle below one pixel. Prefer tiling at native resolution.</td><td>Tile, do not shrink</td></tr>
+<tr><td>Noise reduction (Gaussian, median, non-local means)</td><td>Suppress sensor or shot noise</td><td><b>High.</b> Removes exactly the small, high-frequency structures that small defects are made of; a median filter erases isolated bright pixels.</td><td>Avoid before scoring</td></tr>
+<tr><td>Contrast normalisation (per-image z-score, percentile stretch)</td><td>Remove gain/offset differences</td><td>Low, if computed globally. Local equalisation (CLAHE) can amplify noise or flatten low-contrast stains.</td><td>Global only</td></tr>
+<tr><td>Illumination correction</td><td>Remove slow brightness gradients</td><td>Medium. A large-scale background estimate (e.g. very wide Gaussian) is safe for small defects but can absorb large, faint stains.</td><td>Wide kernel; ablate</td></tr>
+<tr><td>Image quality assessment</td><td>Reject blurred, saturated or charged images</td><td>None to defects; prevents false alarms from bad images.</td><td>Yes</td></tr>
+<tr><td>Die cropping and extraction</td><td>Isolate each die, assign (i, j)</td><td>Low; cropping too tight can cut defects at the die edge.</td><td>Crop with margin</td></tr>
+</tbody></table>
+<div class="box amber"><span class="lbl">Rule</span><p>Any operation that is applied to the target must also be applied, identically, to the references, and every preprocessing choice is checked with the defect preservation ratio (Section 19.6) on injected defects before it is adopted.</p></div>
+
+<h2>18.3 Stage 3: Geometric alignment</h2>
+<table class="small"><caption>Alignment options.</caption>
+<thead><tr><th>Approach</th><th>How it works</th><th>Strengths</th><th>Weaknesses on dies</th></tr></thead>
+<tbody>
+<tr><td>Feature-based (SIFT/ORB + RANSAC) [[sift,orb,ransac]]</td><td>Match keypoints, robustly fit a transform</td><td>Handles large rotation/scale</td><td>Periodic layouts give many identical keypoints, so matches are ambiguous; few keypoints on smooth SEM regions</td></tr>
+<tr><td>Template matching (normalised cross-correlation)</td><td>Slide a template, take the correlation peak</td><td>Simple, robust for translation</td><td>Rotation needs a search over angles; peaks repeat with the layout pitch</td></tr>
+<tr><td>Classical intensity registration: phase correlation [[guizar]], Fourier–Mellin [[fmt]], ECC [[ecc]]</td><td>Estimate shift (and rotation/scale via log-polar FFT); refine by maximising a correlation coefficient</td><td>Global, sub-pixel; ECC is invariant to brightness and contrast</td><td>Local optima; Fourier–Mellin is sensitive to large non-overlapping content</td></tr>
+<tr><td>Learned registration (STN, RegAD) [[stn,regad]]</td><td>Network predicts the warp</td><td>Learns from data; differentiable</td><td>Needs training data; opaque; may also "align away" defects</td></tr>
+<tr><td>Rotation augmentation of the memory</td><td>Store references at several angles</td><td>No estimation step; robust to 90° steps</td><td>Memory grows; fine angles need many copies; can make the memory accept wrongly oriented structures</td></tr>
+<tr><td>Invariant features (GraphCore) [[graphcore]]</td><td>Features that do not change with rotation</td><td>No alignment needed</td><td>Blind to orientation-dependent defects</td></tr>
+</tbody></table>
+<div class="box"><span class="lbl">Practical baseline (recommended first implementation)</span>
+<ol>
+<li><b>Coarse orientation:</b> evaluate the four 90° rotations of the reference template against the target with normalised cross-correlation on downsampled images; keep the best.</li>
+<li><b>Residual rotation and scale:</b> Fourier–Mellin (log-polar FFT) on the coarse-aligned pair; or a fine angle search in ±15°.</li>
+<li><b>Refinement:</b> ECC with a Euclidean (rotation + translation) or similarity model on a Gaussian pyramid, using die-edge and seal-ring regions to avoid pitch ambiguity.</li>
+<li><b>Apply to the references, not the target:</b> warp each reference into the target frame (bilinear), compute a validity mask for regions the references do not cover, and exclude them from scoring.</li>
+<li><b>Quality check:</b> if the post-alignment correlation is below a threshold, flag the die as "alignment uncertain" and fall back to a rotation-augmented memory.</li>
+</ol>
+<p><b>Limitations:</b> large non-rigid distortions (e.g. SEM charging drift) are not modelled; periodic structures can still cause pitch-sized errors; very small dies with little structure may not align. All are measured by target registration error on synthetic data.</p></div>
+
+<h2>18.4 Stage 4: Feature extraction</h2>
+<p><b>What a feature vector is.</b> A list of numbers (for example 1,024 of them) that describes a region of an image. A good encoder places similar-looking regions close together in this space, so "how different is this region?" becomes "how far apart are these vectors?".</p>
+<p><b>What a feature map is.</b> Encoders keep the spatial layout: a 256 × 256 image becomes, say, a 32 × 32 grid of feature vectors. Each grid cell describes a small patch of the image, its <i>receptive field</i>. Comparing feature maps cell by cell gives a spatial anomaly map.</p>
+<p><b>Why multiple scales matter.</b> Early layers describe fine detail (edges, small dots) at high resolution; deeper layers describe larger context (a via in an array, the end of a line) at low resolution. A 2-pixel missing via is visible in early layers; a large stain is better captured in deep layers. PatchCore uses mid layers 2 and 3 and averages each feature with its neighbours, a compromise between detail and context [[patchcore]].</p>
+<p><b>Why tiny defects need spatially informative features.</b> If one feature cell covers 16 × 16 pixels and a defect occupies 2 × 2 of them, the defect changes only a small part of that cell's description and can be lost in natural variation. Remedies: features from earlier layers, smaller stride, larger input (tiling at native resolution), or upsampling the image so that the defect spans more of a patch. Experiment F reports results by defect size so this effect becomes visible.</p>
+<table class="small"><caption>Encoder candidates.</caption>
+<thead><tr><th>Encoder</th><th>Type</th><th>Patch / stride</th><th>Pros</th><th>Cons</th><th>Plan</th></tr></thead>
+<tbody>
+<tr><td>Wide-ResNet-50 (layers 2+3) [[wrn]]</td><td>CNN, ImageNet</td><td>8–16 px</td><td>PatchCore default; reproducible; good locality</td><td>Natural-image bias</td><td><b>Primary</b></td></tr>
+<tr><td>ResNet-18 [[resnet]]</td><td>CNN</td><td>8–16 px</td><td>Fast; low memory</td><td>Weaker features</td><td>Low-GPU fallback</td></tr>
+<tr><td>EfficientNet [[efficientnet]]</td><td>CNN</td><td>varies</td><td>Efficient</td><td>Less used in AD; tuning needed</td><td>Optional</td></tr>
+<tr><td>ConvNeXt [[convnext]]</td><td>Modern CNN</td><td>varies</td><td>Strong features</td><td>Heavier</td><td>Optional</td></tr>
+<tr><td>DINOv2 ViT-S/14 [[dinov2]]</td><td>Self-supervised ViT</td><td>14 px</td><td>Strong few-shot results [[anomalydino]]</td><td>Fixed 14-px patches; small defects need upsampling</td><td><b>Primary</b></td></tr>
+<tr><td>CLIP ViT [[clip]]</td><td>Vision–language</td><td>14–32 px</td><td>Text prompts (WinCLIP)</td><td>Coarse; natural-image vocabulary</td><td>Baseline only</td></tr>
+<tr><td>Self-supervised on SEM</td><td>DINO-style fine-tuning on unlabelled SEM</td><td>—</td><td>Domain-specific features</td><td>Compute; risk of collapse</td><td>Advanced extension</td></tr>
+</tbody></table>
+
+<h2>18.5 Stage 5: Reference memory</h2>
+<p><b>How the model "remembers" without retraining.</b> Enrolment passes each reference through the frozen encoder and appends its patch features to a list, the memory <span class="var">M</span>. That is the whole learning step. Inspection asks nearest-neighbour questions of <span class="var">M</span>. Adding, removing or relabelling items changes the system's behaviour immediately and reversibly; no gradient descent is involved.</p>
+<ul>
+<li><b>Feature bank (normal memory <span class="var">M</span><sub>N</sub>).</b> All patch features of the aligned references, with metadata (reference ID, position, scale, memory version).</li>
+<li><b>Coreset subsampling.</b> Greedy selection of a subset that covers the bank (e.g. 10–25%), keeping search fast [[patchcore]]. With K ≤ 10 dies the bank is small, so subsampling may be unnecessary.</li>
+<li><b>Nearest-neighbour matching with an alignment-aware window.</b> Because references are aligned, a target patch at position <span class="var">p</span> is first compared with reference patches near <span class="var">p</span> (window of ±<span class="var">w</span> cells). This is faster and stricter: a via-array patch cannot be "explained" by a similar via array elsewhere on the die. A global search is kept as a second score; disagreement between the two flags misalignment.</li>
+<li><b>Prototype representations.</b> Mean features of groups (e.g. of each defect class) for compact storage and classification [[protonet]].</li>
+<li><b>Known-defect memory <span class="var">M</span><sub>D</sub>.</b> Region features of verified defects, grouped by class, kept separate from <span class="var">M</span><sub>N</sub> so that defects never contaminate the normal memory.</li>
+<li><b>Memory quality control.</b> Before admission: remove features from low-quality images; detect outlier references (a reference whose patches are far from the other references' patches may contain a defect: leave-one-out scoring); de-duplicate; record provenance and version.</li>
+</ul>
+
+<h2>18.6 Stage 6: Anomaly detection</h2>
+<p><b>Feature distance and similarity.</b> For each target patch feature, compute its Euclidean distance to the nearest memory feature (or 1 − cosine similarity). Distance 0 means "an identical patch exists in the references".</p>
+<p><b>Normality and anomaly score.</b> The anomaly score of a patch is that nearest distance; a normality score is its negative or a monotone transform. The image score <span class="var">A</span>(<span class="var">x</span>) is the maximum patch score, or the mean of the top-<span class="var">q</span>% of patch scores, which is more robust to single noisy pixels.</p>
+<p><b>Score normalisation.</b> Distances depend on the encoder and the die type. To compare across die types, standardise with statistics from leave-one-out scoring of the references (each reference scored against the others) and the calibration normals: <span class="var">z</span> = (<span class="var">s</span> − μ<sub>ref</sub>) / σ<sub>ref</sub>.</p>
+<p><b>Threshold selection.</b> Choose τ so that a target false-alarm rate α on normal dies is met: τ = the (1 − α) quantile of image scores of held-out normals (for image decisions) or of pixel scores (for maps). With K = 1 and no held-out normals, build pseudo-normals by small random shifts, rotations and noise of the reference and score them. This underestimates natural variation, so α is then reported as optimistic. Thresholds are always selected on validation data, never on test data.</p>
+<p><b>Confidence and uncertainty.</b> Report (i) the margin (<span class="var">A</span> − τ)/σ<sub>ref</sub>; (ii) agreement between the windowed and global nearest-neighbour scores; (iii) optionally, variation of the decision across the K leave-one-out sub-memories (a cheap ensemble). Low margin or disagreement sends the die to review. Scores can be mapped to calibrated probabilities with a validation set (isotonic regression or temperature-style scaling [[guo]]) when enough labelled validation data exist.</p>
+
+<h2>18.7 Stage 7: Defect localisation</h2>
+<ul>
+<li><b>Pixel-level anomaly maps:</b> the patch score grid is bilinearly upsampled to image size and lightly smoothed (Gaussian σ ≈ 2–4 px). This smoothing affects the <i>map</i>, not the image, and is applied identically to all methods.</li>
+<li><b>Patch-level localisation:</b> the raw grid itself; useful when masks are coarse.</li>
+<li><b>Segmentation:</b> threshold the map at τ<sub>pix</sub>; remove regions below a minimum area; report each connected region with area, peak score and mean score.</li>
+<li><b>Bounding boxes:</b> the tight box of each region, for comparison with box annotations (Wafer Surface Defect).</li>
+<li><b>Multi-scale localisation:</b> compute maps from two feature levels and combine them (maximum or mean), so that small and large defects are both visible; ablated in Experiment H.</li>
+</ul>
+<p>Annotation needed for each output is listed in Section 17.8. Localisation is reported in the target's own coordinates, which is guaranteed by the "warp the reference" design.</p>
+
+<h2>18.8 Stage 8: Unknown defect detection</h2>
+<fig id="triage" src="dia_11_triage.svg" w="full">Three-way triage. The normal-memory test always runs first. Only regions that are anomalous are compared with known-defect prototypes; a region far from all known classes is reported as an unknown anomaly, and a region close to two classes is sent to review as ambiguous.</fig>
+<p>The decision for each anomalous region <span class="var">r</span> uses two distances: to the normal memory (is it abnormal?) and to known-defect prototypes (is it something we know?).</p>
+<ol>
+<li><b>Known normal patterns:</b> <span class="var">A</span>(<span class="var">r</span>) ≤ τ<sub>n</sub> → normal.</li>
+<li><b>Known defect types:</b> <span class="var">A</span>(<span class="var">r</span>) &gt; τ<sub>n</sub> and the nearest prototype distance <span class="var">d</span><sub>c*</sub> &lt; τ<sub>k</sub> with a clear margin to the second-nearest class → known class <span class="var">c</span>*.</li>
+<li><b>Unknown suspicious patterns:</b> <span class="var">A</span>(<span class="var">r</span>) &gt; τ<sub>n</sub> and <span class="var">d</span><sub>c*</sub> ≥ τ<sub>k</sub> → unknown anomaly; low margin → ambiguous (review with top-2 candidates).</li>
+</ol>
+<p>τ<sub>k</sub> is set per class from the spread of that class's own examples (e.g. the maximum leave-one-out distance times a safety factor), so classes with few, tight examples get tight boundaries, as in open-set recognition [[scheirer]]. Because step 1 depends only on normal references, an unknown defect is always flagged as anomalous even if triage is wrong, which follows the design rule of [[dra]]. Unknown regions can later be clustered for engineer review, similar to novel class discovery [[zhao2025ncd]], but that is an extension.</p>
+
+<h2>18.9 Stage 9: Wafer-level analysis</h2>
+<p><b>Image-level defects vs wafer-map failure patterns.</b> An image-level defect is a localised abnormality inside one die (a particle at pixel 412, 87). A wafer-map failure pattern is a spatial arrangement of abnormal <i>dies</i> across the wafer (an edge ring). They are different findings, computed from different data, and reported separately.</p>
+<ul>
+<li><b>Die indexing:</b> (row, column) from die extraction or metadata; wafer coordinates in mm from the die pitch.</li>
+<li><b>Wafer-map visualisation:</b> per-die image score <span class="var">A</span><sub>ij</sub>, per-die status, and per-die defect count/area (Figure {{fig:wafermap}}).</li>
+<li><b>Defect clustering:</b> DBSCAN on coordinates of suspicious dies; spatial autocorrelation (e.g. join-count statistics) to test whether failures are clustered or random.</li>
+<li><b>Repeated spatial patterns:</b> compare the binary suspicious-die map with WM-811K-style pattern classes using a wafer-map classifier trained on WM-811K, as an optional context label.</li>
+<li><b>Context score (RQ7, optional):</b> <span class="var">A</span>′<sub>ij</sub> = <span class="var">A</span><sub>ij</sub> + λ · mean(<span class="var">A</span> of neighbouring dies), to test whether spatial context improves die ranking. Risk: context can raise false alarms for good dies inside a cluster, so it is evaluated, not assumed.</li>
+<li><b>Repeater detection:</b> an anomaly at the same <i>within-die</i> position on many dies suggests a systematic (reticle- or design-related) cause, and also warns that such a defect may have contaminated the references.</li>
+</ul>
+
+<h2>18.10 Stage 10: Engineer feedback and adaptation</h2>
+<table class="small"><caption>Adaptation options compared.</caption>
+<thead><tr><th>Option</th><th>What changes</th><th>Speed</th><th>Reversible</th><th>Forgetting risk</th><th>Contamination risk</th><th>Verdict</th></tr></thead>
+<tbody>
+<tr><td>Reference-memory update</td><td>Normal memory items</td><td>Instant</td><td>Yes (versioned)</td><td>None for weights; memory can drift</td><td>High if wrong "normal" labels are admitted; mitigated by gates</td><td><b>Implement first</b></td></tr>
+<tr><td>Prototype update</td><td>Known-defect prototypes</td><td>Instant</td><td>Yes</td><td>Low</td><td>Medium (mislabelled class)</td><td>Implement second</td></tr>
+<tr><td>Replay-based continual learning</td><td>Encoder or head weights, with stored old samples</td><td>Minutes–hours</td><td>Only by checkpoint</td><td>Reduced by replay</td><td>Medium</td><td>Optional extension</td></tr>
+<tr><td>Periodic fine-tuning</td><td>Encoder weights</td><td>Hours</td><td>Checkpoint</td><td>High without replay [[prasad2024]]</td><td>Medium</td><td>Optional, gated</td></tr>
+<tr><td>Test-time adaptation</td><td>Normalisation statistics</td><td>Online</td><td>Partly</td><td>Medium</td><td>High (adapts to defects too)</td><td>Not for core</td></tr>
+</tbody></table>
+<p><b>Safe feedback workflow (recommended first):</b></p>
+<ol>
+<li><b>Record:</b> every engineer action (confirm, reject, correct location, assign label, mark unknown) is stored with reviewer ID, time, die ID and the memory version that produced the result.</li>
+<li><b>Route by action:</b>
+  <ul><li><i>Reject (false alarm)</i> → candidate <b>normal</b> patches from the flagged region enter a <b>quarantine buffer</b>.</li>
+  <li><i>Confirm + label</i> → region features become candidate <b>known-defect</b> items for class <span class="var">c</span>.</li>
+  <li><i>Correct location</i> → corrected mask defines which patches are defect and which are normal.</li>
+  <li><i>Mark unknown</i> → region stored in an <b>investigation set</b>; it never enters the normal memory.</li></ul></li>
+<li><b>Gate:</b> a candidate normal patch is admitted only if (a) it is novel (its distance to <span class="var">M</span><sub>N</sub> exceeds the median nearest-neighbour distance among existing normals, a self-calibrating gate following [[abbas]]), (b) it is <i>not</i> close to any known-defect prototype, and (c) a second reviewer confirmed it, or the same pattern was independently rejected as a false alarm on at least <span class="var">n</span> different dies.</li>
+<li><b>Version and regression check:</b> admitted items create a candidate memory <span class="var">M</span><sub>t+1</sub>. It is evaluated on a fixed held-out validation set of normal and defective dies (never used for feedback). It is accepted only if recall at the operating threshold does not drop and AUROC does not decrease beyond a tolerance; otherwise it rolls back to <span class="var">M</span><sub>t</sub>.</li>
+<li><b>Drift monitoring:</b> track the memory size, the share of feedback-derived items, the false-alarm rate on a fixed set of golden normal dies, and the detection rate on a fixed set of known defects (a "canary" set). Alarm if either drifts.</li>
+</ol>
+<div class="box"><span class="lbl">Why memory updates first</span><p>They need no GPU training, act immediately, and are fully auditable and reversible. They also directly test the question of the research brief, "does feedback improve detection or merely memorise samples?", because a held-out protocol can measure improvement on dies that never generated feedback. Fine-tuning is only worth adding if memory updates plateau.</p></div>
+
+<h1 id="s19"><span class="num">19</span>Mathematical Formulation</h1>
+<p>This section uses only distances, minima and averages. Every symbol is explained in plain English right after it appears.</p>
+<h2>19.1 Symbols</h2>
+<table class="symtab"><caption>Symbols used in the formulation.</caption>
+<thead><tr><th>Symbol</th><th>Meaning in plain English</th></tr></thead>
+<tbody>
+<tr><td>R = {r<sub>1</sub>, …, r<sub>K</sub>}</td><td>The reference set: K images of normal dies that the engineer provides.</td></tr>
+<tr><td>x</td><td>The target die image we want to inspect (height H, width W pixels).</td></tr>
+<tr><td>T, T̂</td><td>The true and the estimated geometric transform (rotation angle θ, shift t, scale s) between a reference and the target.</td></tr>
+<tr><td>f</td><td>The frozen feature encoder. f(x) is a grid of h × w feature vectors, each with C numbers. f<sub>p</sub>(x) is the vector at grid position p.</td></tr>
+<tr><td>M = M<sub>N</sub> ∪ M<sub>D</sub></td><td>The reference memory: normal patch features M<sub>N</sub>, plus optional known-defect prototypes M<sub>D</sub> = {μ<sub>c</sub>}.</td></tr>
+<tr><td>d(a, b)</td><td>Distance between two feature vectors, here Euclidean: d(a, b) = ‖a − b‖. Small = similar.</td></tr>
+<tr><td>s(p)</td><td>Anomaly score of the patch at position p.</td></tr>
+<tr><td>S</td><td>The spatial anomaly map: s(p) for every position, upsampled to H × W pixels.</td></tr>
+<tr><td>A(x)</td><td>The image-level anomaly score of the whole die.</td></tr>
+<tr><td>τ, τ<sub>pix</sub>, τ<sub>k</sub></td><td>Thresholds: for image decisions, for pixels, and for accepting a known class.</td></tr>
+<tr><td>U</td><td>The feedback update function, which turns the memory at time t into the memory at time t + 1.</td></tr>
+</tbody></table>
+
+<h2>19.2 Conceptual flow</h2>
+<p style="text-align:center"><b>Reference dies</b> R → <b>feature extraction</b> f(r<sub>k</sub>) → <b>reference memory</b> M → <b>target features</b> f(x) → <b>feature comparison</b> d(·, M) → <b>anomaly map</b> S → <b>defect decision</b> (A(x) &gt; τ ?)</p>
+
+<h2>19.3 Enrolment</h2>
+<span class="eq"><i>M</i><sub>N</sub> = ⋃<sub>k=1..K</sub> { <i>f</i><sub>p</sub>( <i>T̂</i><sub>k</sub>(<i>r</i><sub>k</sub>) ) : <i>p</i> valid } <span class="no">(1)</span></span>
+<p><i>In words:</i> align each reference, run it through the encoder, and put every valid patch feature into the memory. "Valid" excludes border regions with no image data after warping. If the memory is large, a coreset subset is kept.</p>
+
+<h2>19.4 Anomaly scoring</h2>
+<span class="eq"><i>s</i>(<i>p</i>) = min<sub><i>m</i> ∈ <i>M</i><sub>N</sub>(<i>p</i>)</sub> ‖ <i>f</i><sub>p</sub>(<i>x</i>) − <i>m</i> ‖ <span class="no">(2)</span></span>
+<p><i>In words:</i> for the patch at position p of the target, find the most similar normal patch in the memory and take the distance. M<sub>N</sub>(p) is either the whole normal memory (global search) or only the reference patches within a window around p (aligned search). A large distance means "nothing like this exists in the references".</p>
+<span class="eq"><i>S</i> = <i>G</i><sub>σ</sub> ∗ Upsample( [ <i>s</i>(<i>p</i>) ]<sub><i>p</i></sub> ), &nbsp;&nbsp; <i>A</i>(<i>x</i>) = mean of the top-<i>q</i>% values of <i>s</i> <span class="no">(3)</span></span>
+<p><i>In words:</i> the anomaly map is the grid of patch scores, enlarged to the image size and lightly smoothed (G<sub>σ</sub> is a Gaussian blur of width σ applied to the map, not to the image). The die's score summarises its worst patches; q = 1% is a typical choice, and q → 0 gives the maximum.</p>
+<span class="eq">decision(<i>x</i>) = anomalous if <i>A</i>(<i>x</i>) &gt; τ, &nbsp;&nbsp; τ = Quantile<sub>1−α</sub>{ <i>A</i>(<i>x</i>′) : <i>x</i>′ normal, held-out } <span class="no">(4)</span></span>
+<p><i>In words:</i> the threshold is set so that only a fraction α (e.g. 1%) of normal validation dies would be flagged. Pixels whose map value exceeds τ<sub>pix</sub> (chosen the same way on pixel scores) form the predicted defect mask.</p>
+
+<h2>19.5 Known / unknown triage</h2>
+<span class="eq"><i>c</i>* = argmin<sub><i>c</i></sub> ‖ <i>g</i>(<i>r</i>) − μ<sub><i>c</i></sub> ‖, &nbsp;&nbsp; <i>y</i>(<i>r</i>) = known:<i>c</i>* if ‖<i>g</i>(<i>r</i>) − μ<sub><i>c</i>*</sub>‖ &lt; τ<sub><i>k</i>,<i>c</i>*</sub>, otherwise unknown <span class="no">(5)</span></span>
+<p><i>In words:</i> g(r) is the average feature of an anomalous region r; μ<sub>c</sub> is the prototype (average feature) of known class c. The region takes the nearest class only if it is close enough to it; otherwise it is "unknown".</p>
+
+<h2>19.6 Defect preservation ratio (proposed evaluation)</h2>
+<span class="eq">DPR(<i>P</i>) = <i>s</i><sub>defect</sub>( pipeline with step <i>P</i> ) / <i>s</i><sub>defect</sub>( reference pipeline without <i>P</i>, ideal alignment ) <span class="no">(6)</span></span>
+<p><i>In words:</i> inject a defect with a known mask, and measure its peak (or mean) anomaly score with and without a processing step P (an alignment variant, a denoising filter, a resize). DPR ≈ 1 means the step keeps the defect as visible as before; DPR &lt; 1 means the step weakens it. Reported by defect size and type. Because the injected defect is known exactly, DPR isolates the effect of P from the rest of the pipeline.</p>
+
+<h2>19.7 Feedback update</h2>
+<span class="eq"><i>M</i><sub>t+1</sub> = <i>U</i>(<i>M</i><sub>t</sub>, <i>F</i><sub>t</sub>) = ( <i>M</i><sub>N,t</sub> ∪ { <i>z</i> ∈ <i>Z</i><sub>t</sub><sup>normal</sup> : gate(<i>z</i>) } ) ∪ ( <i>M</i><sub>D,t</sub> ⊕ <i>Z</i><sub>t</sub><sup>defect</sup> ) <span class="no">(7)</span></span>
+<span class="eq">gate(<i>z</i>) = [ min<sub><i>m</i>∈<i>M</i><sub>N,t</sub></sub> ‖<i>z</i> − <i>m</i>‖ &gt; δ<sub>t</sub> ] ∧ [ min<sub><i>c</i></sub> ‖<i>z</i> − μ<sub><i>c</i></sub>‖ &gt; τ<sub><i>k</i></sub> ] ∧ [ verified ] <span class="no">(8)</span></span>
+<p><i>In words:</i> F<sub>t</sub> is the batch of engineer decisions; Z<sub>t</sub><sup>normal</sup> are patch features from regions the engineers called normal, and Z<sub>t</sub><sup>defect</sup> features from confirmed, labelled defects. A candidate normal patch z enters the memory only if it is genuinely new (farther than δ<sub>t</sub>, the median nearest-neighbour distance among current normal patches), is not similar to a known defect, and has been verified. Defect features update the class prototypes (⊕ = add the example and recompute the class mean). M<sub>t+1</sub> is kept only if the held-out regression check passes; otherwise M<sub>t+1</sub> = M<sub>t</sub>.</p>
+
+<h2>19.8 Worked example of feature-based anomaly scoring</h2>
+<p>Use tiny 2-number features to keep the arithmetic visible. Suppose K = 2 references give four normal patch features at one aligned position window:</p>
+<p style="text-align:center">M<sub>N</sub>(p) = { (1.0, 2.0), (1.2, 1.9), (0.9, 2.1), (1.1, 2.2) }</p>
+<p><b>Normal target patch</b> f<sub>p</sub>(x) = (1.05, 2.05). Distances: to (1.0, 2.0) = √(0.05² + 0.05²) = 0.071; to (1.2, 1.9) = 0.212; to (0.9, 2.1) = 0.158; to (1.1, 2.2) = 0.158. Minimum: <b>s(p) = 0.071</b>.</p>
+<p><b>Defective target patch</b> (a bright particle raises both feature values) f<sub>p</sub>(x) = (2.0, 3.0). Distances: 1.414, 1.360, 1.421, 1.204. Minimum: <b>s(p) = 1.204</b>.</p>
+<p><b>Threshold.</b> Scoring held-out normal patches gives values between 0.03 and 0.25; with α = 1% suppose τ<sub>pix</sub> = 0.30. The first patch (0.071) is normal; the second (1.204) is anomalous, and it is about 4× above the threshold, which is a confident decision.</p>
+<p><b>Triage.</b> Known prototypes: μ<sub>particle</sub> = (2.1, 3.1) with τ<sub>k</sub> = 0.4; μ<sub>scratch</sub> = (0.2, 0.5) with τ<sub>k</sub> = 0.4. Distance of the region (2.0, 3.0) to μ<sub>particle</sub> = 0.141 &lt; 0.4 → <b>known: particle</b>. A region at (3.5, 0.8) would be 2.69 from the particle prototype and 3.31 from the scratch prototype, beyond both τ<sub>k</sub> → <b>unknown anomaly</b>, even though it is clearly anomalous (its distance to normal memory is large).</p>
+<div class="box gray"><span class="lbl">Runnable version</span><p>The same computation, with real (toy) images, multi-scale patch descriptors, a calibrated threshold and rotation alignment, is in <code>prototype/toy_reference_memory.py</code>. It runs in about 10 seconds on a CPU and produced Diagrams 5 and 6. It uses synthetic dies, so its numbers are illustrations, not results.</p></div>

@@ -1,0 +1,210 @@
+<h1 id="s23"><span class="num">23</span>Implementation Architecture</h1>
+<p>The implementation is a <b>research prototype</b>: Python modules, configuration files and scripts that reproduce every experiment. There is no front end or production service.</p>
+<h2>23.1 Tools</h2>
+<table><caption>Software stack and the role of each tool.</caption>
+<thead><tr><th style="width:20%">Tool</th><th>Role in this project</th></tr></thead>
+<tbody>
+<tr><td>Python 3.11</td><td>Language for all modules and experiments.</td></tr>
+<tr><td>PyTorch + torchvision / timm</td><td>Load frozen pretrained encoders (WRN-50, DINOv2), extract multi-scale feature maps on GPU or CPU.</td></tr>
+<tr><td>FAISS [[faiss]] (or scikit-learn NearestNeighbors)</td><td>Fast nearest-neighbour search in the reference memory.</td></tr>
+<tr><td>OpenCV</td><td>Image I/O, ECC alignment (<code>findTransformECC</code>), warping, ORB features, connected components.</td></tr>
+<tr><td>scikit-image</td><td>Phase correlation (<code>phase_cross_correlation</code>), log-polar transforms for Fourier–Mellin, region properties.</td></tr>
+<tr><td>NumPy / SciPy</td><td>Array maths, Gaussian filtering, statistics, bootstrap confidence intervals, Wilcoxon tests.</td></tr>
+<tr><td>scikit-learn</td><td>AUROC, AUPRC, precision–recall, DBSCAN for wafer clusters, isotonic calibration.</td></tr>
+<tr><td>Albumentations</td><td>Controlled, logged geometric and photometric transforms for rotation and illumination experiments and synthetic data.</td></tr>
+<tr><td>Anomalib [[anomalib]]</td><td>Reference implementations of PatchCore, PaDiM, EfficientAD and others for baselines; AUPRO implementation.</td></tr>
+<tr><td>Matplotlib</td><td>Anomaly maps, overlays, curves, wafer maps.</td></tr>
+<tr><td>Hydra or plain YAML + pydantic</td><td>Configuration of every experiment; configs are saved with results.</td></tr>
+<tr><td>MLflow or CSV/JSON logs</td><td>Experiment tracking (parameters, metrics, artefacts, git commit).</td></tr>
+<tr><td>pytest</td><td>Unit tests for metrics, splits (leakage check) and alignment on synthetic transforms.</td></tr>
+</tbody></table>
+
+<h2>23.2 Project directory structure</h2>
+<pre>research/
+├── configs/                 <span class="c"># YAML: datasets, encoders, experiments A–H</span>
+├── datasets/                <span class="c"># loaders + split manifests (hash lists) per dataset</span>
+│   ├── carinthia_s.py  wafer_surface_defect.py  mvtec.py  wm811k.py
+│   └── synthetic/           <span class="c"># patterned-die and wafer generator (T3)</span>
+├── preprocessing/           <span class="c"># quality checks, illumination/contrast normalisation, die extraction</span>
+├── registration/            <span class="c"># coarse 90° search, Fourier–Mellin, ECC, warp-reference, validity masks</span>
+├── feature_extraction/      <span class="c"># frozen encoders, multi-scale patch features, feature cache</span>
+├── reference_memory/        <span class="c"># memory bank, coreset, windowed k-NN, QC, versioning</span>
+├── anomaly_detection/       <span class="c"># patch scores, image scores, normalisation, thresholds</span>
+├── localization/            <span class="c"># map upsampling, regions, boxes, masks</span>
+├── unknown_detection/       <span class="c"># prototypes, open-set triage, ambiguity</span>
+├── feedback/                <span class="c"># feedback records, simulator, gate, quarantine, rollback</span>
+├── wafer_analysis/          <span class="c"># die indexing, wafer maps, clustering, context score</span>
+├── evaluation/              <span class="c"># metrics (AUROC, AUPRO, DPR, forgetting), statistics</span>
+├── visualization/           <span class="c"># overlays, curves, wafer maps, gallery</span>
+├── experiments/             <span class="c"># run_A_fewshot.py … run_H_ablation.py</span>
+├── notebooks/               <span class="c"># exploration only; never the source of reported numbers</span>
+├── results/                 <span class="c"># one folder per run: config.yaml, metrics.json, maps/, log.txt</span>
+└── tests/                   <span class="c"># pytest: leakage, metrics, alignment</span></pre>
+
+<h2>23.3 Modules, inputs and outputs</h2>
+<table class="small"><caption>Module interfaces.</caption>
+<thead><tr><th style="width:17%">Module</th><th style="width:31%">Input</th><th style="width:31%">Output</th><th>Key functions</th></tr></thead>
+<tbody>
+<tr><td>datasets</td><td>Raw files, split manifest</td><td><code>Sample(image: float32[H,W], mask: bool[H,W]|None, label, meta: dict)</code></td><td><code>load_split()</code>, <code>check_leakage()</code></td></tr>
+<tr><td>preprocessing</td><td>Sample</td><td>Normalised image, <code>quality: dict</code></td><td><code>normalize()</code>, <code>quality_check()</code>, <code>extract_dies()</code></td></tr>
+<tr><td>registration</td><td>target image, reference images</td><td><code>T̂</code> (2×3 matrix), warped references, validity mask, alignment score</td><td><code>coarse_rot90()</code>, <code>fourier_mellin()</code>, <code>ecc_refine()</code>, <code>warp_reference()</code></td></tr>
+<tr><td>feature_extraction</td><td>Image(s)</td><td><code>float16[h,w,C]</code> per scale; cached to disk by image hash</td><td><code>Encoder.extract()</code></td></tr>
+<tr><td>reference_memory</td><td>Feature maps + validity masks + metadata</td><td><code>Memory</code> object (FAISS index, item metadata, version)</td><td><code>enrol()</code>, <code>query(window=)</code>, <code>add()</code>, <code>remove()</code>, <code>snapshot()</code>, <code>rollback()</code></td></tr>
+<tr><td>anomaly_detection</td><td>Distances</td><td>Patch map <code>[h,w]</code>, image score, z-score</td><td><code>score_patches()</code>, <code>image_score()</code>, <code>calibrate_threshold()</code></td></tr>
+<tr><td>localization</td><td>Patch map, τ<sub>pix</sub></td><td>Pixel map <code>[H,W]</code>, list of regions (bbox, area, peak, mask)</td><td><code>upsample()</code>, <code>regions()</code></td></tr>
+<tr><td>unknown_detection</td><td>Region features, prototypes</td><td><code>{normal | known:c | ambiguous | unknown}</code>, distances</td><td><code>triage()</code></td></tr>
+<tr><td>feedback</td><td>Results + engineer (or simulated) actions</td><td>Feedback records; candidate memory; accept/rollback decision</td><td><code>simulate()</code>, <code>gate()</code>, <code>apply_update()</code>, <code>regression_check()</code></td></tr>
+<tr><td>wafer_analysis</td><td>Per-die results + (i, j)</td><td>Wafer map arrays, clusters, context scores</td><td><code>wafer_map()</code>, <code>cluster()</code>, <code>context_score()</code></td></tr>
+<tr><td>evaluation</td><td>Predictions + ground truth</td><td><code>metrics.json</code></td><td><code>auroc()</code>, <code>aupro()</code>, <code>dpr()</code>, <code>forgetting()</code>, <code>bootstrap_ci()</code></td></tr>
+</tbody></table>
+
+<h2>23.4 Pseudocode: reference enrolment</h2>
+<pre><span class="k">def</span> enrol(reference_images, encoder, cfg):
+    template = choose_template(reference_images)          <span class="c"># e.g. the most "central" reference</span>
+    items = []
+    <span class="k">for</span> r <span class="k">in</span> reference_images:
+        q = quality_check(r)
+        <span class="k">if not</span> q.ok: log.warn("reference rejected", q); <span class="k">continue</span>
+        r = normalize(r)                                  <span class="c"># global contrast only, no smoothing</span>
+        T = register(template, r)                         <span class="c"># canonical pose of this reference</span>
+        r_c, valid = warp(r, T)                           <span class="c"># references may be warped: they are clean</span>
+        for scale, fmap <span class="k">in</span> encoder.extract(r_c).items():
+            items += patches(fmap, valid, meta={ref_id, scale, position})
+    items = memory_qc(items)       <span class="c"># leave-one-out outlier check, de-duplication, optional coreset</span>
+    M = Memory(items, version=0, provenance="enrolment", cfg_hash=hash(cfg))
+    M.prototypes = build_prototypes(cfg.known_defects, encoder)   <span class="c"># optional, kept separate</span>
+    tau = calibrate_threshold(M, cfg.calibration_normals, alpha=cfg.alpha)
+    <span class="k">return</span> M, tau</pre>
+
+<h2>23.5 Pseudocode: inference on a new die</h2>
+<pre><span class="k">def</span> inspect(x, M, tau, encoder, cfg):
+    q = quality_check(x)
+    <span class="k">if not</span> q.ok: <span class="k">return</span> Result(status="REVIEW: image quality", quality=q)
+    x = normalize(x)                                      <span class="c"># same operation as for references</span>
+    T, align_score = register(M.template, x)              <span class="c"># coarse 90° + Fourier–Mellin + ECC</span>
+    refs_in_x_frame, valid = warp_references(M.reference_images, T)   <span class="c"># target untouched</span>
+    feats = encoder.extract(x)                            <span class="c"># multi-scale feature maps of the target</span>
+    s_win = M.query(feats, window=cfg.window, aligned_to=T)           <span class="c"># Eq. (2), aligned search</span>
+    s_glob = M.query(feats, window=None)                  <span class="c"># global search, misalignment check</span>
+    S = smooth(upsample(combine_scales(s_win)), cfg.sigma) * valid    <span class="c"># Eq. (3)</span>
+    A = top_q_mean(S, cfg.q)
+    regions = connected_regions(S &gt; tau.pixel, min_area=cfg.min_area)
+    <span class="k">for</span> r <span class="k">in</span> regions:
+        r.label, r.distances = triage(region_feature(feats, r), M.prototypes)   <span class="c"># Eq. (5)</span>
+    status = ("NORMAL" <span class="k">if</span> A &lt;= tau.image <span class="k">else</span>
+              "UNKNOWN" <span class="k">if</span> any(r.label == "unknown" <span class="k">for</span> r <span class="k">in</span> regions) <span class="k">else</span> "SUSPICIOUS")
+    conf = confidence(A, tau, agreement(s_win, s_glob), align_score)
+    <span class="k">return</span> Result(status, A, S, regions, conf, T, memory_version=M.version)</pre>
+
+<h2>23.6 Pseudocode: feedback update</h2>
+<pre><span class="k">def</span> feedback_round(M, batch, heldout, canary, cfg):
+    cand_normal, cand_defect = [], []
+    <span class="k">for</span> fb <span class="k">in</span> batch:                                    <span class="c"># fb: action, die, region, label, reviewer</span>
+        log.record(fb, memory_version=M.version)
+        <span class="k">if</span> fb.action == "reject":                         <span class="c"># false alarm: region is normal</span>
+            quarantine.add(features_in(fb.region), fb)
+        <span class="k">elif</span> fb.action <span class="k">in</span> ("confirm", "label", "correct"):
+            cand_defect += [(features_in(fb.corrected_region), fb.label)]
+        <span class="k">elif</span> fb.action == "unknown":
+            investigation_set.add(fb)                     <span class="c"># never enters normal memory</span>
+    released = quarantine.release(min_votes=cfg.min_votes, second_review=cfg.second_review)
+    delta = median_nn_distance(M.normal)                  <span class="c"># self-calibrating novelty gate</span>
+    for z <span class="k">in</span> released:
+        <span class="k">if</span> nn_distance(z, M.normal) &gt; delta <span class="k">and</span> min_proto_distance(z, M.prototypes) &gt; cfg.tau_k:
+            cand_normal.append(z)                         <span class="c"># Eq. (8)</span>
+    M_new = M.snapshot().add_normal(cand_normal).update_prototypes(cand_defect)   <span class="c"># Eq. (7)</span>
+    before, after = evaluate(M, heldout), evaluate(M_new, heldout)
+    drift_ok = evaluate(M_new, canary).recall &gt;= evaluate(M, canary).recall - cfg.tol
+    <span class="k">if</span> after.recall_at_tau &gt;= before.recall_at_tau <span class="k">and</span> after.auroc &gt;= before.auroc - cfg.tol <span class="k">and</span> drift_ok:
+        <span class="k">return</span> M_new                                      <span class="c"># accepted: version t+1</span>
+    log.warn("update rejected, rolling back"); <span class="k">return</span> M</pre>
+
+<h2>23.7 Reproducible experiment configuration</h2>
+<pre><span class="c"># configs/exp_B_rotation.yaml  (full example in artifacts/example_experiment_config.yaml)</span>
+experiment: B_rotation
+seed: [0, 1, 2, 3, 4]               <span class="c"># 5 reference draws</span>
+data: {dataset: carinthia_s, tier: T1, split_manifest: manifests/carinthia_s_v1.json}
+references: {K: [1, 2, 5, 10], selection: random_stratified}
+encoder: {name: wide_resnet50_2, layers: [layer2, layer3], weights: imagenet1k_v1, input: native_tiles_448}
+memory: {coreset_ratio: 1.0, window: 3, metric: l2}
+alignment: {pipeline: [none, warp_target, warp_reference, rot_aug_memory], coarse: rot90_ncc,
+            fine: [fourier_mellin, ecc_euclidean], ecc_iters: 200}
+transforms: {angles_deg: "0:360:15", translate_frac: 0.1, scale: [0.9, 1.1], illumination_gradient: [0, 0.3]}
+defect_injection: {sizes_px: [1, 2, 3, 5, 10, 20], types: [particle, scratch, bridge, missing_via]}
+scoring: {image_score: top_q_mean, q: 0.01, map_sigma: 4}
+threshold: {alpha: 0.01, source: validation}
+metrics: [auroc, auprc, pixel_auroc, aupro, dpr, false_alarm_rate, tre_px, ms_per_die]
+logging: {tracker: mlflow, save_maps: 20, git_commit: auto}</pre>
+
+<h2>23.8 Logging and evaluation strategy</h2>
+<ul>
+<li>Every run writes <code>results/&lt;experiment&gt;/&lt;timestamp&gt;_&lt;hash&gt;/</code> containing the resolved config, the git commit, environment versions, split manifest hashes, <code>metrics.json</code>, per-image predictions (CSV) and a sample of anomaly maps.</li>
+<li>Features are cached by image hash and encoder name, so experiments that only change scoring do not recompute features.</li>
+<li>Reported tables are generated by a script from <code>metrics.json</code> files, never typed by hand.</li>
+<li>Unit tests: AUPRO and DPR on hand-made cases; alignment recovers known synthetic transforms within a tolerance; the leakage checker fails on a deliberately leaked manifest.</li>
+<li>Compute budget: on one consumer GPU (8–12 GB), WRN-50 features for a 448 × 448 tile take on the order of tens of milliseconds and K ≤ 10 memories fit easily in memory; everything also runs (slowly) on CPU. This is an estimate to be confirmed in milestone 3, not a measurement.</li>
+</ul>
+
+<h1 id="s24"><span class="num">24</span>Required Artifacts</h1>
+<table><caption>The twelve required artifacts and where to find them. All files are in the <code>research-sample-guided-inspection/</code> folder of the repository.</caption>
+<thead><tr><th style="width:5%">#</th><th style="width:26%">Artifact</th><th>In this document</th><th style="width:36%">Separate file</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Research problem definition</td><td>Section 6.2</td><td><code>artifacts/01_problem_definition.md</code></td></tr>
+<tr><td>2</td><td>Novelty matrix</td><td>Section 16.1</td><td><code>artifacts/02_novelty_matrix.csv</code></td></tr>
+<tr><td>3</td><td>Literature review spreadsheet</td><td>Sections 13.4, 14</td><td><code>artifacts/03_literature_review.xlsx</code> and <code>.csv</code></td></tr>
+<tr><td>4</td><td>Dataset comparison table</td><td>Section 17.6</td><td><code>artifacts/04_dataset_inventory.csv</code> (also a sheet in the XLSX)</td></tr>
+<tr><td>5</td><td>Architecture diagram</td><td>Diagram 2 (Section 9)</td><td><code>figures/dia_02_architecture.svg</code>, <code>diagrams/02_architecture.mmd</code></td></tr>
+<tr><td>6</td><td>End-to-end workflow diagram</td><td>Figure {{fig:workflow}} (Section 25)</td><td><code>figures/dia_09_workflow.svg</code>, <code>diagrams/09_research_workflow.mmd</code></td></tr>
+<tr><td>7</td><td>Experimental protocol</td><td>Sections 20–22</td><td><code>artifacts/07_experimental_protocol.md</code>, <code>artifacts/example_experiment_config.yaml</code></td></tr>
+<tr><td>8</td><td>Research risk register</td><td>Section 26.1</td><td><code>artifacts/08_risk_register.csv</code></td></tr>
+<tr><td>9</td><td>Implementation roadmap</td><td>Section 25</td><td><code>artifacts/09_roadmap.csv</code>, <code>figures/dia_10_gantt.svg</code></td></tr>
+<tr><td>10</td><td>Glossary</td><td>Section 30.1</td><td><code>artifacts/10_glossary.md</code></td></tr>
+<tr><td>11</td><td>Visual example gallery</td><td>Section 30.2</td><td><code>figures/</code> (all SVG, editable)</td></tr>
+<tr><td>12</td><td>Research questions and hypotheses</td><td>Section 12</td><td><code>artifacts/12_research_questions.md</code></td></tr>
+</tbody></table>
+<p>Mermaid sources of all eight required diagrams are in <code>diagrams/*.mmd</code> and can be edited and re-rendered in any Mermaid editor. The SVG versions used in this PDF are generated by <code>src/figures.py</code>.</p>
+
+<h1 id="s25"><span class="num">25</span>Research Roadmap</h1>
+<fig id="workflow" src="dia_09_workflow.svg" w="full">End-to-end research workflow (Artifact 6). Ten phases with four decision gates. A gate must be passed before any claim that depends on it is made.</fig>
+<fig id="gantt" src="dia_10_gantt.svg" w="full">Implementation roadmap over 40 weeks (Artifact 9). Teal bars are core milestones; the amber bar (feedback adaptation) is core if time allows and is otherwise an advanced extension. Phases overlap where they do not depend on each other.</fig>
+<!--ROADMAP-->
+<div class="box"><span class="lbl">Core vs optional</span>
+<p><b>Core research milestones:</b> phases 1–7, 9 and 10, which deliver C2 (defect-preserving alignment), C3 (unknown triage) and the few-shot/transfer protocol (C1). <b>Core-if-time:</b> phase 8 (feedback, C5). <b>Optional advanced extensions:</b> wafer-level context (C4, RQ7), self-supervised SEM encoder adaptation, test-time adaptation for cross-wafer drift, clustering unknowns into candidate new classes, and partner-data validation (T4) if access is obtained.</p></div>
+
+<h1 id="s26"><span class="num">26</span>Risks and Limitations</h1>
+<h2>26.1 Research risk register (Artifact 8)</h2>
+<!--RISKS-->
+<h2>26.2 Critical feasibility assessment</h2>
+<p><b>Is a small reference collection sufficient?</b> For same-wafer inspection of a stable process, probably yes for clear defects: published few-shot results on natural-object benchmarks are strong at K = 1–4 [[anomalydino,graphcore]]. For subtle defects close to the natural variation, no: K = 1 sees one sample of "normal", so false alarms and thresholds will be poorly controlled. Experiment A measures where the curve flattens; the honest expectation is that K = 5–10 is needed for stable thresholds.</p>
+<p><b>Can normal-only references identify all defect types?</b> No. They cannot identify (i) defects that look normal at the encoder's resolution; (ii) systematic defects present in every reference; (iii) defects whose appearance falls within natural variation (low-contrast stains under strong illumination change); (iv) "logical" defects in which every part looks normal but something is in the wrong place, unless matching is position-aware. The windowed (aligned) search partly addresses (iv); (ii) needs design data or golden references [[cantu2025]].</p>
+<p><b>Are different wafer types different enough to break transfer?</b> Different <i>designs</i>, yes: a memory of design X contains no normal example of design Y (Scenario 2b), so it must be re-enrolled. Different <i>wafers</i> of the same design differ by process drift and imaging conditions; the size of the effect is an empirical question (Experiment D), and domain-shift studies on SEM classification suggest it is not negligible [[poniatowski]].</p>
+<p><b>Can rotation normalisation remove meaningful defect information?</b> Yes. Warping the target resamples it, which blurs 1–2 px defects and can cut defects near borders; rotation-invariant features cannot distinguish a correctly shaped but wrongly oriented structure. The design (warp references, mask borders) and the DPR metric exist to measure and limit this; it is not assumed to be solved.</p>
+<p><b>Do public datasets support cross-wafer evaluation?</b> No (Section 17.7). Cross-wafer claims rest on synthetic wafers unless partner data is obtained. This is the most important limitation of the study, and it is stated in every result table.</p>
+<p><b>Are pixel-level masks available?</b> Yes for SEM (Carinthia-S) and for natural-object sets; no for the die-level optical set (boxes only). Pixel-level claims on patterned dies come from synthetic data only.</p>
+<p><b>Does feedback improve detection or merely memorise samples?</b> That is exactly what Experiment G tests: improvement is measured only on dies that never generated feedback, with a "random extra normals" control. Abbas et al. showed that naive evaluation inflates gains through memorisation [[abbas]]. If held-out gains vanish, the conclusion is that feedback only memorises, which is still a useful negative result.</p>
+<p><b>Can the system run with limited GPU resources?</b> Yes for the core: frozen encoders, cached features and K ≤ 10 memories fit a consumer GPU, and the toy pipeline runs on a laptop CPU. Large foundation-model baselines (UniVAD, CLIP-based) may be too heavy; they are optional. Self-supervised SEM pre-training is the only component that needs substantial compute, and it is an extension.</p>
+<h2>26.3 Smallest scientifically meaningful prototype</h2>
+<div class="box navy"><span class="lbl">Minimum viable study (about 16–20 weeks)</span>
+<ol>
+<li>PatchCore-style memory with WRN-50 and DINOv2 encoders, reproduced on MVTec AD (sanity gate).</li>
+<li>Few-shot curves K = 1, 2, 5, 10 on Carinthia-S and Wafer Surface Defect (Experiment A).</li>
+<li>Rotation sweep with four pipelines and DPR on injected defects, on Carinthia-S and a small synthetic die set (Experiment B, Contribution C2).</li>
+<li>Leave-one-class-out unknown triage on Carinthia-S (Experiment E, Contribution C3).</li>
+</ol>
+<p>This already answers RQ1, RQ2 and RQ4 with public data and is publishable as a workshop or conference paper if executed carefully. Everything else builds on it.</p></div>
+
+<h1 id="s27"><span class="num">27</span>Expected Contributions</h1>
+<p>If the plan is carried out, the expected outputs are listed below. These are outputs of the work, not predicted outcomes; each hypothesis may be confirmed or rejected.</p>
+<ol>
+<li><b>An evaluated, open reference-memory inspector for die images</b> covering K-shot enrolment, alignment, localisation, triage and gated updates, with reproducible configurations.</li>
+<li><b>Evidence on defect-preserving alignment (C2):</b> a comparison of no alignment, target warping, reference warping, rotation-augmented memories and invariant features under a full rotation sweep, with the defect preservation ratio as a reusable evaluation tool.</li>
+<li><b>Evidence on unknown-defect triage (C3):</b> leave-one-class-out results on public SEM masks showing how often unfamiliar defects are flagged as unknown versus forced into known classes.</li>
+<li><b>Evidence on safe feedback (C5):</b> held-out measurements of whether verified memory edits help, and how gating and rollback behave under realistic error rates.</li>
+<li><b>A transfer protocol (C1):</b> explicit same-wafer / cross-wafer / cross-type splits and a synthetic patterned-wafer benchmark with exact ground truth, released for others to use.</li>
+<li><b>Negative results where they occur</b>, for example if reference-free intrinsic normality [[zhao2025seg]] beats reference memories on unpatterned SEM, or if feedback gains vanish on held-out data.</li>
+</ol>
+
+<h1 id="s28"><span class="num">28</span>Conclusion</h1>
+<p>The research idea, "give the AI a few sample dies, let it learn their patterns, inspect new dies, show where the defects are, and improve from verified feedback", is technically feasible with existing building blocks. Frozen pretrained encoders and a reference memory provide few-shot learning without retraining; classical registration applied to the references keeps targets untouched; nearest-neighbour distances give interpretable anomaly maps; distance-based open-set triage keeps unknown defects visible; and memory edits make feedback auditable and reversible.</p>
+<p>The literature shows that each block exists, so novelty must come from the <b>combination, the semiconductor setting and the evaluation</b>: whether alignment preserves defects, whether unknown defects are localised and kept apart from known ones, whether feedback survives realistic mistakes, and how transfer differs between same-wafer, cross-wafer and cross-type inspection. The main limitation is data: no public patterned-die dataset with masks and wafer coordinates exists, so cross-wafer conclusions will rest on synthetic data unless partner data becomes available.</p>
+<p><b>What to do first:</b> reproduce PatchCore on MVTec AD; run few-shot curves on Carinthia-S; build the rotation sweep with "warp the reference" and the DPR metric; then add unknown triage. That sequence produces a meaningful result within about four months and lays the foundation for the feedback study.</p>

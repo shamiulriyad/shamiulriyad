@@ -1,0 +1,47 @@
+<h1 id="s29"><span class="num">29</span>References</h1>
+<p class="small-note">Numbered in order of first citation. Verification codes: <b>S</b> = checked in this session through search results quoting the official record (publisher, CVF, ACL Anthology, arXiv, Zenodo, IEEE DataPort); <b>P</b> = checked in an earlier verification log in this repository; <b>K</b> = standard bibliographic knowledge, not re-fetched (direct access to arXiv, Zenodo and Crossref was blocked). Open every link once before external distribution.</p>
+<div class="refs"><!--REFERENCES--></div>
+
+<h1 id="s30"><span class="num">30</span>Appendix and Glossary</h1>
+<h2>30.1 Glossary (Artifact 10)</h2>
+<!--GLOSSARY-->
+
+<h2>30.2 Visual example gallery (Artifact 11)</h2>
+<p>The gallery collects the conceptual examples. All panels are synthetic renderings produced by <code>src/figures.py</code> and <code>prototype/toy_reference_memory.py</code>; none is a real SEM or optical measurement, and none is an experimental result.</p>
+<fig id="gal_rot" src="ill_03_rotations.svg" w="full">Gallery: geometric and photometric variation of one die (with a particle defect): 0°, 90°, 180°, 270°, an arbitrary 37°, a shift with 8% scale change, and an illumination gradient. Every variation must be handled without hiding the particle. <span class="tag syn">SYNTHETIC</span></fig>
+<table><caption>Index of the visual examples in this dossier.</caption>
+<thead><tr><th>Example requested</th><th>Where</th></tr></thead>
+<tbody>
+<tr><td>Full wafer with die divisions; magnified die</td><td>Figure {{fig:wafer}}</td></tr>
+<tr><td>Normal vs defective die; microscopic defect examples</td><td>Figure {{fig:normaldefect}}</td></tr>
+<tr><td>Same die under different rotations</td><td>Figure {{fig:gal_rot}}, Diagram 5 (Figure {{fig:rotation}})</td></tr>
+<tr><td>Reference dies given to the model; unseen dies inspected</td><td>Figure {{fig:refs}}, Diagram 3 (Figure {{fig:same}})</td></tr>
+<tr><td>Reference matching and localised defect heat map</td><td>Diagram 6 (Figure {{fig:loc}})</td></tr>
+<tr><td>Wafer map with suspicious die positions</td><td>Figure {{fig:wafermap}}; data-type comparison in Figure {{fig:datatypes}}</td></tr>
+<tr><td>Engineer providing feedback</td><td>Figure {{fig:card}}, Diagram 7 (Figure {{fig:feedback}})</td></tr>
+</tbody></table>
+<div class="box amber"><span class="lbl">Why no real SEM or dataset images are reproduced</span>
+<p>Real images from Carinthia-S, MVTec AD and the Wafer Surface Defect set would add authenticity, but their licences were not all verified (MVTec AD is CC BY-NC-SA 4.0; Carinthia and Carinthia-S licences are unconfirmed). Rather than reproduce images whose reuse terms are unclear, this dossier uses synthetic illustrations and links to the official dataset pages (Section 17). Once licences are confirmed in milestone 2, a real-image gallery can be added with full attribution.</p></div>
+
+<h2>30.3 Final quality-control review (research brief, Part 16)</h2>
+<table class="small"><caption>Quality-control checklist and how each item was addressed.</caption>
+<thead><tr><th style="width:36%">Check</th><th>Outcome</th></tr></thead>
+<tbody>
+<tr><td>Does the document accurately explain the original idea?</td><td>Yes. Sections 4 and 8 restate it in the brief's own terms (sample-guided learning, cross-die transfer, rotation, localisation, unknowns, feedback), and Diagram 1 follows the requested flow exactly.</td></tr>
+<tr><td>Is same-wafer vs cross-wafer vs cross-type clear?</td><td>Yes. Diagrams 3–4, Section 10.2, RQ3, Experiments C–D and separate split rules (Section 20.2). Cross-type is expected to need re-enrolment.</td></tr>
+<tr><td>Are raw die images and wafer maps distinguished?</td><td>Yes. Section 5.1 (figure and table), Stage 9, and dataset rows that mark WM-811K/MixedWM38 as maps.</td></tr>
+<tr><td>Are all papers real and correctly cited?</td><td>All 34 analysed papers are cited with official links. 29 were checked against official records in this session (code S) and 5 against an earlier verification log in this repository (code P). Some background references (backbones, registration, continual learning) are cited from standard bibliographic knowledge (code K). The codes are printed with every reference. Full texts could not be opened, so quoted numbers are limited to abstracts and official records, and the reader is asked to verify them.</td></tr>
+<tr><td>Are dataset counts and annotation types verified?</td><td>Counts for Carinthia, Carinthia-S, WM-811K, Wafer Surface Defect, MVTec AD and VisA come from official records. Unverified items (licences, resolutions, class names, MixedWM38 and MPDD counts) are marked as such.</td></tr>
+<tr><td>Is the novelty defensible?</td><td>The novelty is framed as a gap in evaluated combinations and protocols (Section 15.2), with each closest paper's overlap stated (Section 15.1). No "first ever" claims are made.</td></tr>
+<tr><td>Are diagrams consistent with the methodology?</td><td>Yes. Diagram 2 matches Stages 1–10; Diagram 5 and Figure {{fig:alignopts}} match the "warp the reference" design of Stage 3; Diagram 7 matches the workflow of Stage 10.5; Diagram 8 matches the frozen-encoder design.</td></tr>
+<tr><td>Are the experiments feasible with available data?</td><td>Partly. A, B, E and F run on public data; C and D need synthetic or partner data; G runs on public data with simulated feedback. Stated in Section 17.7.</td></tr>
+<tr><td>Are the metrics appropriate?</td><td>Yes. Metrics are matched to tasks and annotation levels (Sections 17.8, 21), with AUPRC/AUPRO preferred for rare and small defects.</td></tr>
+<tr><td>Are all important assumptions stated?</td><td>Key assumptions: references are normal (checked by memory QC); dies of one design share a layout; feedback errors occur at the simulated rates; synthetic data is realistic enough for relative comparisons. Each has a mitigation in Section 26.</td></tr>
+<tr><td>Can a beginner follow the pipeline?</td><td>Sections 4–5 explain 19 concepts with the simple → example → technical → why pattern; Section 19.8 works through the maths by hand; the toy prototype runs in seconds.</td></tr>
+<tr><td>Can a faculty member evaluate the contribution?</td><td>Sections 13–16 separate evidence from hypothesis; Section 12 gives falsifiable hypotheses; Sections 20–22 give the protocol.</td></tr>
+<tr><td>Can a student start implementing?</td><td>Yes. Section 23 gives the tool stack, directory layout, interfaces, pseudocode and a config; Section 25 gives the order of work.</td></tr>
+<tr><td>Inconsistencies corrected during review</td><td>Worked-example distances recomputed (Section 19.8); diagram labels and layouts fixed after rendering; Diagram 1 and the workflow gates aligned with the roadmap; dataset limitations moved into every relevant table.</td></tr>
+</tbody></table>
+
+<h2>30.4 How this document was produced</h2>
+<p>The document is generated from source: <code>src/sections/*.html</code> (text), <code>src/papers.py</code>, <code>src/tables.py</code> and <code>src/refs.py</code> (structured data used for tables, the spreadsheet and references), <code>src/figures.py</code> (all figures), and <code>build.py</code> (assembly, figure and citation numbering, PDF rendering with headless Chromium, spreadsheet export). Rebuild with <code>python3 build.py</code>. The same data feeds the document and the spreadsheets, so they cannot disagree.</p>

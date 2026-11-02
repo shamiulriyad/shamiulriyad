@@ -1,0 +1,10 @@
+%% Diagram 7 · Feedback-driven adaptation cycle
+flowchart LR
+  A["1 AI inspection<br/>memory version v_t"] --> B["2 Review queue<br/>uncertain · unknown · high impact first"]
+  B --> C["3 Engineer verification<br/>confirm · reject · correct · label · unknown"]
+  C --> D["4 Verification gate<br/>quarantine · novelty gate · second reviewer"]
+  D --> E["5 Versioned memory update<br/>M_(t+1) = U(M_t, verified feedback)"]
+  E --> F{"6 Regression check<br/>held-out + canary dies OK?"}
+  F -- "yes: deploy v_(t+1)" --> A
+  F -- "no: roll back to v_t" --> E
+  C -- "unknown" --> I["Investigation set<br/>(never enters normal memory)"]

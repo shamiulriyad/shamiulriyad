@@ -1,0 +1,9 @@
+%% Diagram 8 · Training vs enrolment vs inference vs update
+flowchart TB
+  P["Offline pre-training<br/>by encoder authors · once · weights FROZEN"] --> EN
+  EN["Reference enrolment<br/>per die type · changes memory M"] --> IN
+  IN["Inference / inspection<br/>every die · read-only"] --> FB
+  FB["Feedback update<br/>per verified batch · versioned memory edit"] --> IN
+  FT["Optional fine-tuning<br/>rare · changes encoder weights · replay + regression check"]:::opt
+  FB -. "only if memory updates plateau" .-> FT
+  classDef opt fill:#F8E5E2,stroke:#B03A2E,color:#B03A2E;

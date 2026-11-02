@@ -1,0 +1,16 @@
+%% Diagram 1 · Complete research concept
+flowchart LR
+  A["1 Reference samples<br/>K = 1–10 dies (normal; optional known defects)"] --> B["2 Sample enrolment<br/>preprocess, crop, align to template"]
+  B --> C["3 Feature extraction<br/>frozen pretrained encoder, multi-scale"]
+  C --> D["4 Reference memory M<br/>patch features + prototypes, versioned"]
+  D --> E["5 New die inspection<br/>unseen die, any orientation"]
+  E --> F["6 Anomaly detection<br/>distance to memory → anomaly score"]
+  F --> G["7 Defect localisation<br/>anomaly map, regions, boxes"]
+  G --> H["8 Engineer verification<br/>confirm / reject / correct / label"]
+  H --> I["9 Reference adaptation<br/>gated, reversible memory update"]
+  I -. verified knowledge .-> D
+  G --> O["Output: status · heat map · score · confidence"]
+  classDef teal fill:#E2F1F1,stroke:#0F7C80,color:#0F7C80;
+  classDef navy fill:#E7EDF5,stroke:#1F3A5F,color:#1F3A5F;
+  classDef amber fill:#FBF1DF,stroke:#B7791F,color:#B7791F;
+  class A,B,D teal; class C,E,F,G navy; class H,I amber;

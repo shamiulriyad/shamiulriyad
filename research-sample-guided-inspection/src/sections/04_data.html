@@ -1,0 +1,88 @@
+<h1 id="s17"><span class="num">17</span>Dataset Investigation</h1>
+<p>The core experiment needs, ideally: (i) many images of <b>patterned dies of one design</b>, so that some can be references and others targets; (ii) <b>pixel-level defect masks</b>; (iii) <b>wafer and die coordinates</b>, to form same-wafer and cross-wafer splits; (iv) <b>several defect classes</b>, to hold some out as unknown; and (v) <b>several designs</b>, for cross-type tests. This section checks what public data actually offers. All counts were verified against the official record (through search results quoting it) unless the table says otherwise.</p>
+
+<h2>17.1 Carinthia SEM defect dataset</h2>
+<p><b>What it is.</b> Zenodo record 10715190 (version v2, published 27 February 2024), credited to KAI GmbH, Infineon Technologies Dresden and Infineon Technologies Austria [[carinthia]]. It contains <b>4,591 SEM images of defects on one production layer of unstructured (unpatterned) semiconductor wafers</b>, unevenly distributed over <b>six defect classes</b>, packaged as a single <code>data.zip</code> with a separate HTML description. Labels are image-level (a CSV mapping image path to label).</p>
+<ul>
+<li><b>SEM availability:</b> yes, openly downloadable from Zenodo.</li>
+<li><b>Defect categories:</b> six classes. The class names should be taken from the record's description file; they were not confirmed in this session.</li>
+<li><b>Resolution and annotation format:</b> image-level labels in CSV. Resolution not verified (a third-party listing mentions 480 × 480 px).</li>
+<li><b>Class imbalance:</b> the record states that the distribution is uneven; exact counts per class must be computed in the dataset audit (milestone 2).</li>
+<li><b>Access and permissions:</b> open download. The <b>licence was not verified</b>. Note also that Carinthia-S cites the concept DOI 10.5281/zenodo.10696644, which differs from the v2 record; cite the version actually used.</li>
+</ul>
+
+<h2>17.2 Carinthia-S</h2>
+<p><b>What it is.</b> Zenodo record 16895427 (v1, 20 August 2025), credited to KAI GmbH and the University of Sarajevo, Faculty of Electrical Engineering [[carinthia_s]]. It is described as an enhanced version of Carinthia with <b>expert-validated binary segmentation masks for each of the 4,591 defect images</b>.</p>
+<ul>
+<li><b>Suitability for pixel-level localisation:</b> high. It is the best public source of real SEM defect masks found in this review.</li>
+<li><b>Annotation quality:</b> masks are described as expert-validated. Inter-annotator agreement is not reported in the sources we could access. The audit should inspect a random sample, checking anti-aliased edges, empty masks and class consistency.</li>
+<li><b>Key limitation:</b> the wafers are <b>unpatterned</b>, so there is no repeated die layout and no die-to-die correspondence. Rotation tests on these images test texture robustness, not layout alignment. Whether a defect-free subset exists is not confirmed; if not, normal references must be built from defect-free regions of defect images (masked by the expert masks).</li>
+<li><b>Access and DOI:</b> open download via Zenodo; DOI via the record; <b>licence not verified</b>.</li>
+</ul>
+
+<h2>17.3 WM-811K</h2>
+<p><b>What it is.</b> The wafer-map dataset of Wu, Jang and Chen [[wu2015]]: <b>811,457 wafer maps</b>, of which <b>172,950 are labelled</b> into <b>nine classes</b>: Center, Donut, Edge-Loc, Edge-Ring, Loc, Near-full, Random, Scratch and None. Each map is a grid of per-die values (no die, pass, fail).</p>
+<ul>
+<li><b>Representation:</b> categorical die-level grids, not images of die surfaces.</li>
+<li><b>Limitations for microscopic die-image inspection:</b> no die appearance, no pixel masks, no possibility of testing rotation of die images, alignment, localisation inside a die or reference matching of die structures. The labelled part is dominated by "None".</li>
+<li><b>Use here:</b> only for the optional wafer-level study (Stage 9, RQ7), such as few-shot or open-set recognition of spatial patterns, and as a realistic source of spatial cluster shapes for the synthetic wafer benchmark.</li>
+</ul>
+
+<h2>17.4 MVTec AD</h2>
+<p><b>What it is.</b> The standard industrial anomaly-detection benchmark [[mvtec,mvtec_ijcv]]: <b>5,354 high-resolution colour images in 15 object and texture categories</b>, with a defect-free training set, a test set with more than 70 defect types, and <b>pixel-precise masks</b>. Licence: CC BY-NC-SA 4.0 (non-commercial).</p>
+<ul>
+<li><b>Suitability:</b> excellent for initial method development, and for checking the implementation by reproducing published PatchCore and AnomalyDINO numbers. The few-shot protocol (sampling K normal training images) is well established.</li>
+<li><b>Domain difference:</b> natural colour images of objects and textures, not SEM or optical die images; most categories are roughly aligned; defects are often larger relative to the image than typical die defects. MVTec AD 2 [[mvtec2]] adds lighting changes and very small defects and is useful for illumination robustness.</li>
+</ul>
+
+<h2>17.5 Additional datasets</h2>
+<p><b>Wafer Surface Defect (IEEE DataPort)</b> [[wsd]]: <b>500 optical images, 680 × 680 px, each showing one individual die</b>; it includes defect-free dies and four defect types (particle, scratch, stain, liquid residual), annotated with YOLO-format bounding boxes. It is the closest public match to the "normal reference dies → inspect other dies" setting, but it is small, has boxes rather than masks, and has no wafer coordinates. Per-class counts and the licence were not verified, and access may require an IEEE DataPort account.</p>
+<p><b>MixedWM38</b> [[mixedwm38]]: about 38,015 wafer maps (52 × 52) with 38 patterns (1 normal, 8 single, 29 mixed). Wafer-level only; the count comes from one secondary source and should be confirmed.</p>
+<p><b>VisA</b> [[visa]]: 10,821 images (9,621 normal, 1,200 anomalous) in 12 subsets with pixel masks; four subsets are printed circuit boards. It is the best public proxy for <b>patterned, repeated designs</b> and is useful for testing registration on real repeated layouts. The licence statements conflict between sources.</p>
+<p><b>MPDD</b> [[mpdd]]: metal parts in varied positions and orientations, used by RegAD and GraphCore to evaluate pose variation. Counts not verified here.</p>
+<p><b>Private semiconductor datasets.</b> Most recent semiconductor papers (SEM-CLIP, IC-DefectNCD, imec ADI/AEI, LogicQA's SEM set) use private data [[semclip,zhao2025ncd,prasad2024,logicqa]]. Their results cannot be reproduced and serve only as context.</p>
+
+<h2>17.6 Dataset comparison table (Artifact 4)</h2>
+<!--DATASETS-->
+
+<h2>17.7 Can the core experiment be done with public data?</h2>
+<div class="box red"><span class="lbl">Honest answer: only partly</span>
+<p>No public dataset found in this review combines patterned dies of one design, pixel masks, wafer/die coordinates and multiple designs. Specifically:</p>
+<ul>
+<li><b>Few-shot detection and localisation</b> can be tested on real data: MVTec AD (method check), Carinthia-S (SEM with masks; references from normal regions) and Wafer Surface Defect (die-level references; box-level localisation).</li>
+<li><b>Unknown-defect detection</b> can be tested on real data: leave-one-class-out on Carinthia-S (6 classes) and on Wafer Surface Defect (4 classes).</li>
+<li><b>Rotation robustness</b> can be tested on real images by applying controlled rotations, but layout alignment of real <i>patterned</i> dies can only be tested on VisA PCBs (proxy) and on synthetic dies.</li>
+<li><b>Same-wafer vs cross-wafer</b> splits <b>cannot</b> be formed on any public semiconductor image dataset, because none provides wafer IDs and die coordinates for die images. They are tested on synthetic wafers and, if possible, on partner data.</li>
+<li><b>Cross-type</b> transfer can be <i>approximated</i> across datasets (e.g. enrol on Wafer Surface Defect, test on Carinthia-S), with the caveat that modality also changes.</li>
+</ul></div>
+<h3>Realistic experimental alternative: a four-tier data plan</h3>
+<table><caption>Tiered data plan. Results from each tier are reported separately and never pooled.</caption>
+<thead><tr><th style="width:15%">Tier</th><th style="width:28%">Data</th><th>What it can show</th><th style="width:22%">Claim strength</th></tr></thead>
+<tbody>
+<tr><td>T0 · Method check</td><td>MVTec AD, MVTec AD 2, VisA</td><td>Implementation correctness; few-shot behaviour; illumination robustness; registration on repeated layouts (VisA PCB)</td><td>Not semiconductor evidence</td></tr>
+<tr><td>T1 · Real SEM</td><td>Carinthia / Carinthia-S</td><td>Pixel localisation on real SEM defects; known/unknown triage; texture-level rotation robustness</td><td>Real data, unpatterned surfaces</td></tr>
+<tr><td>T2 · Real die images</td><td>Wafer Surface Defect</td><td>Die-level few-shot references; box-level localisation; leave-one-class-out with 4 classes</td><td>Real dies; small set; boxes only</td></tr>
+<tr><td>T3 · Synthetic patterned wafers</td><td>Procedurally generated dies on synthetic wafers, with defects injected from real Carinthia-S masks and procedural shapes</td><td>Same-wafer vs cross-wafer vs cross-type; exact rotation ground truth; DPR; wafer-level clusters (shapes inspired by WM-811K)</td><td>Controlled, exact ground truth; external validity limited</td></tr>
+<tr><td>T4 · Partner data (if obtained)</td><td>Real patterned die images with wafer coordinates from a university lab or industry partner</td><td>External validity of T3 findings</td><td>Strongest; not guaranteed</td></tr>
+</tbody></table>
+<h3>Synthetic patterned-wafer benchmark (T3) design</h3>
+<ol>
+<li><b>Layouts:</b> several die designs built from parametric primitives (pad rings, via arrays, line gratings, logic blocks, orientation marks), rendered with an SEM-like or optical-like appearance model (blur, edge brightening, shot-like noise). The toy generator in <code>prototype/</code> is the starting point.</li>
+<li><b>Wafers:</b> each design is placed on a die grid inside a wafer outline. Each wafer gets its own nuisance parameters (global brightness, contrast, focus blur, noise level, small layout bias) to create controlled wafer-to-wafer shift.</li>
+<li><b>Geometry:</b> each die image gets a recorded transform (rotation in {0, 90, 180, 270} plus a residual of up to ±15°, or any angle in 0–360° for the sweep; translation; scale within ±10%).</li>
+<li><b>Defects:</b> injected with recorded masks. Shapes are cut from Carinthia-S masks (real shape statistics) or drawn procedurally (bridge, open, missing via, particle, scratch, stain), with sizes from 1 px upwards so small-defect behaviour can be studied. Orientation-dependent defects (e.g. a correctly shaped line at a wrong angle) are included on purpose to test invariance.</li>
+<li><b>Spatial patterns:</b> defective dies are placed randomly or in clusters (edge ring, line, local blob) inspired by WM-811K classes [[wu2015]].</li>
+<li><b>Realism checks:</b> compare intensity histograms, noise power spectra and edge profiles with real SEM (Carinthia) and optical (Wafer Surface Defect) images. Report synthetic results only as synthetic.</li>
+</ol>
+
+<h2>17.8 Annotation needed for each output</h2>
+<table><caption>Annotation level required by each output and metric.</caption>
+<thead><tr><th>Output</th><th>Minimum annotation</th><th>Metrics enabled</th><th>Available in</th></tr></thead>
+<tbody>
+<tr><td>Normal / anomalous decision</td><td>Image-level label</td><td>Image AUROC, AUPRC, F1</td><td>All image datasets</td></tr>
+<tr><td>Known defect class</td><td>Image- or region-level class</td><td>Accuracy, macro-F1, open-set F1</td><td>Carinthia(-S), Wafer Surface Defect, MVTec AD</td></tr>
+<tr><td>Bounding boxes</td><td>Boxes</td><td>Box IoU, detection AP</td><td>Wafer Surface Defect; derivable from masks</td></tr>
+<tr><td>Pixel anomaly map / mask</td><td>Pixel masks</td><td>Pixel AUROC, AUPRO, Dice, IoU</td><td>Carinthia-S, MVTec AD, VisA, synthetic</td></tr>
+<tr><td>Rotation robustness, DPR</td><td>Known transform + mask</td><td>AUROC vs angle, DPR</td><td>Any masked set with controlled rotation; synthetic</td></tr>
+<tr><td>Same- vs cross-wafer</td><td>Wafer ID + die index</td><td>Per-split AUROC/AUPRO gap</td><td>Synthetic; partner data</td></tr>
+</tbody></table>

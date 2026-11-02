@@ -1,0 +1,90 @@
+<h1 id="s20"><span class="num">20</span>Experimental Design</h1>
+<p>Eight experiments, A–H, test the research questions. All are designed so that they can be run, and so that a negative outcome is informative. <b>No results are reported in this dossier; none have been produced.</b> This section, together with Sections 21–22, forms the experimental protocol (Artifact 7; also in <code>artifacts/07_experimental_protocol.md</code>).</p>
+
+<h2>20.1 General protocol</h2>
+<ul>
+<li><b>Repetitions:</b> every few-shot setting is run with 5 independent random draws of the reference set (fixed, logged seeds). Report mean ± standard deviation and 95% bootstrap confidence intervals over test images.</li>
+<li><b>Statistics:</b> paired comparisons between methods use the same reference draws; significance with a Wilcoxon signed-rank test across categories or draws, Holm-corrected for multiple comparisons (as in [[abbas]]).</li>
+<li><b>Thresholds and hyper-parameters</b> (τ, window size, coreset ratio, q) are tuned on validation data only, then frozen before testing.</li>
+<li><b>Reporting:</b> every table states the data tier (T0–T4); synthetic results are never merged with real-data results.</li>
+</ul>
+
+<h2>20.2 Data splits without leakage</h2>
+<table><caption>Split rules. A split manifest lists file hashes per split; the evaluation script refuses to run if any test hash appears in a reference, calibration or feedback set.</caption>
+<thead><tr><th style="width:22%">Dataset</th><th>Split rule</th></tr></thead>
+<tbody>
+<tr><td>MVTec AD / VisA</td><td>Official train/test split. References drawn only from the official normal training set; calibration normals from the remaining training normals.</td></tr>
+<tr><td>Carinthia-S</td><td>Stratified split by class into reference-source / validation / test (e.g. 20 / 20 / 60%), after near-duplicate clustering by perceptual hash so re-captures of one site stay together. Normal references are taken from defect-free regions of reference-source images only.</td></tr>
+<tr><td>Wafer Surface Defect</td><td>Normal dies split into reference pool / calibration / test; defective dies only in validation and test. Near-duplicate clustering as above.</td></tr>
+<tr><td>Synthetic wafers (T3)</td><td>Split by <b>wafer</b> and by <b>design</b>: same-wafer tests use references and targets from one wafer but never the same die; cross-wafer tests use disjoint wafers; cross-type tests use a design never seen in enrolment or tuning.</td></tr>
+<tr><td>Partner data (T4)</td><td>Split by lot and wafer; never place dies of one wafer in both tuning and test; keep the acquisition date order (train on earlier, test on later) to mimic deployment.</td></tr>
+<tr><td>Feedback experiments</td><td>Three disjoint pools: <b>feedback stream</b> (dies whose review decisions are fed back), <b>held-out evaluation</b> (never fed back) and <b>canary set</b> (fixed normals + known defects to monitor drift).</td></tr>
+</tbody></table>
+
+<h2>20.3 Experiments</h2>
+<table class="small"><caption>Experiment plan (Artifact 7).</caption>
+<thead><tr><th style="width:11%">Exp.</th><th style="width:23%">Question</th><th style="width:21%">Data</th><th>Procedure</th><th style="width:16%">Primary metrics</th></tr></thead>
+<tbody>
+<tr><td><b>A</b> Few-shot</td><td>RQ1: performance vs K</td><td>T0 MVTec AD; T1 Carinthia-S; T2 Wafer Surface Defect</td><td>K ∈ {1, 2, 5, 10}, 5 draws each; encoders WRN-50 and DINOv2; with and without memory QC</td><td>Image AUROC, AUPRC; pixel AUROC, AUPRO (where masks exist)</td></tr>
+<tr><td><b>B</b> Rotation robustness</td><td>RQ2: alignment vs augmentation vs invariance; defect preservation</td><td>T0, T1, T2 with controlled transforms; T3 synthetic</td><td>Angle sweep 0–360° in 15° steps plus 90° multiples; translation ±10% of die size; scale ±10%; illumination gradients. Pipelines: none / warp-target / warp-reference / rotation-augmented memory / GraphCore-style invariance. Inject defects (1–20 px) for DPR</td><td>AUROC vs angle; false alarms on normals per angle; DPR by size; target registration error</td></tr>
+<tr><td><b>C</b> Cross-die (same wafer)</td><td>RQ3: references from some dies transfer to other dies of the same wafer</td><td>T3 synthetic; T4 if available</td><td>Enrol K dies of a wafer (spread vs clustered selection); test on all other dies of that wafer</td><td>AUROC, AUPRO; gap to in-sample upper bound</td></tr>
+<tr><td><b>D</b> Cross-wafer and cross-type</td><td>RQ3: transfer to other wafers and designs</td><td>T3 (wafer shift levels; new designs); T4; cross-dataset proxy (T2 → T1)</td><td>Enrol on wafer A, test on wafers B…; then on a new design with 0, 1, 2, 5 new references; optional per-wafer feature normalisation</td><td>Per-split AUROC/AUPRO; performance vs shift level; references needed to recover</td></tr>
+<tr><td><b>E</b> Unknown defects</td><td>RQ4: unknown vs known triage</td><td>T1 Carinthia-S (6 classes); T2 (4 classes); T3</td><td>Leave-one-class-out: build prototypes from all classes except one; test regions of the held-out class. Repeat for every class</td><td>Unknown-detection AUROC; open-set F1; forced-assignment rate; known-class accuracy</td></tr>
+<tr><td><b>F</b> Localisation</td><td>RQ5: map quality</td><td>T0, T1 (masks), T2 (boxes), T3</td><td>Single- vs multi-scale maps; native-resolution tiling vs resizing; threshold at validation-selected τ<sub>pix</sub></td><td>Pixel AUROC, AUPRO, Dice, IoU (masks); box IoU / AP (boxes); all by defect-size bin</td></tr>
+<tr><td><b>G</b> Feedback adaptation</td><td>RQ6: improvement without contamination or forgetting</td><td>T0 MVTec AD (comparison with [[abbas]]); T1; T3</td><td>Simulated review stream from ground truth with controlled error rates (0%, 5%, 10%, 20% wrong labels; 10% wrong locations). Arms: no update / ungated update / gated update / gated + second review / gated + rollback</td><td>ΔAUROC and false-alarm rate on held-out set over time; forgetting rate on canary defects; contamination rate</td></tr>
+<tr><td><b>H</b> Ablations</td><td>Contribution of each component</td><td>Best tier per component</td><td>Remove one component at a time (Section 22.2)</td><td>Same as the affected experiment</td></tr>
+</tbody></table>
+
+<h2>20.4 Experiment G in more detail</h2>
+<p>Because the risk of fooling ourselves is highest here, the protocol is spelled out. (1) Start from memory M<sub>0</sub> built from K references. (2) Process the feedback stream in batches of <span class="var">b</span> dies; for each flagged or sampled die, generate the "engineer decision" from ground truth, then corrupt a controlled fraction of decisions (label flips, shifted locations, defect called normal). (3) Apply the update arm. (4) After each batch, evaluate on the held-out set and the canary set, never on dies from the stream. (5) Report learning curves, final gain, worst-case dip, and how often rollback fired. A useful negative control is "update with random normal patches": if it helps as much as the feedback, the gain comes from simply having more memory, not from the feedback.</p>
+
+<h1 id="s21"><span class="num">21</span>Evaluation Metrics</h1>
+<table class="small"><caption>Metrics and the tasks they apply to.</caption>
+<thead><tr><th style="width:15%">Metric</th><th style="width:38%">Definition (simple)</th><th style="width:22%">Task</th><th>Notes</th></tr></thead>
+<tbody>
+<tr><td>AUROC (image)</td><td>Probability that a random defective die scores higher than a random normal die</td><td>Detection (A–E, G)</td><td>Threshold-free; optimistic when anomalies are rare</td></tr>
+<tr><td>AUPRC</td><td>Area under precision–recall curve</td><td>Detection with rare defects</td><td>Preferred headline metric for imbalanced data</td></tr>
+<tr><td>Precision, Recall, F1</td><td>Share of alarms that are real; share of real defects found; harmonic mean</td><td>Operating point at τ</td><td>Report recall at fixed false-alarm rate (e.g. 1%)</td></tr>
+<tr><td>Pixel AUROC</td><td>AUROC computed over all pixels</td><td>Localisation (F)</td><td>Dominated by large defects and by easy background pixels</td></tr>
+<tr><td>AUPRO / PRO</td><td>Mean per-region overlap up to 30% false-positive rate; every defect region weighs equally [[mvtec_ijcv]]</td><td>Localisation (F)</td><td>Fairer to small defects than pixel AUROC</td></tr>
+<tr><td>Dice, IoU</td><td>Overlap between predicted and true masks at τ<sub>pix</sub></td><td>Segmentation (F)</td><td>Need masks; sensitive to threshold</td></tr>
+<tr><td>Box IoU / AP</td><td>Overlap of predicted and true boxes; detection average precision</td><td>Box localisation (T2)</td><td>When only boxes exist</td></tr>
+<tr><td>Unknown-detection AUROC; open-set F1</td><td>How well held-out classes are labelled unknown; F1 over known classes + "unknown"</td><td>Unknown defects (E)</td><td>Also report forced-assignment rate</td></tr>
+<tr><td>DPR</td><td>Defect score with a processing step ÷ without it (Eq. 6)</td><td>Rotation / preprocessing (B)</td><td>Proposed metric; by defect size</td></tr>
+<tr><td>Target registration error</td><td>Mean pixel distance between true and estimated positions of points after alignment</td><td>Alignment (B)</td><td>Needs known transforms (T3) or fiducials</td></tr>
+<tr><td>Inference time</td><td>Wall-clock ms per die (feature extraction + search), median of 100 runs, hardware stated</td><td>All</td><td>Separate enrolment time</td></tr>
+<tr><td>Memory consumption</td><td>Memory bank size (MB, number of vectors) and peak GPU/CPU RAM</td><td>All</td><td>Grows with K and feedback</td></tr>
+<tr><td>Adaptation performance</td><td>Held-out AUROC/AUPRC gain after n feedback batches</td><td>Feedback (G)</td><td>Only on dies never fed back</td></tr>
+<tr><td>Forgetting rate</td><td>Drop in detection of canary known defects (or old categories) after updates</td><td>Feedback (G)</td><td>Must stay ≈ 0</td></tr>
+<tr><td>Contamination rate</td><td>Share of admitted normal items that come from true defects</td><td>Feedback (G)</td><td>Measurable only in simulation</td></tr>
+</tbody></table>
+
+<h1 id="s22"><span class="num">22</span>Baselines and Ablation Studies</h1>
+<h2>22.1 Baselines</h2>
+<table><caption>Planned baselines. Implementations: official code where available, otherwise Anomalib [[anomalib]].</caption>
+<thead><tr><th style="width:24%">Baseline</th><th>Why it is included</th><th style="width:22%">Experiments</th></tr></thead>
+<tbody>
+<tr><td>PatchCore [[patchcore]]</td><td>Canonical memory-bank method; the system's direct ancestor</td><td>A–H</td></tr>
+<tr><td>AnomalyDINO [[anomalydino]]</td><td>Strongest simple few-shot baseline</td><td>A, B, D, F</td></tr>
+<tr><td>RegAD [[regad]]</td><td>Learned registration for few-shot AD (alignment alternative)</td><td>A, B, D</td></tr>
+<tr><td>GraphCore [[graphcore]] or "augmentation + PatchCore"</td><td>Rotation-invariance alternative</td><td>B</td></tr>
+<tr><td>WinCLIP [[winclip]]</td><td>Zero/few-shot with language priors; cross-type reference point</td><td>A, D</td></tr>
+<tr><td>Classical die-to-die difference</td><td>Industrial-style pixel subtraction after alignment; sanity check</td><td>B, F</td></tr>
+<tr><td>Supervised U-Net segmentation</td><td>Upper bound when many labelled masks exist (Carinthia-S)</td><td>F, E (known classes)</td></tr>
+<tr><td>Reverse Distillation / EfficientAD [[rd,efficientad]]</td><td>Full-data upper bound and latency reference (optional)</td><td>A (K = all)</td></tr>
+<tr><td>Abbas et al. memory correction [[abbas]]</td><td>Closest feedback method; ungated vs gated comparison</td><td>G</td></tr>
+</tbody></table>
+<h2>22.2 Ablation studies</h2>
+<table><caption>Ablations requested in the research brief and what each tests.</caption>
+<thead><tr><th style="width:26%">Ablation</th><th>Implementation</th><th style="width:28%">Expected effect (hypothesis)</th></tr></thead>
+<tbody>
+<tr><td>Without geometric alignment</td><td>Skip Stage 3; global nearest-neighbour search only</td><td>Large AUROC drop for rotated targets; little change at 0°</td></tr>
+<tr><td>Warp target instead of references</td><td>Apply T̂<sup>−1</sup> to the target</td><td>Lower DPR for defects ≤ 3 px</td></tr>
+<tr><td>Without reference memory</td><td>Replace memory matching by a reference-free score (e.g. intrinsic self-similarity, in the spirit of [[zhao2025seg]]) or by raw pixel difference</td><td>Shows what the memory contributes; may win on unpatterned SEM</td></tr>
+<tr><td>Without multi-scale features</td><td>Single feature layer</td><td>Lower AUPRO for small defects</td></tr>
+<tr><td>Without unknown-defect handling</td><td>Closed-set nearest prototype for every anomalous region</td><td>High forced-assignment rate on held-out classes</td></tr>
+<tr><td>Without feedback adaptation</td><td>Memory fixed at M<sub>0</sub></td><td>Baseline for Experiment G</td></tr>
+<tr><td>Without feedback gate / rollback</td><td>Admit all feedback</td><td>Degradation under noisy feedback</td></tr>
+<tr><td>Without wafer-level context</td><td>λ = 0 in the context score</td><td>No change on random-defect wafers; lower AUPRC on clustered ones</td></tr>
+<tr><td>Without memory QC</td><td>Admit all reference patches</td><td>Sensitivity to a defective reference</td></tr>
+</tbody></table>

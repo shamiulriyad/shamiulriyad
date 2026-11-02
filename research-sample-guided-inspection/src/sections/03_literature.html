@@ -1,0 +1,103 @@
+<h1 id="s13"><span class="num">13</span>Existing Research and Related Papers</h1>
+<h2>13.1 How the review was conducted</h2>
+<p><b>Cut-off date:</b> 2 November 2026. <b>Sources searched:</b> IEEE Xplore, SpringerLink, ScienceDirect, CVF Open Access, arXiv, ACL Anthology, SPIE, Zenodo and IEEE DataPort records, through publisher-indexed web search. <b>Search directions:</b> the 15 directions of the research brief, including few-shot semiconductor defect detection, reference-based and normal-only anomaly detection, SEM defect segmentation, rotation invariance, registration, open-set and unknown defects, continual and incremental learning, human-in-the-loop inspection, cross-domain transfer, wafer-level spatial analysis and self-supervised semiconductor inspection.</p>
+<div class="box amber"><span class="lbl">Limitation of this review</span>
+<p>Direct access to arXiv, Zenodo and Crossref was blocked in the environment where this dossier was produced, so paper details were verified through search results quoting the official records (publisher pages, CVF, ACL Anthology, arXiv listings), supplemented by an earlier verification log in this repository. Every reference carries a verification code (Section 29). Numbers are quoted only where the abstract or official record states them. Before submitting any derived paper, open every link and check every quoted number against the full text. This is not yet a PRISMA-style systematic review; milestone 1 of the roadmap turns it into one.</p></div>
+
+<h2>13.2 The methods you need to know, explained</h2>
+<p>The research brief lists 18 methods. They fall into six families. For each family: how it works in simple terms, the technical core, and the verdict for this project. Selection: <span class="tag pr">CORE</span> = part of the proposed system; <span class="tag ev">BASELINE</span> = compared against; <span class="tag hy">OPTIONAL</span> = extension; no tag = background only.</p>
+
+<h3>Family 1: Memory and nearest-neighbour anomaly detection</h3>
+<p><b>Feature-based nearest-neighbour matching</b> <span class="tag pr">CORE</span>. <i>Simply:</i> describe every small region of the normal images with a vector of numbers; for a new image, ask whether each region has a close twin among the normal regions. <i>Technically:</i> anomaly score = distance to the k-th nearest neighbour in a bank of pretrained features. No training; robust to small data; cost grows with the bank, which is controlled by subsampling.</p>
+<p><b>SPADE</b> [[spade]] <span class="tag ev">BASELINE</span>. Retrieves the K most similar normal images using global features, then does pixel-wise nearest-neighbour matching in their multi-scale feature pyramids. It introduced the "correspondence with similar normal images" idea that this project uses for alignment-aware matching.</p>
+<p><b>PatchCore</b> [[patchcore]] <span class="tag pr">CORE</span>. Builds a memory bank of locally aggregated mid-level patch features (Wide-ResNet-50 layers 2 and 3), reduces it by greedy coreset subsampling (keeping a subset that covers the feature space), and scores each test patch by its nearest-neighbour distance; the image score is the highest patch score, re-weighted by local density. Reported up to 99.6% image AUROC on MVTec AD. It is the template for the proposed reference memory.</p>
+<p><b>AnomalyDINO</b> [[anomalydino]] <span class="tag ev">BASELINE</span>. The same patch-matching principle with DINOv2 ViT features [[dinov2]], designed for the few-shot case; 96.6% 1-shot image AUROC on MVTec AD. The strongest simple few-shot baseline.</p>
+
+<h3>Family 2: Distribution, flow and reconstruction models</h3>
+<p><b>PaDiM</b> [[padim]] <span class="tag ev">BASELINE</span> (aligned data only). Fits a Gaussian per patch position and scores by Mahalanobis distance. It needs many normal images to estimate covariances and assumes alignment, so it serves as a "position-aware" comparison after registration, not as a few-shot method.</p>
+<p><b>FastFlow</b> [[fastflow]]. Learns a normalizing flow that maps normal features to a simple Gaussian, giving an exact likelihood per location. Needs many normal images; background only.</p>
+<p><b>DRAEM</b> [[draem]] <span class="tag hy">OPTIONAL</span>. Trains a reconstruction network and a segmentation network on normal images with pasted synthetic anomalies. Not few-shot, but its anomaly-synthesis recipe is reused for the defect-injection benchmark.</p>
+
+<h3>Family 3: Student–teacher methods</h3>
+<p><b>Reverse Distillation</b> [[rd]] and <b>EfficientAD</b> [[efficientad]] <span class="tag ev">BASELINE</span> (full-data upper bound). A student network learns to reproduce a teacher's features on normal images; disagreement marks anomalies. Both need per-category training on many normals. They show what is achievable when plenty of normal data exist, and EfficientAD sets a latency reference.</p>
+
+<h3>Family 4: Metric-based few-shot learning</h3>
+<p><b>Siamese networks</b> [[siamese]]: two weight-sharing encoders embed two images; a learned distance says whether they match. <b>Matching networks</b> [[matchnet]]: classify a query by attention-weighted similarity to a labelled support set. <b>Prototypical networks</b> [[protonet]] <span class="tag pr">CORE</span> (for known-defect classes): each class is represented by the mean embedding (prototype) of its few examples, and a query takes the class of the nearest prototype. These are classification methods: they need examples of every class and are closed-set by design. In this project prototypes are used <i>only</i> for the optional known-defect memory, and always after the normal-reference test (Section 18.8).</p>
+
+<h3>Family 5: Encoders: CNNs, Vision Transformers and foundation features</h3>
+<p><b>CNN feature extraction</b> (ResNet, Wide-ResNet, EfficientNet, ConvNeXt [[resnet,wrn,efficientnet,convnext]]) <span class="tag pr">CORE</span>: convolution layers produce feature maps whose mid layers combine local detail with some context. <b>Vision Transformers</b> [[vit]] split images into patches (e.g. 14 × 14 px for DINOv2) and relate them with self-attention; self-supervised DINOv2 features transfer well without fine-tuning [[dinov2]] <span class="tag pr">CORE</span>. <b>CLIP-based</b> methods (WinCLIP [[winclip]], InCTRL [[inctrl]], SEM-CLIP [[semclip]]) add language priors <span class="tag ev">BASELINE</span>. The encoder choice is an experimental variable (Section 18.4).</p>
+
+<h3>Family 6: Geometry, adaptation, continual and open-set learning</h3>
+<p><b>Image registration methods</b> [[zitova,ecc,fmt,guizar,sift,orb,ransac]] <span class="tag pr">CORE</span>: estimate the transform between two images from intensities (phase correlation, Fourier–Mellin, ECC) or from matched keypoints (SIFT/ORB + RANSAC). <b>Spatial Transformer Networks</b> [[stn]]: a differentiable module that predicts and applies a warp inside a network; used by RegAD [[regad]] for feature-level registration <span class="tag ev">BASELINE</span>. <b>Rotation-invariant features</b> (GraphCore [[graphcore]]) <span class="tag ev">BASELINE</span>.</p>
+<p><b>Test-time adaptation</b> (e.g. Tent [[tent]], which updates normalisation parameters on unlabelled test batches by entropy minimisation) <span class="tag hy">OPTIONAL</span>: attractive for cross-wafer drift, but it adapts to whatever the test batch contains, including defects, so for anomaly detection it needs care. <b>Continual learning and memory replay</b> (EWC [[ewc]], replay buffers [[zhao2024pirb]], prompt memories [[ucad]]) <span class="tag hy">OPTIONAL</span> for encoder fine-tuning; the core system uses memory edits instead. <b>Open-set anomaly detection</b> (open-set recognition [[scheirer,openmax]], open-set supervised AD [[dra]]) <span class="tag pr">CORE</span> idea for Stage 8.</p>
+
+<h2>13.3 Method comparison and selection</h2>
+<table class="small"><caption>Comparison of the investigated methods for the requirements of this project. "K" = number of normal samples needed in practice.</caption>
+<thead><tr><th>Method</th><th>Training needed</th><th>Works at K ≤ 10</th><th>Localises</th><th>Rotation</th><th>Update by memory edit</th><th>Role here</th></tr></thead>
+<tbody>
+<tr><td>kNN feature matching / SPADE</td><td>None</td><td>Yes</td><td>Yes</td><td>No (needs alignment)</td><td>Yes</td><td>Core idea / baseline</td></tr>
+<tr><td>PatchCore</td><td>None</td><td>Yes (low-shot study)</td><td>Yes</td><td>No</td><td>Yes</td><td><b>Core baseline</b></td></tr>
+<tr><td>AnomalyDINO</td><td>None</td><td>Yes (1-shot)</td><td>Yes</td><td>Not studied</td><td>Yes</td><td><b>Core baseline</b></td></tr>
+<tr><td>PaDiM</td><td>Statistics only</td><td>Weak (covariance)</td><td>Yes</td><td>Needs alignment</td><td>Partial</td><td>Aligned-data comparison</td></tr>
+<tr><td>FastFlow</td><td>Flow per category</td><td>No</td><td>Yes</td><td>No</td><td>No</td><td>Background</td></tr>
+<tr><td>DRAEM</td><td>Per category</td><td>No</td><td>Yes</td><td>No</td><td>No</td><td>Synthetic-defect recipe</td></tr>
+<tr><td>Reverse Distillation</td><td>Per category</td><td>No</td><td>Yes</td><td>No</td><td>No</td><td>Full-data upper bound</td></tr>
+<tr><td>EfficientAD</td><td>Per category</td><td>No</td><td>Yes</td><td>No</td><td>No</td><td>Latency reference</td></tr>
+<tr><td>RegAD (STN registration)</td><td>Meta-training on other categories</td><td>Yes</td><td>Yes</td><td>Learned alignment</td><td>Support set swap</td><td>Baseline (C1, C2)</td></tr>
+<tr><td>GraphCore</td><td>Graph module</td><td>Yes</td><td>Yes</td><td>Invariant</td><td>Yes</td><td>Baseline (C2)</td></tr>
+<tr><td>WinCLIP / InCTRL</td><td>None / generalist training</td><td>Yes</td><td>Yes / No</td><td>No</td><td>Support set swap</td><td>Baseline (cross-type)</td></tr>
+<tr><td>Prototypical / Matching / Siamese</td><td>Episodic training</td><td>Yes (per class)</td><td>No</td><td>No</td><td>Prototype update</td><td>Known-defect memory only</td></tr>
+<tr><td>Classical registration</td><td>None</td><td>n/a</td><td>n/a</td><td>Yes (estimation)</td><td>n/a</td><td><b>Core (Stage 3)</b></td></tr>
+<tr><td>Test-time adaptation</td><td>Online</td><td>n/a</td><td>n/a</td><td>No</td><td>No (changes weights)</td><td>Optional (cross-wafer)</td></tr>
+<tr><td>Continual learning / replay</td><td>Retraining</td><td>n/a</td><td>Depends</td><td>No</td><td>No</td><td>Optional (fine-tuning)</td></tr>
+<tr><td>Open-set recognition / DRA</td><td>Depends</td><td>Partial</td><td>Mostly no</td><td>No</td><td>Partial</td><td>Core idea (Stage 8)</td></tr>
+</tbody></table>
+<div class="box"><span class="lbl">Selection</span>
+<p><b>Core pipeline:</b> classical registration (coarse rotation search + Fourier–Mellin + ECC refinement) → frozen multi-scale encoder (WRN-50 and DINOv2 ViT-S/14 compared) → PatchCore-style memory with alignment-aware nearest-neighbour search → prototype-based known-defect memory with open-set rejection → gated memory updates. <b>Baselines:</b> PatchCore, AnomalyDINO, RegAD, GraphCore (or its "augmentation + PatchCore" variant, which is simpler to reproduce), WinCLIP, and a supervised segmentation upper bound where masks exist. <b>Not implemented:</b> FastFlow, Matching and Siamese networks, Tent (unless time allows).</p></div>
+
+<h2>13.4 Paper comparison matrix</h2>
+<p>The matrix summarises the 34 analysed papers against the five capabilities of the proposed system. Values are assigned only where the paper (abstract, official record or well-documented method) supports them; "Unclear" means we could not confirm it from the sources available. Column definitions: <b>Few-shot</b> Yes = main evaluation with ≤ 10 normal or labelled samples per category; <b>Rotation</b> Yes = rotation explicitly modelled <i>and</i> evaluated; <b>Localisation</b> Yes = pixel or region output evaluated; <b>Unknown</b> Yes = separates unknown anomalies from known classes, Partial = flags any deviation from normal but has no known-class concept; <b>Feedback</b> Yes = learns from human or verified feedback, Partial = continual learning without human verification.</p>
+<!--PAPER_MATRIX-->
+
+<h1 id="s14"><span class="num">14</span>Paper-by-Paper Analysis</h1>
+<p>Each card begins with a plain-language summary, followed by the 15 fields of the research brief. Papers are grouped by family; within a group, they are ordered by year. "Closeness" (1–5 ★) rates how closely a paper overlaps with the proposed research; the five most relevant papers are discussed further in Section 15. The same data, with links, is in <code>artifacts/03_literature_review.xlsx</code>.</p>
+<!--PAPER_CARDS-->
+
+<h1 id="s15"><span class="num">15</span>Research Gap</h1>
+<h2>15.1 The closest existing research</h2>
+<p>Five papers overlap most with the proposed work. For each we state the overlap, the difference, what is already done, what remains open and how this project could extend it.</p>
+<!--CLOSEST-->
+<h2>15.2 Gap statement</h2>
+<div class="box navy"><span class="lbl">Defensible research gap</span>
+<p>Few-shot, reference-based anomaly detection with frozen pretrained features is established on natural-object benchmarks [[patchcore,anomalydino,univad]]. Learned registration [[regad]] and rotation-invariant features [[graphcore]] have improved few-shot detection under pose variation. Open-set recognition is studied for wafer maps [[shin2025]]. Continual learning has been benchmarked on fab SEM data [[prasad2024]]. Training-free memory correction from simulated expert feedback has been demonstrated on MVTec AD [[abbas]]. Semiconductor-specific work uses private data [[semclip,zhao2025seg,zhao2025ncd,dey2024]] and, in one line of work, argues <i>against</i> external references for IC images [[zhao2025seg]].</p>
+<p>Within the literature we reviewed, <b>we found no study that, on semiconductor die imagery with public, reproducible splits:</b></p>
+<ol>
+<li>measures whether geometric alignment or rotation invariance <b>preserves or weakens genuine defects</b> (not only whether detection accuracy holds), including orientation-dependent defects;</li>
+<li>performs <b>pixel-level three-way triage</b> (normal / known class / unknown) driven by normal references plus a small known-defect memory, evaluated by leave-one-class-out on expert masks;</li>
+<li>evaluates <b>memory updates from imperfect engineer feedback</b> (wrong labels, wrong locations) with quarantine, gating and rollback, under a held-out protocol that rules out memorisation;</li>
+<li>separates <b>same-wafer, cross-wafer and cross-type</b> transfer as distinct, explicitly defined evaluation conditions.</li>
+</ol>
+<p>This is a gap in <b>evaluated combinations and evaluation protocols</b>, not a claim that the individual components are new.</p></div>
+<div class="box amber"><span class="lbl">What would close the gap (and how the project would respond)</span>
+<p>If a paper appears that already performs items 1–3 on semiconductor data, the project becomes a reproduction-and-extension study on public data, focusing on whichever item remains open. A monthly literature alert is part of the risk plan (Section 26).</p></div>
+
+<h1 id="s16"><span class="num">16</span>Novelty and Original Contributions</h1>
+<h2>16.1 Novelty matrix (Artifact 2)</h2>
+<!--NOVELTY-->
+<h2>16.2 Classification of claims</h2>
+<table><caption>What kind of claim each part of the proposal makes.</caption>
+<thead><tr><th style="width:24%">Category</th><th>Items</th></tr></thead>
+<tbody>
+<tr><td><span class="tag ev">Existing established methods</span></td><td>Pretrained-feature nearest-neighbour anomaly detection; coreset memory; classical registration (ECC, Fourier–Mellin, feature + RANSAC); prototypical classification; open-set rejection by distance threshold; wafer-map pattern recognition; replay and regularisation for continual learning.</td></tr>
+<tr><td><span class="tag pr">Proposed combinations of existing methods</span></td><td>Registration that warps references instead of the target, combined with alignment-aware patch matching; normal-memory test followed by prototype triage; memory edits gated by a novelty test plus a held-out regression check with rollback; per-die scores aggregated to wafer maps.</td></tr>
+<tr><td><span class="tag hy">Potentially novel contributions</span></td><td>Defect preservation ratio (DPR) as an evaluation of alignment and preprocessing; the joint public protocol separating same-wafer / cross-wafer / cross-type transfer on die imagery; pixel-level leave-one-class-out open-set triage on Carinthia-S; noisy-feedback robustness study of memory editing in a semiconductor setting.</td></tr>
+<tr><td><span class="tag hy">Unverified hypotheses</span></td><td>H1–H7 (Section 12): for example, that warping references preserves defects better than warping targets; that held-out classes are flagged as unknown rather than misclassified; that gated updates resist 10% wrong feedback; that wafer context improves die ranking.</td></tr>
+</tbody></table>
+<h2>16.3 Recommended contributions for a student project</h2>
+<div class="box"><span class="lbl">Prioritise these</span>
+<ol>
+<li><b>C2 · Defect-preserving alignment (highest priority).</b> Clear gap, cheap to test (rotations and injected defects are fully controlled), and it produces a new, reusable evaluation tool (DPR). Feasible on public and synthetic data.</li>
+<li><b>C3 · Reference-guided unknown-anomaly localisation.</b> Testable on public data with real expert masks (Carinthia-S, leave-one-class-out). Results are meaningful even if the answer is negative.</li>
+<li><b>C5 · Verified feedback adaptation under noisy feedback</b> (if time allows). Builds directly on a 2026 preprint [[abbas]], so its novelty is the noisy-feedback robustness and the semiconductor setting. Simulation is cheap; the main risk is evaluation leakage, which the protocol addresses.</li>
+</ol>
+<p><b>C1</b> is not a separate contribution but the shared experimental backbone: every result is reported for K = 1–10 and for the transfer splits. <b>C4</b> (wafer-level context) is an optional extension because no public dataset links die images to wafer coordinates.</p></div>

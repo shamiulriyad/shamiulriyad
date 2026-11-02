@@ -1,0 +1,9 @@
+%% Diagram 5 · Rotation-robust inspection
+flowchart LR
+  X["Target die x<br/>(0°, 90°, 180°, 270° or any angle; shift; scale)"] --> C["Coarse orientation<br/>4 × 90° NCC search"]
+  R["Reference dies R"] --> C
+  C --> F["Residual angle / scale<br/>Fourier–Mellin or fine search"] --> E["Refine<br/>ECC (Euclidean / similarity)"]
+  E --> W["Warp the REFERENCES into x's frame<br/>+ validity mask (target pixels untouched)"]
+  W --> S["Patch matching → anomaly map S"]
+  E -- "low alignment score" --> AUG["Fallback: rotation-augmented memory"] --> S
+  X -. "Option A, not recommended: warp the target (blurs small defects)" .-> S
