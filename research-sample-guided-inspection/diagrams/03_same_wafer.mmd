@@ -1,0 +1,11 @@
+%% Diagram 3 · Same-wafer inspection (Scenario 1)
+flowchart LR
+  W["Wafer W07<br/>one lot, one layer"] -- "pick 5 normal dies spread across the wafer" --> E["Enrol references"]
+  E --> M[("Memory M built only<br/>from W07 references")]
+  W -- "all other dies of W07" --> T["Inspect each die"]
+  M --> T
+  T --> N["Normal"]
+  T --> S["Suspicious → review"]
+  T --> D["Defect localised"]
+  note["Reference dies are never scored;<br/>results reported per wafer"]:::n
+  classDef n fill:#F2F4F7,stroke:#5B6573,color:#5B6573;

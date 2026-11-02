@@ -1,0 +1,18 @@
+%% Diagram 2 · Detailed system architecture
+flowchart TB
+  subgraph ENROL["A · Reference enrolment (per die type / recipe)"]
+    R1["Reference dies<br/>K normal + optional known defects"] --> R2["Preprocess + quality check"] --> R3["Canonical pose<br/>(register to template)"] --> R4["Shared frozen encoder f"] --> R5["Memory QC<br/>outliers, de-duplication, coreset"]
+  end
+  MEM[("Reference memory M<br/>normal patch features M_N<br/>known-defect prototypes M_D<br/>version log · quarantine")]
+  R5 --> MEM
+  subgraph INSPECT["B · Inspection of a new die"]
+    I0["Input images + metadata"] --> I1["1 Preprocessing<br/>illumination/contrast; no smoothing"] --> I2["2 Die extraction + (i, j) index"] --> I3["3 Geometric registration<br/>estimate T; warp the REFERENCE"] --> I4["4 Feature encoder f (frozen, multi-scale)"] --> I5["5 Feature matching<br/>windowed k-NN in M"] --> I6["6 Anomaly scoring → S, A(x)"] --> I7["7 Localisation<br/>threshold τ → regions, masks, boxes"] --> I8["8 Known / unknown triage"] --> I9["9 Confidence estimation"] --> OUT["Output: Normal / Suspicious / Unknown<br/>heat map · score · confidence"]
+  end
+  MEM -- reference pose --> I3
+  MEM <-- query --> I5
+  MEM -- defect prototypes --> I8
+  subgraph FB["C · Feedback (verified cases)"]
+    F1["Engineer verification<br/>confirm · reject · correct · label · unknown"] --> F2["Verification gate<br/>quarantine · novelty gate · 2nd review"] --> F3["Regression check<br/>held-out dies: accept or roll back"] --> F4["Versioned memory update"]
+  end
+  OUT -- review queue --> F1
+  F4 -- "gated update (no weight training)" --> MEM

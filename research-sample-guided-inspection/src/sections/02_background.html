@@ -1,0 +1,170 @@
+<h1 id="s5"><span class="num">5</span>Semiconductor and Wafer Background</h1>
+<p>This section explains the manufacturing side of the problem from zero, as concepts 1–9 of the research brief. It ends with the most important distinction in this dossier: <b>die-surface images</b> and <b>wafer maps</b> are different kinds of data and answer different questions.</p>
+<fig id="wafer" src="ill_01_wafer_and_die.svg" w="full">A wafer is a disc carrying a grid of identical dies separated by scribe lines; the notch marks the wafer's orientation. Right: one die, magnified, with typical structures (bond pads, a repeated via array, metal lines, an orientation mark). <span class="tag syn">SYNTHETIC</span> Stylised drawing; real dies contain millions of much smaller structures.</fig>
+
+<concept n="1" title="What is a semiconductor wafer?">
+<s>A thin, very flat, mirror-polished disc of silicon on which hundreds of identical chips are built at the same time, layer by layer.</s>
+<e>A 300 mm silicon wafer passes through hundreds of process steps (deposition, lithography, etching, implantation, polishing) over several weeks. At the end it may carry several hundred copies of the same processor die.</e>
+<t>Wafers are typically 150, 200 or 300 mm in diameter and under 1 mm thick. A notch or flat marks the crystal orientation, so tools can align the wafer. Each process <i>layer</i> adds patterned material. Inspection is performed after critical steps, such as after development (ADI) and after etch (AEI) [[prasad2024]].</t>
+<w>Everything on one wafer shares the same process history, so dies of the same wafer are expected to look alike. This is what makes same-wafer reference inspection plausible (Scenario 1).</w>
+</concept>
+
+<concept n="2" title="What is a die?">
+<s>One rectangular chip on the wafer. After manufacturing, the wafer is sawn along the gaps (scribe lines) and each die becomes an individual chip.</s>
+<e>A 10 × 10 mm die on a 300 mm wafer gives roughly 600 dies. Each has the same design: the same pads, memory arrays and wiring at the same positions.</e>
+<t>Dies are laid out on a regular grid with a fixed step (pitch) and are indexed by (row, column). Because all dies of a product share one design, any die can serve as a reference for another. This is the basis of die-to-die inspection [[kla_ref,dehaerne]].</t>
+<w>Die identity and position (i, j) link the image-level analysis (inside one die) to the wafer-level analysis (across dies). That link is Stage 9 of the method.</w>
+</concept>
+
+<concept n="3" title="What is a normal die?">
+<s>A die whose appearance matches the intended design, apart from harmless variation such as slight noise, brightness differences or tiny process fluctuations.</s>
+<e>Two good dies photographed one after the other never give identical pixels: line widths differ by a few nanometres, the illumination changes slightly and the sensor adds noise. Both are still "normal".</e>
+<t>"Normal" is a <i>distribution</i>, not a single image. A reference memory must capture enough of this natural variation, or it will raise false alarms on good dies. With K = 1 the system sees only one sample of that distribution, which is why calibration at low K is hard (Section 18.6).</t>
+<w>The quality of the reference set sets the false-alarm rate. A defective die accidentally used as a reference makes that defect "normal". This is why memory quality control and feedback gating exist.</w>
+</concept>
+
+<concept n="4" title="What is a defective die?">
+<s>A die with a physical imperfection that may stop it working or shorten its life.</s>
+<e>A particle lands on two neighbouring metal lines during deposition and later creates a short circuit (a <i>bridge</i>). Or a line is interrupted (an <i>open</i>), or a via is missing.</e>
+<t>Defects are classified by type (particle, scratch, bridge, open, residue, stain, missing or extra pattern), by size relative to the design rule, and by whether they are <i>killer</i> defects (cause electrical failure) or <i>nuisance</i> defects (visible but harmless). Visual anomaly is not the same as electrical failure.</t>
+<w>The system detects <i>visual</i> anomalies. Whether an anomaly is a killer defect requires engineering judgement or electrical test. This is one reason for the human verification step.</w>
+</concept>
+
+<fig id="normaldefect" src="ill_02_normal_vs_defective.svg" w="full">(a) A normal die and (b) a defective die of the same design, with defect regions boxed. (c1–c4) Magnified crops of four defect types: particle, scratch, bridge between lines, missing via. Each crop has a small inset of the same location on the normal die. Comparing the large crop with its inset is exactly what a reference-based inspector does. <span class="tag syn">SYNTHETIC</span></fig>
+
+<concept n="5" title="What are semiconductor surface defects?">
+<s>Unwanted marks, particles, missing or extra material, or damage visible on the die surface.</s>
+<e>The Carinthia SEM dataset groups real SEM defect images from one production layer into six defect classes [[carinthia]]; the Wafer Surface Defect dataset uses particle, scratch, stain and liquid residual [[wsd]].</e>
+<t>Surface defects differ in scale (from a few nanometres to millimetres), contrast (bright particles, dark scratches, low-contrast stains) and context (random vs systematic). Systematic defects repeat at the same design location on many dies; a die-to-die comparison cannot see them if every reference has them too.</t>
+<w>Defect size relative to the encoder's patch size decides whether a defect is detectable at all (Section 18.4), and systematic defects are a known blind spot of reference methods (Section 26).</w>
+</concept>
+
+<concept n="6" title="What is wafer-map analysis?">
+<s>Looking at a map of the whole wafer, where each die is a coloured square showing whether it passed or failed, and asking whether the failing dies form a pattern.</s>
+<e>Failing dies concentrated in a ring near the wafer edge point to an edge-related process problem; a straight line of failing dies suggests a scratch from wafer handling.</e>
+<t>A wafer map (wafer bin map) is a 2-D grid of categorical values per die. The WM-811K dataset contains 811,457 such maps, of which 172,950 are labelled into nine pattern classes (Center, Donut, Edge-Loc, Edge-Ring, Loc, Near-full, Random, Scratch, None) [[wu2015]]. Methods include feature-based classifiers, CNNs, few-shot learning [[kim2024]] and open-set recognition [[shin2025]].</t>
+<w>Wafer maps answer "<i>which</i> dies fail and in what spatial pattern?", not "<i>where</i> on the die is the defect?". They are useful context (Contribution C4), but they cannot evaluate pixel localisation.</w>
+</concept>
+
+<concept n="7" title="What is microscopic die-image inspection?">
+<s>Taking magnified photographs of each die, with light or with an electron beam, and checking them for defects.</s>
+<e>An optical tool scans the wafer quickly and flags candidate locations; an SEM then takes high-resolution images of each candidate for review and classification.</e>
+<t>Optical inspection is fast with resolution limited by the wavelength of light; scanning electron microscopy (SEM) reaches nanometre resolution but is slow and adds its own noise, charging and contrast effects. SEM-based automatic defect inspection has been reviewed systematically: reference-based detection dominated until about 2020, after which deep learning became more common, especially for classification [[dehaerne]].</t>
+<w>The proposed method works on die images (optical or SEM). Its claims are tested on SEM (Carinthia-S), optical die images (Wafer Surface Defect) and synthetic patterned dies.</w>
+</concept>
+
+<concept n="8" title="Why is defect detection difficult?">
+<s>Defects are rare, tiny, varied and often look similar to harmless variation. Good dies are never pixel-identical, and the images vary with tool settings.</s>
+<e>A 3-pixel particle on a 2,000 × 2,000 pixel image must be found, while slight focus changes across the image must <i>not</i> be flagged.</e>
+<t>Main difficulties: (1) extreme class imbalance; (2) small objects relative to the field of view; (3) nuisance variation from noise, illumination, focus and process drift; (4) geometric variation from stage rotation, offsets and scale; (5) periodic patterns that make alignment ambiguous; (6) open-ended defect types; (7) domain shift between tools, layers and products [[poniatowski]].</t>
+<w>Every stage of the method answers one of these difficulties: preprocessing (3), alignment (4, 5), multi-scale features (2), reference memory (1, 6), open-set triage (6), feedback (7).</w>
+</concept>
+
+<concept n="9" title="Why are defect labels expensive or limited?">
+<s>Labelling a defect needs an expert, an expensive microscope and time, and new defect types keep appearing.</s>
+<e>To draw a pixel mask of a bridge in an SEM image, an engineer must recognise it, confirm it, and trace it carefully. Many fabs therefore label only boxes or image-level classes [[dey2024]].</e>
+<t>Label cost scales with annotation detail (image label &lt; box &lt; pixel mask) and with expert scarcity. Defects of interest are rare by design. Fab data is confidential, so few public datasets exist. Active learning [[cai2022]] and box-supervised segmentation [[dey2024]] try to reduce cost.</t>
+<w>This is the core motivation for few-shot, normal-reference learning, and it limits the experiments we can run (Section 17).</w>
+</concept>
+
+<h2>5.1 Two different kinds of data: die images and wafer maps</h2>
+<fig id="datatypes" src="ill_00_data_types.svg" w="w90">The two data types used in this dossier, which must never be confused. (a) A die-surface image contains pixels and shows <i>where</i> on one die something is wrong. (b) A wafer map has one cell per die (pass/fail or bin code) and shows <i>which</i> dies fail and in what spatial pattern. WM-811K and MixedWM38 are wafer-map datasets; Carinthia-S and Wafer Surface Defect are image datasets. <span class="tag syn">SYNTHETIC</span></fig>
+<table><caption>Die-surface images versus wafer maps.</caption>
+<thead><tr><th>Property</th><th>Die-surface image</th><th>Wafer map</th></tr></thead>
+<tbody>
+<tr><td>Unit</td><td>Pixels inside one die</td><td>One cell per die on the wafer</td></tr>
+<tr><td>Question answered</td><td>Is there a defect on this die, where, how big?</td><td>Which dies fail, and do the failures form a spatial pattern?</td></tr>
+<tr><td>Typical source</td><td>Optical inspection or SEM review images</td><td>Electrical test (bin codes) or aggregated inspection results</td></tr>
+<tr><td>Example public data</td><td>Carinthia / Carinthia-S (SEM), Wafer Surface Defect (optical)</td><td>WM-811K, MixedWM38</td></tr>
+<tr><td>Role in this research</td><td>Main object of study: detection, localisation, rotation, unknowns, feedback</td><td>Optional context: aggregate per-die scores, study spatial clusters (C4)</td></tr>
+</tbody></table>
+
+<h1 id="s6"><span class="num">6</span>Problem Statement</h1>
+<h2>6.1 Informal statement</h2>
+<p>Given a small set of reference die images from one product (and, optionally, a few verified defect examples), build an inspector that, for any new die of the same product, possibly from another wafer and in any orientation, outputs: whether the die is normal, contains a known defect type or contains an unknown anomaly; where the abnormal regions are; how large and how severe they are; and how confident the system is. It must improve over time from engineer-verified feedback without retraining the network and without degrading on previously handled cases.</p>
+<h2>6.2 Formal problem definition (Artifact 1)</h2>
+<div class="box navy"><span class="lbl">Formal definition</span>
+<p>Let <span class="var">R</span> = {<span class="var">r</span><sub>1</sub>, …, <span class="var">r</span><sub>K</sub>} be K normal reference images of die type <span class="var">d</span>, and <span class="var">D</span> = {(<span class="var">x</span><sub>j</sub>, <span class="var">c</span><sub>j</sub>)} an optional small set of verified defect images with class labels <span class="var">c</span><sub>j</sub> ∈ 𝒞<sub>known</sub>. A target die image <span class="var">x</span> ∈ ℝ<sup>H×W</sup> is observed as <span class="var">x</span> = <span class="var">g</span>(<span class="var">T</span>(<span class="var">x</span>*)), where <span class="var">x</span>* is the die in canonical pose, <span class="var">T</span> an unknown geometric transform (rotation θ, translation <span class="var">t</span>, scale <span class="var">s</span>) and <span class="var">g</span> an unknown photometric change. The task is to learn, <b>without updating encoder weights</b>, a function</p>
+<p style="text-align:center"><span class="var">F</span>(<span class="var">x</span>; <span class="var">R</span>, <span class="var">D</span>) → ( <span class="var">S</span> ∈ ℝ<sup>H×W</sup>, &nbsp;<span class="var">A</span> ∈ ℝ, &nbsp;<span class="var">y</span> ∈ {normal, known:<span class="var">c</span>, unknown}, &nbsp;<span class="var">u</span> ∈ [0, 1] )</p>
+<p>where <span class="var">S</span> is a pixel anomaly map in the coordinates of <span class="var">x</span>, <span class="var">A</span> an image anomaly score, <span class="var">y</span> the triage decision and <span class="var">u</span> a confidence. The function must (i) be invariant in its decisions to <span class="var">T</span> and <span class="var">g</span> within stated ranges, (ii) never assign a region outside all known classes to a known class with high confidence, and (iii) admit an update operator <span class="var">M</span><sub>t+1</sub> = <span class="var">U</span>(<span class="var">M</span><sub>t</sub>, verified feedback) that does not reduce performance on a held-out set. Performance is evaluated separately for target dies from the <b>same wafer</b>, <b>other wafers</b> of the same design and <b>other die types</b>.</p></div>
+<h2>6.3 Scope and non-goals</h2>
+<ul>
+<li><b>In scope:</b> visual anomaly detection and localisation on die images; geometric and photometric robustness; known/unknown triage; memory-based feedback adaptation; optional wafer-level aggregation.</li>
+<li><b>Not in scope:</b> root-cause analysis (the system marks <i>where</i> a die looks abnormal, not <i>why</i>); electrical failure prediction; production deployment, user interfaces or tool integration; real-time tool control.</li>
+</ul>
+
+<h1 id="s7"><span class="num">7</span>Research Motivation</h1>
+<p><b>Label scarcity is structural, not temporary.</b> Each new product, layer or recipe starts with few reviewed defects, and fab data rarely leaves the fab [[dehaerne]]. Methods that need thousands of labelled defect images per product arrive too late in the product's life to matter.</p>
+<p><b>The industry already thinks in references.</b> Die-to-die and die-to-standard-reference comparison are established industrial practice [[kla_ref]], and reference-based algorithms were the dominant approach in SEM inspection until about 2020 [[dehaerne]]. A reference-memory approach with deep features continues this tradition and keeps its strengths: it is interpretable ("this region does not match any reference region") and needs no defect labels.</p>
+<p><b>Strong few-shot results exist, but not on dies.</b> Training-free patch matching with DINOv2 features reached 96.6% image AUROC from a single normal image on MVTec AD [[anomalydino]]. Whether such numbers survive the conditions of die inspection is unknown: periodic layouts, SEM noise, tiny defects, arbitrary rotations and cross-wafer drift. There is even a semiconductor counter-argument: one group argues that external-reference matching is brittle for IC images because layouts vary and alignment is hard, and proposes reference-free intrinsic normality instead [[zhao2025seg]]. This tension is worth testing directly.</p>
+<p><b>Rotation and alignment are under-studied for defect preservation.</b> Few-shot methods either learn alignment [[regad]] or become rotation-invariant [[graphcore]]. Both are evaluated on detection accuracy, not on whether the alignment step itself <i>weakens</i> small defects. For inspection this matters: a missed defect is far more costly than a false alarm.</p>
+<p><b>Unknown defects and feedback are where inspection systems fail in practice.</b> Closed-set classifiers force new defect types into old classes. Continual updates forget [[prasad2024]]. A 2026 preprint showed that expert memory corrections can help a PatchCore model, but with clean, simulated feedback on natural-object images, and warned that naive evaluation is inflated by memorisation [[abbas]]. Real engineers make mistakes, so safe adaptation under imperfect feedback is an open and practical question.</p>
+
+<h1 id="s8"><span class="num">8</span>Proposed System Overview</h1>
+<fig id="concept" src="dia_01_concept.svg" w="full"><b>Diagram 1 · Complete research concept.</b> Reference samples are enrolled into a reference memory with a frozen pretrained encoder (steps 1–4). New dies are inspected against the memory to produce anomaly scores and localised regions (5–7). Engineer verification (8) feeds a gated memory update (9) that improves later inspections. Teal: reference knowledge; navy: automatic inspection; amber: human-verified feedback.</fig>
+<p>The system has three paths that share one encoder and one memory:</p>
+<ol>
+<li><b>Enrolment path</b>, run once per die type or recipe. K reference dies are checked for quality, brought into a canonical pose, encoded into multi-scale patch features and stored in the reference memory <span class="var">M</span> after de-duplication and coreset subsampling. Optional: a few verified defect examples per known class are stored as prototypes.</li>
+<li><b>Inspection path</b>, run for every die. The die is preprocessed and extracted, its pose relative to the references is estimated, and the <i>references</i> are warped into the die's frame. Each patch of the die is compared with the memory to give an anomaly map <span class="var">S</span> and an image score <span class="var">A</span>. Thresholding gives regions, which are triaged as known or unknown and given a confidence.</li>
+<li><b>Feedback path</b>, run for reviewed cases. Engineer decisions pass through a verification gate (quarantine, novelty gate, second review), create a new memory version and are kept only if a regression check on held-out dies passes. Otherwise the memory rolls back.</li>
+</ol>
+<div class="box"><span class="lbl">Design principle: learn by remembering, not by retraining</span>
+<p>The encoder is pretrained by others and stays frozen in the core system. "Learning from samples" and "learning from feedback" both mean <i>editing the memory</i>. This keeps enrolment fast, works with K = 1, makes every change auditable and reversible, and avoids catastrophic forgetting of network weights. Fine-tuning the encoder is an optional, later extension (Diagram 8).</p></div>
+
+<h1 id="s9"><span class="num">9</span>Detailed System Architecture</h1>
+<fig id="arch" src="dia_02_architecture.svg" w="full"><b>Diagram 2 · Detailed system architecture.</b> Column A enrols reference dies into the reference memory <span class="var">M</span>. Column B inspects a new die in ten steps, querying <span class="var">M</span> for feature matching and using the references' pose for registration and the defect prototypes for triage. Column C turns engineer decisions into a gated, versioned memory update, routed back into <span class="var">M</span> without training any weights.</fig>
+<table><caption>Purpose of every component in Diagram 2.</caption>
+<thead><tr><th style="width:24%">Component</th><th style="width:40%">Purpose</th><th>Input → output</th></tr></thead>
+<tbody>
+<tr><td>Input image collection</td><td>Collect die or wafer images with metadata (wafer ID, die index, recipe, tool, magnification).</td><td>Files + manifest → image tensors + metadata</td></tr>
+<tr><td>Preprocessing</td><td>Normalise illumination and contrast; check image quality (focus, noise, saturation). Deliberately no smoothing before scoring.</td><td>Raw image → normalised image + quality flag</td></tr>
+<tr><td>Die extraction</td><td>Locate the die grid in wafer-level images, crop each die, assign (row, column).</td><td>Wafer image → die crops + indices</td></tr>
+<tr><td>Geometric registration</td><td>Estimate rotation, translation and scale relative to the references; warp the <i>references</i> to the target frame; mask invalid borders.</td><td>Target + references → transform <span class="var">T̂</span>, aligned references, validity mask</td></tr>
+<tr><td>Visual feature encoder</td><td>Turn each image into multi-scale patch features with a frozen pretrained CNN or ViT.</td><td>Image → feature map <span class="var">h</span>×<span class="var">w</span>×<span class="var">C</span></td></tr>
+<tr><td>Reference feature bank (memory)</td><td>Store normal patch features (and known-defect prototypes) with provenance and version.</td><td>Reference features → index <span class="var">M</span></td></tr>
+<tr><td>Feature matching</td><td>Find the nearest memory features for each target patch, optionally within a spatial window around the aligned position.</td><td>Target features + <span class="var">M</span> → nearest distances</td></tr>
+<tr><td>Anomaly scoring</td><td>Convert distances into a patch score map and an image score; normalise with reference statistics.</td><td>Distances → <span class="var">S</span>, <span class="var">A</span></td></tr>
+<tr><td>Localisation module</td><td>Upsample and threshold the map; extract connected regions, boxes, areas and peak scores.</td><td><span class="var">S</span> → regions, masks, boxes</td></tr>
+<tr><td>Optional defect classifier</td><td>Compare region features with known-defect prototypes.</td><td>Region features → nearest class + distance</td></tr>
+<tr><td>Unknown anomaly detection</td><td>Assign "unknown" when a region is anomalous but far from every known class.</td><td>Distances → {known:<span class="var">c</span>, ambiguous, unknown}</td></tr>
+<tr><td>Confidence estimation</td><td>Report a calibrated confidence; send low-margin cases to review.</td><td>Scores → confidence <span class="var">u</span>, review flag</td></tr>
+<tr><td>Feedback mechanism</td><td>Record engineer actions (confirm, reject, correct, label, unknown) with reviewer ID and memory version.</td><td>Review → feedback records</td></tr>
+<tr><td>Reference-memory update</td><td>Apply gated, versioned edits to <span class="var">M</span>; regression-check and roll back if needed.</td><td><span class="var">M</span><sub>t</sub> + feedback → <span class="var">M</span><sub>t+1</sub></td></tr>
+</tbody></table>
+
+<h1 id="s10"><span class="num">10</span>Complete Visual Workflow</h1>
+<p>This section shows each scenario and mechanism of the system as a diagram. Diagrams 5 and 6 are computed by the toy prototype in <code>prototype/toy_reference_memory.py</code> on synthetic dies. They show how the pipeline behaves, not how well it performs.</p>
+<h2>10.1 Scenario 1: same-wafer inspection</h2>
+<fig id="same" src="dia_03_same_wafer.svg" w="full"><b>Diagram 3 · Same-wafer inspection.</b> Five normal dies spread across wafer W07 are enrolled as references; every other die on the same wafer is inspected against the resulting memory. This scenario has the smallest domain shift (same lot, tool and recipe) and is the first one to validate.</fig>
+<h2>10.2 Scenario 2: cross-wafer and cross-type inspection</h2>
+<fig id="cross" src="dia_04_cross_wafer.svg" w="full"><b>Diagram 4 · Cross-wafer generalisation.</b> References from wafer A are used to inspect wafer B (same design, different lot: Scenario 2a) and wafer C (different design: Scenario 2b). Both are research objectives that require validation. We expect 2a to work with some loss, and 2b to fail without re-enrolling references of the new design.</fig>
+<div class="box amber"><span class="lbl">Same mechanism, different expectations</span>
+<p>The same algorithm runs in all scenarios. What changes is how far the target lies from the reference distribution. In Scenario 2b the memory contains no normal example of the new layout, so every structure of design Y looks "abnormal". A reference memory cannot generalise to a design it has never seen; it needs new references. The research question for 2b is therefore not "does it transfer?" but "how few new references are needed, and does anything learned from design X (thresholds, defect prototypes, encoder adaptation) carry over?" (RQ3).</p></div>
+<h2>10.3 Rotation-robust inspection</h2>
+<p>A die can reach the inspector in many poses (see the gallery, Figure {{fig:gal_rot}}). Diagram 5 shows, on the toy pipeline, what happens when a rotated die is compared with an unrotated memory, and what alignment changes.</p>
+<fig id="rotation" src="dia_05_rotation.svg" w="full"><b>Diagram 5 · Rotation-robust inspection.</b> Top: the same die at 0°, 90°, 180°, 270° and 37°. Bottom: (a) a target at 37°; (b) comparing it with an unrotated memory makes every structure look anomalous; (c) the rotation is estimated and the references are warped into the target frame; (d) the aligned comparison leaves only the defects; (e) regions are drawn on the untouched target pixels. <span class="tag syn">SYNTHETIC</span> Toy pipeline on synthetic dies; not an experimental result.</fig>
+<fig id="alignopts" src="dia_12_alignment_options.svg" w="full">Two ways to apply an estimated transform. Warping the target resamples the image under inspection and can blur or cut small defects. Warping the references keeps the target's pixels intact. This proposal adopts option B and measures the difference with the defect preservation ratio (Section 19.6).</fig>
+<h2>10.4 Defect localisation</h2>
+<fig id="loc" src="dia_06_localisation.svg" w="full"><b>Diagram 6 · Defect localisation.</b> (1) Original die as acquired, with an illumination gradient; (2) a normal reference; (3) target after preprocessing; (4) anomaly map <span class="var">S</span> = distance of each patch to its nearest reference patch; (5) final highlighted regions where <span class="var">S</span> &gt; τ, with bounding boxes and peak scores. <span class="tag syn">SYNTHETIC</span> Computed by the toy prototype; τ is the 99.9th percentile of scores on held-out synthetic normal dies.</fig>
+<h2>10.5 Feedback-driven adaptation</h2>
+<fig id="feedback" src="dia_07_feedback.svg" w="full"><b>Diagram 7 · Feedback-driven adaptation.</b> Inspection results go to a prioritised review queue. Engineer decisions pass a verification gate, produce a candidate memory version and are deployed only if a regression check on held-out dies passes; otherwise the system rolls back.</fig>
+<fig id="card" src="ill_07_feedback_card.svg" w="full">What the engineer sees: a review card with the die, the anomaly overlay and five actions (confirm, reject, correct location, assign label, mark unknown). It illustrates the information the feedback study needs; building such an interface is not part of this research. <span class="tag syn">SYNTHETIC</span></fig>
+<h2>10.6 Training vs enrolment vs inference</h2>
+<fig id="train" src="dia_08_train_vs_inference.svg" w="full"><b>Diagram 8 · Training vs inference.</b> Offline pre-training is done once by the encoder's authors. In the core system, only enrolment and feedback change anything, and they change only the memory. Optional fine-tuning (bottom row) changes weights and must pass the same regression checks.</fig>
+<h2>10.7 Wafer-level view</h2>
+<fig id="wafermap" src="ill_06_wafer_map.svg" w="w90">Aggregating die-level results into a wafer map. (a) Each die coloured by its image anomaly score (the maximum of its anomaly map). (b) Dies above the threshold, with two spatial clusters: an edge cluster and a scratch-like line. Image-level defects (inside a die) and wafer-level patterns (across dies) are different findings and are reported separately. <span class="tag syn">SYNTHETIC</span></fig>
+
+<h1 id="s11"><span class="num">11</span>Research Objectives</h1>
+<ol>
+<li><b>O1 · Few-shot enrolment.</b> Build and evaluate a reference-memory inspector that works from K = 1, 2, 5, 10 reference dies without retraining, on SEM and optical die data.</li>
+<li><b>O2 · Defect-preserving geometric robustness.</b> Make decisions stable under 0–360° rotation, translation, ±10% scale and illumination change, while measurably preserving small defects; compare alignment, rotation-augmented memory and invariant features.</li>
+<li><b>O3 · Localisation.</b> Produce pixel- or region-level anomaly maps and evaluate them against expert masks or boxes, broken down by defect size.</li>
+<li><b>O4 · Unknown-defect handling.</b> Separate normal, known-class and unknown regions; never force unfamiliar anomalies into known classes with high confidence.</li>
+<li><b>O5 · Transfer scenarios.</b> Quantify same-wafer, cross-wafer and cross-type performance as separate, explicit evaluation splits.</li>
+<li><b>O6 · Safe feedback adaptation.</b> Show whether verified feedback improves later inspections on held-out data, and how quarantine, gating and rollback limit damage from wrong feedback.</li>
+<li><b>O7 · Reproducibility.</b> Release code, configurations, split manifests and the synthetic benchmark, and report negative results.</li>
+</ol>
+
+<h1 id="s12"><span class="num">12</span>Research Questions and Hypotheses</h1>
+<p>Each question is paired with a falsifiable hypothesis, its measurement and the experiment that tests it (Artifact 12). Numerical targets are <span class="tag hy">HYPOTHESIS</span> values to be revised after the pilot study; they are not predictions of results.</p>
+<!--RQ_TABLE-->

@@ -1,0 +1,124 @@
+<section class="cover">
+  <div class="band"></div><div class="band2"></div>
+  <div class="kicker">Research technical dossier · exploratory proposal</div>
+  <h1 class="title">Sample-Guided Semiconductor Wafer Die Inspection: Few-Shot, Rotation-Robust Anomaly Detection, Localisation and Verified Feedback Adaptation</h1>
+  <div class="subtitle">Learn from a few reference dies, inspect unseen dies, locate abnormal regions,<br>separate known from unknown defects, and improve safely from engineer-verified feedback.</div>
+  <div class="coverfig"><img src="../figures/dia_01_concept.svg" alt="Research concept diagram"></div>
+  <div class="meta">
+    <b>Author:</b> Md Shamiul Islam Riyad · B.Sc. Computer Science and Engineering, United International University<br>
+    <b>Document type:</b> research proposal and technical explanation · <b>Version:</b> 1.0 · <b>Date:</b> 2 November 2026 (literature cut-off)<br>
+    <span class="status">Status: proposed study. No experiments have been run. Every die image in this document is a synthetic illustration.</span>
+  </div>
+</section>
+
+<nav class="toc"><h1 id="contents">Contents</h1><!--TOC--></nav>
+
+<h1 id="s2"><span class="num">2</span>Abstract</h1>
+<p>Semiconductor dies are inspected to find defects such as particles, scratches, bridges and missing structures. Deep-learning inspectors usually need many labelled defect images for every product, yet new products and process steps start with few labels, and new defect types keep appearing. This dossier proposes and plans a <b>sample-guided die inspection system</b>. An engineer gives the system a small set of reference dies (K = 1–10, normally defect-free). A frozen, pretrained visual encoder converts the references into a <b>reference memory</b> of patch features. Every new die is geometrically aligned to the references, compared patch by patch with the memory, and given an anomaly score, a pixel-level anomaly map and a status: <i>normal</i>, <i>known defect</i> or <i>unknown anomaly</i>. Engineer-verified decisions update the memory through a gated, versioned and reversible procedure. Model weights are not retrained.</p>
+<p>A literature review of 34 papers (2010–2026, weighted to 2024–2026) shows that the building blocks exist separately: memory-based anomaly detection (PatchCore, AnomalyDINO), registration-based and rotation-invariant few-shot detection (RegAD, GraphCore), open-set recognition at wafer-map level, continual learning on fab SEM data, and a 2026 preprint on human-in-the-loop memory correction. We found no published study that evaluates their combination on semiconductor die imagery with <b>defect-preserving alignment</b>, <b>pixel-level known/unknown triage</b> and <b>noisy, verified feedback</b>. We present that combination as a set of testable hypotheses, not as an established result. The dataset audit shows that no public dataset contains patterned dies with pixel masks <i>and</i> wafer coordinates. The plan therefore uses Carinthia-S (SEM, expert masks), the IEEE DataPort Wafer Surface Defect set (single-die optical images), MVTec AD (method validation), WM-811K (wafer-level patterns only) and a clearly labelled synthetic patterned-die benchmark. The dossier provides the mathematical formulation, eight experiments with leak-free splits, metrics, baselines, ablations, a 40-week roadmap, a risk register and a runnable toy prototype.</p>
+<p><b>Keywords:</b> few-shot anomaly detection; semiconductor die inspection; reference memory; image registration; rotation robustness; defect localisation; open-set recognition; human-in-the-loop; continual learning.</p>
+
+<h1 id="s3"><span class="num">3</span>Executive Summary</h1>
+<div class="box navy"><span class="lbl">The idea in one sentence</span>
+<p>Give the AI a few sample dies, let it remember what they look like, show it new dies in any orientation, let it point at what looks wrong and say whether it is a known or unknown defect, and let verified engineer feedback improve its memory safely over time.</p></div>
+<table class="kv"><caption>Summary of the proposal at a glance.</caption>
+<tbody>
+<tr><td>Problem</td><td>Supervised defect inspectors need many labelled examples per product and defect type; new products, rotated or shifted dies and new defect types break them; image-level labels do not say <i>where</i> a defect is.</td></tr>
+<tr><td>Proposed approach</td><td>Reference memory of frozen pretrained patch features built from K = 1–10 reference dies; geometric alignment that warps the <i>references</i>, not the inspected die; nearest-neighbour anomaly maps; three-way triage (normal / known / unknown); gated, versioned memory updates from engineer feedback.</td></tr>
+<tr><td>What already exists</td><td>Memory-based anomaly detection [[patchcore,spade]]; strong few-shot variants [[anomalydino,univad,winclip]]; registration and rotation-invariant few-shot methods [[regad,graphcore]]; wafer-map open-set recognition [[shin2025]]; continual learning on SEM data [[prasad2024]]; training-free memory correction from human feedback on MVTec AD [[abbas]].</td></tr>
+<tr><td>Defensible gap</td><td>No reviewed study evaluates, on semiconductor die imagery: (i) whether alignment or invariance <i>preserves</i> real defects; (ii) pixel-level known/unknown triage from normal references plus a small defect memory; (iii) feedback updates under noisy or wrong feedback with quarantine and rollback; (iv) same-wafer vs cross-wafer vs cross-type transfer as separate, explicit splits.</td></tr>
+<tr><td>Recommended core contributions</td><td><b>C2</b> defect-preserving alignment with a defect preservation ratio (DPR); <b>C3</b> reference-guided pixel-level unknown-anomaly triage; <b>C5</b> verified feedback adaptation with safeguards, if time allows. C1 is the shared evaluation protocol. C4 (wafer-level context) is an optional extension.</td></tr>
+<tr><td>Data reality</td><td>No public patterned-die dataset with masks and wafer coordinates was found. The plan combines Carinthia-S (4,591 SEM images with expert masks), the 500-image Wafer Surface Defect die set (boxes), MVTec AD, WM-811K (wafer maps only) and a synthetic patterned-die benchmark, which is always reported separately.</td></tr>
+<tr><td>Smallest meaningful prototype</td><td>PatchCore-style memory with a WRN-50 or DINOv2 encoder, K-shot enrolment, rotation sweep with and without alignment, DPR test, and leave-one-class-out unknown detection on Carinthia-S. This runs on a single consumer GPU, or slowly on a CPU.</td></tr>
+<tr><td>What to implement first</td><td>(1) Reproduce PatchCore on MVTec AD. (2) K-shot enrolment curves. (3) Rotation sweep plus "warp the reference" alignment. (4) Carinthia-S localisation. (5) Unknown triage. (6) Feedback simulation.</td></tr>
+</tbody></table>
+<p>The document is written for two readers at once. A student new to the field should be able to follow every step, from "what is a wafer?" to the equations and the code skeleton. A faculty member should be able to judge the scientific contribution, the evidence behind each claim and the feasibility of the plan. Published evidence is marked <span class="tag ev">EVIDENCE</span>, and claims of this proposal that still need testing are marked <span class="tag hy">HYPOTHESIS</span>. Synthetic illustrations carry the label <span class="tag syn">SYNTHETIC</span> in their captions.</p>
+
+<h1 id="s4"><span class="num">4</span>Research Idea Explained Simply</h1>
+<h2>4.1 The story, without jargon</h2>
+<p class="lead">Imagine a quality inspector who has to check thousands of identical chips. Nobody gives them a catalogue of every possible defect. They are shown a few good chips and told: "this is what correct looks like; tell me when something is different, and show me where."</p>
+<p>A good human inspector does four things. First, they <b>study the good samples</b> carefully and remember the patterns: where the pads are, how the lines run, what the texture looks like. Second, when a new chip arrives, they <b>turn it to the same orientation</b> as the samples before comparing. Third, they <b>compare region by region</b> and point at places that do not match anything they remember. Fourth, when a supervisor says "that one was fine, it is just a normal variation" or "yes, that is a scratch", they <b>update what they remember</b>, carefully, so the same mistake is not repeated.</p>
+<p>This research builds an AI system that does the same four things:</p>
+<ol>
+<li><b>Sample-guided learning.</b> The engineer gives K reference dies (for example 1, 2, 5 or 10). The system stores a compact description of every small region of those dies in a <i>reference memory</i>. It does not need thousands of labelled defects.</li>
+<li><b>Geometric alignment.</b> Each new die may be rotated (0°, 90°, 180°, 270° or any angle), shifted, scaled or lit differently. The system estimates that change and brings the references into the same pose as the new die, without resampling the new die itself, so that tiny defects are not blurred away.</li>
+<li><b>Comparison, scoring and localisation.</b> Every region of the new die looks for its closest match in the memory. Regions with no close match get a high <i>anomaly score</i>. Together these scores form a heat map that shows where the die looks abnormal, how large the area is and how different it is.</li>
+<li><b>Known, unknown and feedback.</b> A suspicious region is compared with a small library of known defect types. If it matches one clearly, it gets that label. If it matches none, it is reported as an <i>unknown anomaly</i>, not forced into the wrong class. An engineer then confirms, rejects, corrects or labels the result, and verified decisions update the memory through safety checks.</li>
+</ol>
+<fig id="refs" src="ill_04_references_and_targets.svg" w="full">The core idea. (a) A few normal reference dies are turned into a reference memory, with no network re-training. (b) New dies that were not in the reference set are compared with that memory; each receives a status. <span class="tag syn">SYNTHETIC</span> Stylised die renderings; status labels are illustrative, not model outputs.</fig>
+
+<h2>4.2 What is new, and what is not</h2>
+<p>None of the individual ideas above is new. Comparing a die with a reference die is the oldest approach in wafer inspection [[dehaerne,zontak,kla_ref]]; memory-based anomaly detection with pretrained features is well established [[spade,patchcore]]; recent methods reach strong results from a single normal image on standard benchmarks [[anomalydino]]. What this research proposes is to <b>combine and test</b> these ideas on semiconductor die imagery under conditions that published work leaves out. Does alignment destroy small defects? Can unknown defects be localised at pixel level and kept apart from known ones? Do references from one wafer work on another wafer or another product? Does feedback really help, or does it only memorise the corrected samples? Section 16 sets out exactly which parts are established and which are open.</p>
+
+<h2>4.3 The key AI ideas, from zero</h2>
+<p>The semiconductor concepts (wafer, die, defects, wafer maps, microscopy) are explained in Section 5. If you are completely new to chip manufacturing, read Section 5 first. The cards below explain the machine-learning concepts 10–19 of the research brief. Each follows the same pattern: a simple explanation, a semiconductor example, the technical explanation, and why it matters here.</p>
+
+<concept n="10" title="Why reference-based learning is useful">
+<s>Instead of teaching the system every way a die can be wrong, you show it what right looks like and ask it to spot differences. It is easier to collect good examples than to collect every kind of mistake.</s>
+<e>A fab starts a new product. On day one there are hundreds of good dies but only a handful of reviewed defects. A reference-based inspector can start working after enrolling a few good dies; a supervised classifier cannot.</e>
+<t>Reference-based (one-class) methods model the distribution of normal data, <span class="var">p</span>(normal appearance), and flag low-likelihood or high-distance samples. Classical die-to-die inspection subtracts neighbouring dies [[dehaerne,kla_ref]]; modern versions compare deep features [[spade,patchcore]].</t>
+<w>It removes the need for large labelled defect sets, which do not exist for new products, and it can, in principle, detect defect types that nobody has seen before.</w>
+</concept>
+
+<concept n="11" title="Few-shot learning">
+<s>Learning from just a few examples, like a person who recognises a new kind of fruit after seeing it two or three times.</s>
+<e>An engineer marks 2 good dies of a new design. The system must then inspect the remaining 300 dies on the wafer.</e>
+<t>In <i>K</i>-shot learning only K labelled examples per class (or K normal samples, in few-shot anomaly detection) are available at deployment time. Methods either compare against stored examples (metric learning: prototypical, matching and Siamese networks [[protonet,matchnet,siamese]]) or rely on strong pretrained features with nearest-neighbour matching [[anomalydino]], or train a model that generalises across categories [[regad,inctrl]].</t>
+<w>This is the core of "give the AI a few sample dies". Experiment A measures how performance changes with K = 1, 2, 5, 10.</w>
+</concept>
+
+<concept n="12" title="Anomaly detection">
+<s>Finding things that do not fit the usual pattern, without being told in advance what the unusual things look like.</s>
+<e>A die with a particle on a metal line looks different from all good dies at that spot, even if no particle was ever shown to the system.</e>
+<t>Given normal training data only, learn a score <span class="var">A</span>(<span class="var">x</span>) that is low for normal samples and high for anomalies. Families include memory/kNN methods (SPADE, PatchCore), density models (PaDiM, FastFlow), reconstruction and synthetic-anomaly methods (DRAEM), and student–teacher discrepancy (Reverse Distillation, EfficientAD) [[spade,patchcore,padim,fastflow,draem,rd,efficientad]].</t>
+<w>It is the detection engine of the proposed system. Its main weakness is that "different" is not always "defective": noise, focus or harmless process variation can also look different, so thresholds and verification are essential.</w>
+</concept>
+
+<concept n="13" title="Defect localisation">
+<s>Not just saying "this die is bad", but drawing where the problem is.</s>
+<e>The system highlights a 6 × 2 µm region on the third metal line from the left, so the review engineer can drive the SEM straight to it.</e>
+<t>Outputs can be a continuous anomaly map (one score per pixel or patch), a thresholded binary mask, bounding boxes around connected regions, or instance masks. Evaluation uses pixel AUROC, AUPRO, Dice/IoU or box IoU, depending on what ground truth exists [[mvtec_ijcv]].</t>
+<w>Localisation is what makes inspection results actionable and checkable. It also lets us measure defect size and test whether alignment weakens small defects.</w>
+</concept>
+
+<concept n="14" title="Geometric registration">
+<s>Lining up two pictures so that the same structure is at the same place in both, like laying a transparent sheet over a map and turning it until the roads match.</s>
+<e>A die image was captured with a 2° stage rotation and a 15-pixel offset. Before comparison, registration estimates this rotation and offset so a via in the reference falls on the corresponding via in the target.</e>
+<t>Estimate a transform <span class="var">T</span> (rigid, similarity, affine or non-rigid) that maximises similarity between images. Methods include intensity-based (ECC [[ecc]], phase correlation [[guizar]], Fourier–Mellin [[fmt]]), feature-based (SIFT/ORB + RANSAC [[sift,orb,ransac]]) and learned (spatial transformers [[stn]], RegAD [[regad]]). A survey is given in [[zitova]].</t>
+<w>Without alignment, a rotated normal die looks abnormal everywhere (Section 10, Diagram 5). With careless alignment, interpolation can blur or cut off the very defects we want to find. Contribution C2 addresses exactly this trade-off.</w>
+</concept>
+
+<concept n="15" title="Rotation robustness">
+<s>Giving the same right answer whether the die is upright, sideways or upside down.</s>
+<e>Dies are loaded onto the tool in different orientations, or images come from tools with different coordinate conventions, so the same die appears at 0°, 90°, 180° or 270°, plus small residual angles.</e>
+<t>Two strategies exist: <i>normalise</i> the pose before comparison (registration), or make the features <i>invariant</i> to rotation (rotation augmentation of the memory, or invariant features such as GraphCore's [[graphcore]]). Invariance can be harmful when orientation itself carries meaning: a horizontal line is normal while a vertical one in the same place is a defect.</t>
+<w>Few-shot memories cover few orientations, so rotation is a main cause of false alarms. RQ2 compares alignment, augmentation and invariance.</w>
+</concept>
+
+<concept n="16" title="Open-set recognition">
+<s>A classifier that is allowed to say "I don't know this one" instead of forcing every input into one of the classes it was taught.</s>
+<e>The system knows "particle", "scratch" and "bridge". A new residue defect appears after a chemistry change. It should be reported as <i>unknown</i>, not labelled "particle".</e>
+<t>Closed-set classifiers partition the whole feature space among known classes. Open-set recognition bounds each class region and rejects samples that fall outside all of them [[scheirer,openmax]]. Open-set supervised anomaly detection keeps a separate path for unseen anomalies [[dra]].</t>
+<w>Forcing a new defect into a wrong class hides it from engineers. Contribution C3 and Experiment E test unknown-defect handling.</w>
+</concept>
+
+<concept n="17" title="Continual learning">
+<s>Learning new things over time without forgetting old ones.</s>
+<e>After a recipe change, the normal appearance of a layer shifts slightly. The system should accept the new normal appearance without losing the ability to recognise the old scratch type.</e>
+<t>Updating network weights on new data alone causes <i>catastrophic forgetting</i>. Remedies include regularising important weights (EWC [[ewc]]), replaying stored old examples, and expanding memory or prompts (UCAD [[ucad]]). Fab studies show fine-tuning forgets earlier SEM defect classes quickly [[prasad2024]].</t>
+<w>The feedback loop is a form of continual learning. Here it is done by editing a memory rather than retraining weights, which makes every change measurable and reversible.</w>
+</concept>
+
+<concept n="18" title="Reference memory">
+<s>The system's notebook of what normal dies (and a few known defects) look like, region by region.</s>
+<e>For each of 5 reference dies, the memory stores about 1,000 small region descriptions: corners of pads, via grids, line edges and background texture.</e>
+<t>A set <span class="var">M</span> of feature vectors extracted by a frozen encoder from reference images, often reduced by coreset subsampling [[patchcore]]. New patches are scored by their distance to the nearest memory entries; a k-nearest-neighbour index (e.g. FAISS [[faiss]]) makes this fast.</t>
+<w>The memory is what "learning from samples" means in this project: enrolment and feedback change the memory, not the network. That is cheap, fast, auditable and reversible.</w>
+</concept>
+
+<concept n="19" title="Human-in-the-loop learning">
+<s>People check the AI's answers, and their checked answers are used to make the AI better.</s>
+<e>A review engineer opens a flagged die, sees it is a known harmless pattern near the seal ring, and clicks "Reject (false alarm)". That decision can teach the memory that this pattern is normal.</e>
+<t>Human feedback is used to correct labels, select informative samples (active learning [[cai2022]]) or edit the model directly. Training-free memory correction of a PatchCore model from expert feedback was recently studied on MVTec AD with simulated feedback [[abbas]].</t>
+<w>Fab engineers already review flagged defects. Using their decisions is natural, but wrong feedback can poison the memory. Contribution C5 studies safeguards: quarantine, gates, second review and rollback.</w>
+</concept>

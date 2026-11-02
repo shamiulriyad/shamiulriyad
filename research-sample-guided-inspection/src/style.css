@@ -1,0 +1,144 @@
+/* Print stylesheet for the research dossier (A4, rendered by headless Chromium). */
+:root {
+  --ink: #1C2430; --muted: #5B6573; --navy: #1F3A5F; --teal: #0F7C80;
+  --teal-l: #E2F1F1; --navy-l: #E7EDF5; --amber: #B7791F; --amber-l: #FBF1DF;
+  --red: #B03A2E; --red-l: #F8E5E2; --rule: #C9D1DB; --tint: #F4F6F9;
+}
+@page { size: A4; margin: 17mm 16mm 18mm 16mm; }
+@page cover { margin: 0; }
+html, body { background: #FFFFFF; }
+body {
+  color: var(--ink); margin: 0;
+  font-family: "Liberation Serif", "Times New Roman", serif;
+  font-size: 10.3pt; line-height: 1.38;
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  hyphens: auto; orphans: 3; widows: 3;
+}
+a { color: var(--teal); text-decoration: none; overflow-wrap: anywhere; }
+p { margin: 0 0 2.2mm; text-align: justify; }
+ul, ol { margin: 0 0 2.6mm; padding-left: 6mm; }
+li { margin-bottom: 0.9mm; }
+b, strong { color: #101826; }
+code, .mono { font-family: "Liberation Mono", "DejaVu Sans Mono", monospace; font-size: 8.6pt; }
+
+/* ---------- Cover ---------- */
+.cover { page: cover; height: 297mm; width: 210mm; position: relative; break-after: page; overflow: hidden; }
+.cover .band { position: absolute; top: 0; left: 0; right: 0; height: 92mm; background: var(--navy); }
+.cover .band2 { position: absolute; top: 92mm; left: 0; right: 0; height: 3mm; background: var(--teal); }
+.cover .kicker { position: absolute; top: 24mm; left: 20mm; right: 20mm; color: #BFD9DA; font-family: "Liberation Sans", Arial, sans-serif; font-size: 10pt; letter-spacing: 0.12em; text-transform: uppercase; }
+.cover h1.title { position: absolute; top: 36mm; left: 20mm; right: 20mm; margin: 0; border: 0; color: #FFFFFF; font-family: "Liberation Sans", Arial, sans-serif; font-size: 23pt; line-height: 1.18; font-weight: 700; }
+.cover .subtitle { position: absolute; top: 104mm; left: 20mm; right: 20mm; font-family: "Liberation Sans", Arial, sans-serif; font-size: 12.5pt; color: var(--navy); line-height: 1.35; }
+.cover .coverfig { position: absolute; top: 132mm; left: 20mm; right: 20mm; }
+.cover .coverfig img { width: 100%; }
+.cover .meta { position: absolute; bottom: 22mm; left: 20mm; right: 20mm; font-family: "Liberation Sans", Arial, sans-serif; font-size: 9.6pt; color: var(--ink); border-top: 0.8pt solid var(--rule); padding-top: 4mm; line-height: 1.5; }
+.cover .meta .status { color: var(--amber); font-weight: 700; }
+
+/* ---------- Contents ---------- */
+nav.toc { break-after: page; font-family: "Liberation Sans", Arial, sans-serif; }
+nav.toc h1 { break-before: auto; }
+nav.toc ol { list-style: none; padding: 0; margin: 0; columns: 2; column-gap: 9mm; }
+nav.toc li { margin: 0; padding: 0.7mm 0; break-inside: avoid; font-size: 9.2pt; display: flex; }
+nav.toc li .t { flex: 1; }
+nav.toc li .pg { color: var(--muted); padding-left: 2mm; }
+nav.toc li.l2 { padding-left: 5mm; font-size: 8.4pt; color: var(--muted); }
+nav.toc li.l1 { font-weight: 700; margin-top: 1.2mm; }
+nav.toc a { color: var(--ink); }
+
+/* ---------- Headings ---------- */
+h1, h2, h3, h4 { font-family: "Liberation Sans", Arial, sans-serif; color: var(--navy); break-after: avoid; }
+h1 { font-size: 16pt; margin: 0 0 4mm; padding-bottom: 1.6mm; border-bottom: 1.2pt solid var(--navy); break-before: page; }
+h1 .num { color: var(--teal); margin-right: 2.5mm; }
+h2 { font-size: 12.4pt; margin: 5.5mm 0 2mm; }
+h3 { font-size: 10.8pt; margin: 4mm 0 1.6mm; color: var(--ink); }
+h4 { font-size: 9.8pt; margin: 3mm 0 1mm; color: var(--teal); }
+h1 + p, h2 + p, h3 + p { margin-top: 0; }
+.lead { font-size: 11pt; color: #22303f; }
+
+/* ---------- Call-out boxes ---------- */
+.box { border-left: 3pt solid var(--teal); background: var(--teal-l); padding: 2.4mm 3.4mm; margin: 2.6mm 0 3.4mm; break-inside: avoid; }
+.box p:last-child, .box ul:last-child { margin-bottom: 0; }
+.box .lbl { font-family: "Liberation Sans", Arial, sans-serif; font-weight: 700; font-size: 8.4pt; text-transform: uppercase; letter-spacing: 0.06em; color: var(--teal); display: block; margin-bottom: 0.8mm; }
+.box.navy { border-color: var(--navy); background: var(--navy-l); } .box.navy .lbl { color: var(--navy); }
+.box.amber { border-color: var(--amber); background: var(--amber-l); } .box.amber .lbl { color: var(--amber); }
+.box.red { border-color: var(--red); background: var(--red-l); } .box.red .lbl { color: var(--red); }
+.box.gray { border-color: var(--muted); background: var(--tint); } .box.gray .lbl { color: var(--muted); }
+
+/* Concept card: simple / example / technical / why */
+.concept { border: 0.8pt solid var(--rule); border-radius: 2mm; margin: 2.4mm 0 3.6mm; break-inside: avoid; overflow: hidden; }
+.concept > h4 { margin: 0; padding: 1.8mm 3mm; background: var(--navy); color: #FFFFFF; font-size: 10pt; }
+.concept > h4 .n { color: #9CCFD0; margin-right: 2mm; }
+.concept .row { display: grid; grid-template-columns: 27mm 1fr; border-top: 0.6pt solid #E3E7ED; }
+.concept .row .k { font-family: "Liberation Sans", Arial, sans-serif; font-size: 7.8pt; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; padding: 1.6mm 2mm; color: var(--teal); background: #F7FAFA; }
+.concept .row .v { padding: 1.4mm 2.6mm; font-size: 9.6pt; line-height: 1.33; }
+.concept .row.ex .k { color: var(--amber); background: #FDF8EF; }
+.concept .row.tech .k { color: var(--navy); background: #F3F6FA; }
+.concept .row.why .k { color: var(--red); background: #FCF4F3; }
+
+/* Badges */
+.tag { display: inline-block; font-family: "Liberation Sans", Arial, sans-serif; font-size: 7.2pt; font-weight: 700; padding: 0.2mm 1.6mm; border-radius: 2mm; vertical-align: 0.3mm; letter-spacing: 0.03em; }
+.tag.ev { background: var(--teal-l); color: var(--teal); border: 0.5pt solid var(--teal); }
+.tag.hy { background: var(--amber-l); color: var(--amber); border: 0.5pt solid var(--amber); }
+.tag.pr { background: var(--navy-l); color: var(--navy); border: 0.5pt solid var(--navy); }
+.tag.syn { background: #FFF6E0; color: #8A5A12; border: 0.5pt solid #D8A64A; }
+
+/* ---------- Figures ---------- */
+figure { margin: 3mm 0 4.5mm; break-inside: avoid; text-align: center; }
+figure img { max-width: 100%; }
+figure.w90 img { width: 90%; } figure.w80 img { width: 80%; } figure.w70 img { width: 70%; } figure.full img { width: 100%; }
+figcaption { font-family: "Liberation Sans", Arial, sans-serif; font-size: 8.3pt; line-height: 1.32; color: #2B3644; text-align: left; margin-top: 1.6mm; padding: 0 2mm; }
+figcaption .fn { font-weight: 700; color: var(--navy); }
+figcaption .src { color: var(--muted); font-style: italic; }
+
+/* ---------- Tables ---------- */
+table { width: 100%; border-collapse: collapse; margin: 2mm 0 4.2mm; font-family: "Liberation Sans", Arial, sans-serif; font-size: 7.9pt; line-height: 1.28; break-inside: auto; }
+caption { caption-side: top; text-align: left; font-size: 8.4pt; color: #2B3644; padding-bottom: 1.4mm; }
+caption .tn { font-weight: 700; color: var(--navy); }
+thead { display: table-header-group; }
+th { background: var(--navy); color: #FFFFFF; font-weight: 700; text-align: left; padding: 1.3mm 1.6mm; vertical-align: bottom; }
+td { padding: 1.2mm 1.6mm; border-bottom: 0.5pt solid #DDE2E9; vertical-align: top; }
+tr { break-inside: avoid; }
+tbody tr:nth-child(even) td { background: #F7F9FB; }
+table.small { font-size: 7.3pt; }
+table.matrix td.v { text-align: center; font-weight: 700; font-size: 6.9pt; hyphens: manual; }
+table.matrix { font-size: 7pt; }
+td.Yes { color: #0B5E61; background: #D9EEEE !important; }
+td.Partial { color: #7A520F; background: #FAEFD9 !important; }
+td.No { color: #8E2F25; background: #F6E1DE !important; }
+td.Notevaluated, td.Unclear { color: #5B6573; background: #EEF0F3 !important; }
+table.kv td:first-child { font-weight: 700; color: var(--navy); width: 30%; }
+
+/* Paper cards */
+.paper { border: 0.8pt solid var(--rule); border-radius: 2mm; margin: 0 0 4mm; break-inside: auto; }
+.paper .phead { break-inside: avoid; }
+.paper .ph { background: var(--navy-l); padding: 2mm 3mm; border-bottom: 0.8pt solid var(--rule); break-after: avoid; }
+.paper .ph .pt { font-family: "Liberation Sans", Arial, sans-serif; font-weight: 700; font-size: 10pt; color: var(--navy); }
+.paper .ph .pm { font-family: "Liberation Sans", Arial, sans-serif; font-size: 8pt; color: var(--muted); margin-top: 0.6mm; }
+.paper .simple { padding: 1.8mm 3mm; background: var(--teal-l); font-size: 9.6pt; }
+.paper .simple b { color: var(--teal); }
+.paper table { margin: 0; font-size: 7.9pt; }
+.paper table td:first-child { width: 31mm; font-weight: 700; color: var(--navy); background: #FAFBFC !important; }
+.paper .flags { padding: 1.4mm 3mm; font-family: "Liberation Sans", Arial, sans-serif; font-size: 7.6pt; color: var(--muted); }
+.stars { color: var(--amber); letter-spacing: 0.04em; }
+
+/* Equations */
+.eq { display: block; text-align: center; margin: 2.4mm 0 2.6mm; font-family: "Liberation Serif", serif; font-size: 11.2pt; break-inside: avoid; }
+.eq .no { float: right; color: var(--muted); font-size: 9.6pt; }
+.var { font-style: italic; }
+.symtab td:first-child { font-family: "Liberation Serif", serif; font-size: 9.6pt; font-style: italic; width: 22mm; text-align: center; }
+
+/* Pseudocode / code */
+pre { font-family: "Liberation Mono", "DejaVu Sans Mono", monospace; font-size: 7.7pt; line-height: 1.34; background: #F6F8FA; border: 0.6pt solid #DDE2E9; border-left: 2.5pt solid var(--navy); padding: 2.4mm 3mm; margin: 2mm 0 3.6mm; white-space: pre-wrap; break-inside: avoid; }
+pre .c { color: #6A7684; }
+pre .k { color: var(--navy); font-weight: 700; }
+
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; }
+.small-note { font-family: "Liberation Sans", Arial, sans-serif; font-size: 7.9pt; color: var(--muted); }
+.pb { break-before: page; }
+.nobreak { break-inside: avoid; }
+hr { border: 0; border-top: 0.6pt solid var(--rule); margin: 4mm 0; }
+.refs p { text-align: left; font-size: 8.6pt; margin-bottom: 1.3mm; padding-left: 8mm; text-indent: -8mm; }
+.refs .vf { color: var(--muted); font-family: "Liberation Sans", Arial, sans-serif; font-size: 7pt; }
+.gloss dt { font-weight: 700; color: var(--navy); font-family: "Liberation Sans", Arial, sans-serif; font-size: 9pt; margin-top: 1.4mm; break-after: avoid; }
+.gloss dd { margin: 0 0 0 5mm; font-size: 9.4pt; }
+.gloss { columns: 2; column-gap: 8mm; }
+.gloss div { break-inside: avoid; }

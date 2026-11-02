@@ -1,0 +1,7 @@
+%% Artifact 6 · End-to-end research workflow
+flowchart LR
+  L["1 Literature & gap"] --> D["2 Data audit & splits"] --> B["3 Baseline reproduction"]
+  B --> G1{"Gate 1: MVTec AD numbers reproduced?"} --> F["4 Few-shot enrolment"] --> R["5 Rotation & alignment"]
+  R --> G2{"Gate 2: few-shot curves with CIs?"} --> LO["6 Localisation"] --> U["7 Unknown triage"]
+  U --> G3{"Gate 3: open-set results per class?"} --> FB["8 Feedback adaptation (core-if-time)"] --> C["9 Comparison & ablation"]
+  C --> G4{"Gate 4: all experiments run or documented?"} --> P["10 Paper & release"]

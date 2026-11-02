@@ -1,0 +1,15 @@
+#,Risk,Why it matters,Probability,Impact,Mitigation
+1,No public patterned-die dataset with masks and wafer coordinates,Core cross-die / cross-wafer claims cannot be tested on real data,High,High,"Use a tiered data plan: public SEM (Carinthia-S), die-level optical (Wafer Surface Defect), synthetic patterned dies with known ground truth, and seek partner data; report synthetic results as synthetic."
+2,"Pretrained features (ImageNet, DINOv2) do not represent SEM textures well",Few-shot performance may be poor on semiconductor data,Medium,High,Compare several encoders; optional self-supervised adaptation on unlabelled SEM images; report negative results.
+3,Defects smaller than one feature patch are missed,Tiny defects are often the most critical,High,High,Multi-scale features; higher input resolution or tiling; size-binned evaluation.
+4,Alignment or preprocessing removes or blurs real defects,Silent false negatives,Medium,High,"Warp the reference, not the target; defect preservation ratio (DPR) test with injected defects; no smoothing before scoring."
+5,Periodic layouts make feature-based registration ambiguous,Wrong alignment by one pitch produces false alarms,Medium,Medium,Coarse alignment from die edges / global correlation; check the residual; fallback to rotation-augmented memory.
+6,K = 1 gives no data to calibrate a threshold,Threshold is arbitrary,High,Medium,Augmentation-based self-scoring; report threshold-free metrics (AUROC) alongside thresholded ones.
+7,Wrong engineer feedback contaminates the normal memory,Defects become 'normal' and are missed later,Medium,High,"Quarantine buffer, novelty gate, second review for additions, versioned memory with rollback, held-out regression check."
+8,Feedback evaluation inflated by memorisation,Claimed improvement is not real,High,High,Strict held-out protocol (as in Abbas et al.): updated samples never appear in the evaluation set.
+9,"Data leakage between splits (same wafer, re-scans)",Overestimated generalisation,Medium,High,Split by wafer / lot / design; perceptual-hash de-duplication; hash-checked split manifests.
+10,Licence or access restrictions on datasets,Results cannot be published or reproduced,Medium,Medium,Confirm licences on official records before use; keep a data-access log; prefer openly licensed data.
+11,Limited GPU resources,Cannot run large backbones or many seeds,Medium,Medium,"Frozen backbones, cached features, coreset subsampling, small ViT-S / WRN-50; CPU-feasible baseline."
+12,Novelty overlap with a paper published during the project,Contribution weakened,Medium,Medium,Monthly literature alert; frame contributions as evaluated hypotheses; position as a semiconductor-specific study.
+13,Unknown-class experiments depend on how classes are defined,Open-set results may not generalise,Medium,Medium,Leave-one-class-out over every class; report per-class results and variance.
+14,Cross-wafer domain shift larger than expected,Same strategy fails across wafers,High,Medium,Treat as a finding; test re-enrolment with few new references and feature normalisation.

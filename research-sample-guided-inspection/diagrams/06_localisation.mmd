@@ -1,0 +1,7 @@
+%% Diagram 6 · Defect localisation
+flowchart LR
+  O["1 Original die (as acquired)"] --> P["3 Target die (preprocessed)"]
+  R["2 Normal reference(s)"] --> D
+  P --> D["4 Difference / anomaly map S<br/>distance of each patch to nearest reference patch"]
+  D --> T["Threshold τ_pix (set on validation normals)"]
+  T --> H["5 Highlighted defect regions<br/>mask · bounding box · area · peak score"]
